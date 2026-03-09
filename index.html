@@ -347,3 +347,45 @@
         function deleteTest(id) {
             if (confirm('Delete this test?')) {
                 tests = tests.filter(t 
+<div class="d-flex align-items-center" id="userSection">
+  <span id="userName" class="text-white me-2 d-none"></span>
+  <button class="btn btn-sm btn-outline-light" onclick="handleAuth()" id="authBtn">Login</button>
+</div>
+                // Google Auth Provider
+const provider = new firebase.auth.GoogleAuthProvider();
+
+// Handle login/logout button
+window.handleAuth = function() {
+  const user = auth.currentUser;
+  if (user) {
+    auth.signOut();
+  } else {
+    auth.signInWithPopup(provider).catch(error => {
+      console.error("Login failed:", error);
+      alert("Login failed: " + error.message);
+    });
+  }
+};
+
+// Listen to auth state changes
+auth.onAuthStateChanged(user => {
+  const authBtn = document.getElementById('authBtn');
+  const userNameSpan = document.getElementById('userName');
+  if (user) {
+    // User is signed in
+    authBtn.textContent = 'Logout';
+    userNameSpan.textContent = user.displayName;
+    userNameSpan.classList.remove('d-none');
+    
+    // Load cloud tests for this user
+    loadUserTestsFromCloud();
+  } else {
+    // User is signed out
+    authBtn.textContent = 'Login';
+    userNameSpan.classList.add('d-none');
+    
+    // Show only local tests (from localStorage)
+    loadLocalTests();
+  }
+});
+                
