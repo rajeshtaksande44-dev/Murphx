@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>NEET/JEE Pro Mock Test Creator</title>
+    <!-- Bootstrap 5 + Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- Google Fonts for clean typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        body { background: #f8fafd; }
+        .navbar { background: #1e2b3c; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
+        .navbar-brand { font-weight: 600; letter-spacing: -0.3px; }
+        .card { border: none; border-radius: 24px; box-shadow: 0 8px 30px rgba(0,20,50,0.06); transition: 0.2s; }
+        .card-header { background: white; border-bottom: 1px solid rgba(0,0,0,0.05); font-weight: 600; padding: 1.2rem 1.5rem; border-radius: 24px 24px 0 0 !important; }
+        .btn { border-radius: 14px; padding: 10px 20px; font-weight: 500; }
+        .btn-primary { background: #3a5fe5; border: none; box-shadow: 0 6px 14px rgba(58,95,229,0.25); }
+        .btn-primary:hover { background: #2d4ecf; }
+        .btn-outline-secondary { border-color: #d0dae8; color: #344767; }
+        .question-item { background: white; border-radius: 20px; padding: 1.5rem; margin-bottom: 1.5rem; border: 1px solid #edf2f7; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
+        .option-row .form-control { background: #f9fcff; border-color: #e2eaf2; }
+        .badge-topic { background: #eef2ff; color: #3a5fe5; font-weight: 500; padding: 6px 12px; border-radius: 30px; }
+        .timer-badge { font-size: 1.4rem; font-weight: 700; background: #1e2b3c; color: #ffd966; padding: 6px 18px; border-radius: 40px; }
+        .palette-btn { width: 45px; height: 45px; border-radius: 16px; border: 1px solid #dee7f2; background: white; margin: 5px; font-weight: 600; transition: 0.1s; }
+        .palette-btn.answered { background: #3a5fe5; color: white; border-color: #3a5fe5; }
+        .palette-btn.review { background: #ffb347; color: white; border-color: #ffb347; }
+        .palette-btn.current { border: 3px solid #1e2b3c; }
+        .question-panel { background: #f9fcff; border-radius: 24px; padding: 1.5rem; }
+        .stats-card { background: linear-gradient(145deg, #ffffff, #f5f9ff); border-radius: 20px; padding: 1.2rem; }
+        .topic-progress { height: 8px; border-radius: 20px; }
+        @media (max-width: 768px) { .container { padding: 12px; } }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-dark py-3">
+        <div class="container">
+            <span class="navbar-brand fs-4"><i class="bi bi-journal-bookmark-fill me-2"></i>MockTest Pro (NEET/JEE)</span>
+            <div>
+                <button class="btn btn-sm btn-outline-light me-2" onclick="showSection('create')"><i class="bi bi-plus-circle"></i> Create</button>
+                <button class="btn btn-sm btn-outline-light" onclick="showSection('list')"><i class="bi bi-collection"></i> My Tests</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4 pb-5">
+        <!-- Create Section -->
+        <div id="create-section" class="section">
+            <div class="card">
+                <div class="card-header d-flex align-items-center">
+                    <i class="bi bi-pencil-square fs-5 me-2"></i> Design New Mock Test
+                    <span class="ms-auto badge bg-light text-dark">Advanced mode</span>
+                </div>
+                <div class="card-body">
+                    <!-- Quick import area -->
+                    <div class="alert alert-secondary d-flex align-items-center p-3 mb-4" style="border-radius: 20px;">
+                        <i class="bi bi-file-text fs-4 me-3"></i>
+                        <div class="flex-grow-1">
+                            <span class="fw-semibold">Import questions from text</span>
+                            <p class="mb-0 small text-secondary">Paste formatted: <code>Question? | A) opt1 | B) opt2 | C) opt3 | D) opt4 | CorrectLetter | Topic | Explanation</code></p>
+                        </div>
+                        <button class="btn btn-sm btn-outline-primary" onclick="showImportModal()"><i class="bi bi-upload"></i> Import</button>
+                    </div>
+
+                    <form id="testForm">
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Test Title</label>
+                                <input type="text" class="form-control form-control-lg" id="testTitle" placeholder="e.g. Physics: Electrostatics Challenge" required>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-semibold">Subject</label>
+                                <select class="form-select form-select-lg" id="testSubject">
+                                    <option>Physics</option>
+                                    <option>Chemistry</option>
+                                    <option>Biology</option>
+                                    <option>Mathematics</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-semibold">Duration (minutes)</label>
+                                <input type="number" class="form-control form-control-lg" id="testDuration" value="30" min="1" max="180">
+                            </div>
+                        </div>
+
+                        <div id="questionsContainer"></div>
+
+                        <div class="d-flex gap-2 mt-3">
+                            <button type="button" class="btn btn-outline-primary" onclick="addQuestion()"><i class="bi bi-plus-circle me-2"></i>Add Question</button>
+                            <button type="button" class="btn btn-outline-secondary" onclick="addSampleAIGenerated()"><i class="bi bi-stars me-2"></i>✨ AI Generate Sample</button>
+                        </div>
+
+                        <hr class="my-4">
+                        <button type="submit" class="btn btn-primary btn-lg w-100"><i class="bi bi-save me-2"></i>Save Test</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- List Section -->
+        <div id="list-section" class="section" style="display: none;">
+            <div class="card">
+                <div class="card-header"><i class="bi bi-collection me-2"></i>Your Test Library</div>
+                <div class="card-body" id="testListContainer">Loading...</div>
+            </div>
+        </div>
+
+        <!-- Take Test Section -->
+        <div id="take-section" class="section" style="display: none;">
+            <div class="card">
+                <div class="card-header d-flex flex-wrap align-items-center justify-content-between">
+                    <span class="fs-5 fw-semibold" id="takeTestTitle"></span>
+                    <span class="timer-badge" id="timerDisplay">30:00</span>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Question Palette Sidebar -->
+                        <div class="col-lg-3 mb-4">
+                            <div class="question-panel">
+                                <h6 class="fw-semibold mb-3"><i class="bi bi-grid-3x3-gap-fill me-2"></i>Question Palette</h6>
+                                <div id="paletteContainer" class="d-flex flex-wrap"></div>
+                                <div class="mt-3 small text-secondary">
+                                    <span class="badge bg-primary me-1">●</span> Answered 
+                                    <span class="badge bg-warning ms-2 me-1">●</span> Review
+                                </div>
+                                <hr>
+                                <button class="btn btn-sm btn-outline-secondary w-100" onclick="markForReview()"><i class="bi bi-bookmark-star"></i> Mark for review</button>
+                            </div>
+                        </div>
+                        <!-- Questions Area -->
+                        <div class="col-lg-9">
+                            <div id="takeTestContainer"></div>
+                            <div class="d-flex justify-content-between mt-4">
+                                <button class="btn btn-outline-secondary" onclick="prevQuestion()"><i class="bi bi-chevron-left"></i> Previous</button>
+                                <button class="btn btn-outline-secondary" onclick="nextQuestion()">Next <i class="bi bi-chevron-right"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-end">
+                    <button class="btn btn-success btn-lg px-5" onclick="submitTest()"><i class="bi bi-check2-circle"></i> Submit Test</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Result Section -->
+        <div id="result-section" class="section" style="display: none;">
+            <div class="card">
+                <div class="card-header"><i class="bi bi-bar-chart-steps me-2"></i>Performance Analysis</div>
+                <div class="card-body" id="resultContainer"></div>
+                <div class="card-footer">
+                    <button class="btn btn-primary" onclick="showSection('list')"><i class="bi bi-arrow-left"></i> Back to Library</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import Modal (hidden by default) -->
+    <div class="modal fade" id="importModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" style="border-radius: 28px;">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-file-text me-2"></i>Import Questions</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="small text-secondary">Paste lines in this format:</p>
+                    <pre class="bg-light p-3 rounded">Question text | A) option1 | B) option2 | C) option3 | D) option4 | CorrectLetter | Topic (optional) | Explanation (optional)</pre>
+                    <textarea class="form-control" rows="6" id="importText" placeholder="Paste here..."></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="processImport()">Import & Add</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // ========== DATA ==========
+        let tests = JSON.parse(localStorage.getItem('mockTestsPro')) || [];
+        let currentTestId = null;
+        let userAnswers = [];           // array of { selected, review }
+        let currentQIndex = 0;
+        let timerInterval = null;
+        let timeLeft = 0;
+
+        // ========== UI NAV ==========
+        function showSection(sectionName) {
+            document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
+            document.getElementById(sectionName + '-section').style.display = 'block';
+            if (sectionName === 'list') renderTestList();
+            if (sectionName === 'create') resetCreateForm();
+        }
+
+        // ========== CREATE TEST ==========
+        function addQuestion(questionData = null) {
+            const container = document.getElementById('questionsContainer');
+            const qDiv = document.createElement('div');
+            qDiv.className = 'question-item';
+            const idx = container.children.length;
+            qDiv.innerHTML = `
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <span class="badge-topic">Q${idx+1}</span>
+                    <button type="button" class="btn-close" onclick="this.closest('.question-item').remove()"></button>
+                </div>
+                <div class="mb-3">
+                    <textarea class="form-control" rows="2" placeholder="Question text" required>${questionData?.text || ''}</textarea>
+                </div>
+                <div class="row g-2 mb-2">
+                    <div class="col-md-6"><input type="text" class="form-control" placeholder="Option A" value="${questionData?.options?.[0] || ''}" required></div>
+                    <div class="col-md-6"><input type="text" class="form-control" placeholder="Option B" value="${questionData?.options?.[1] || ''}" required></div>
+                    <div class="col-md-6"><input type="text" class="form-control" placeholder="Option C" value="${questionData?.options?.[2] || ''}" required></div>
+                    <div class="col-md-6"><input type="text" class="form-control" placeholder="Option D" value="${questionData?.options?.[3] || ''}" required></div>
+                </div>
+                <div class="row g-2">
+                    <div class="col-md-2">
+                        <input type="text" class="form-control" placeholder="Correct (A/B/C/D)" value="${questionData?.correct || ''}" maxlength="1" required>
+                    </div>
+                    <div class="col-md-4">
+                        <input type="text" class="form-control" placeholder="Topic/Chapter (optional)" value="${questionData?.topic || ''}">
+                    </div>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" placeholder="Explanation (optional)" value="${questionData?.explanation || ''}">
+                    </div>
+                </div>
+            `;
+            container.appendChild(qDiv);
+        }
+
+        // Add one default
+        addQuestion();
+
+        function addSampleAIGenerated() {
+            const sample = {
+                text: "A photon of wavelength 400 nm is incident on a metal surface. The work function is 2.0 eV. What is the maximum kinetic energy of photoelectrons? (Use hc = 1240 eV·nm)",
+                options: ["0.1 eV", "1.1 eV", "2.1 eV", "3.1 eV"],
+                correct: "B",
+                topic: "Modern Physics",
+                explanation: "E = hc/λ = 1240/400 = 3.1 eV. KE = E - φ = 3.1 - 2.0 = 1.1 eV."
+            };
+            addQuestion(sample);
+        }
+
+        document.getElementById('testForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const title = document.getElementById('testTitle').value.trim();
+            const subject = document.getElementById('testSubject').value;
+            const duration = parseInt(document.getElementById('testDuration').value) || 30;
+            const items = document.querySelectorAll('#questionsContainer .question-item');
+            if (items.length === 0) { alert('Add at least one question.'); return; }
+
+            let questions = [];
+            let valid = true;
+            items.forEach(item => {
+                const text = item.querySelector('textarea').value.trim();
+                const opts = [
+                    item.querySelectorAll('input[type="text"]')[0].value.trim(),
+                    item.querySelectorAll('input[type="text"]')[1].value.trim(),
+                    item.querySelectorAll('input[type="text"]')[2].value.trim(),
+                    item.querySelectorAll('input[type="text"]')[3].value.trim()
+                ];
+                const correctRaw = item.querySelector('input[placeholder*="Correct"]').value.trim().toUpperCase();
+                const topic = item.querySelector('input[placeholder*="Topic"]').value.trim();
+                const explanation = item.querySelector('input[placeholder*="Explanation"]').value.trim();
+                if (!text || opts.some(o => !o) || !correctRaw || !'ABCD'.includes(correctRaw)) {
+                    valid = false; return;
+                }
+                questions.push({ text, options: opts, correct: correctRaw, topic, explanation });
+            });
+            if (!valid) { alert('Please fill all required fields.'); return; }
+
+            const newTest = {
+                id: Date.now().toString(),
+                title, subject, duration,
+                questions
+            };
+            tests.push(newTest);
+            localStorage.setItem('mockTestsPro', JSON.stringify(tests));
+            alert('Test saved!');
+            showSection('list');
+        });
+
+        function resetCreateForm() {
+            document.getElementById('testForm').reset();
+            document.getElementById('questionsContainer').innerHTML = '';
+            addQuestion();
+        }
+
+        // ========== IMPORT ==========
+        let importModal;
+        document.addEventListener('DOMContentLoaded', ()=>{
+            importModal = new bootstrap.Modal(document.getElementById('importModal'));
+        });
+        function showImportModal() { importModal.show(); }
+        function processImport() {
+            const text = document.getElementById('importText').value;
+            if (!text.trim()) return;
+            const lines = text.split('\n').filter(l => l.trim());
+            lines.forEach(line => {
+                const parts = line.split('|').map(s => s.trim());
+                if (parts.length >= 6) {
+                    const qText = parts[0];
+                    const opts = parts.slice(1,5).map(o => o.replace(/^[A-D]\)\s*/, '')); // remove A) prefix if present
+                    const correct = parts[5].toUpperCase().replace(/[^A-D]/g, '');
+                    const topic = parts[6] || '';
+                    const explanation = parts[7] || '';
+                    if (qText && opts.length===4 && correct) {
+                        addQuestion({ text: qText, options: opts, correct, topic, explanation });
+                    }
+                }
+            });
+            importModal.hide();
+            document.getElementById('importText').value = '';
+        }
+
+        // ========== LIST TESTS ==========
+        function renderTestList() {
+            const container = document.getElementById('testListContainer');
+            if (tests.length === 0) {
+                container.innerHTML = '<p class="text-muted">No tests yet. Create one now!</p>';
+                return;
+            }
+            let html = '';
+            tests.forEach(test => {
+                html += `
+                    <div class="d-flex justify-content-between align-items-center p-3 mb-3 bg-white rounded-4 shadow-sm">
+                        <div>
+                            <h5 class="fw-semibold">${test.title} <span class="badge bg-secondary">${test.subject}</span></h5>
+                            <small>${test.questions.length} questions · ${test.duration} min</small>
+                        </div>
+                        <div>
+                            <button class="btn btn-sm btn-primary me-2" onclick="takeTest('${test.id}')"><i class="bi bi-play-fill"></i> Start</button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteTest('${test.id}')"><i class="bi bi-trash3"></i></button>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function deleteTest(id) {
+            if (confirm('Delete this test?')) {
+                tests = tests.filter(t 
