@@ -7,7 +7,7 @@
     <!-- Bootstrap 5 + Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <!-- Google Fonts for clean typography -->
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap" rel="stylesheet">
     <style>
         * { font-family: 'Inter', sans-serif; }
@@ -159,7 +159,7 @@
         </div>
     </div>
 
-    <!-- Import Modal (hidden by default) -->
+    <!-- Import Modal -->
     <div class="modal fade" id="importModal" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content" style="border-radius: 28px;">
@@ -182,7 +182,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // ========== DATA ==========
+        // ========== GLOBAL VARIABLES ==========
         let tests = JSON.parse(localStorage.getItem('mockTestsPro')) || [];
         let currentTestId = null;
         let currentTest = null;               // questions array for the active test
@@ -190,26 +190,26 @@
         let currentQIndex = 0;
         let timerInterval = null;
         let timeLeft = 0;                       // seconds
+        let importModal = null;
 
-        // Bootstrap modal instance
-        let importModal;
+        // ========== INITIALIZATION ==========
         document.addEventListener('DOMContentLoaded', function() {
             importModal = new bootstrap.Modal(document.getElementById('importModal'));
             // Add one default question on create page
             if (document.getElementById('questionsContainer').children.length === 0) addQuestion();
+            // Ensure all functions are globally accessible
         });
 
         // ========== UI NAVIGATION ==========
-        function showSection(sectionName) {
+        window.showSection = function(sectionName) {
             document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
             document.getElementById(sectionName + '-section').style.display = 'block';
             if (sectionName === 'list') renderTestList();
             if (sectionName === 'create') resetCreateForm();
-            if (sectionName === 'take') { /* handled by takeTest */ }
-        }
+        };
 
         // ========== CREATE TEST ==========
-        function addQuestion(questionData = null) {
+        window.addQuestion = function(questionData = null) {
             const container = document.getElementById('questionsContainer');
             const qDiv = document.createElement('div');
             qDiv.className = 'question-item';
@@ -241,9 +241,9 @@
                 </div>
             `;
             container.appendChild(qDiv);
-        }
+        };
 
-        function addSampleAIGenerated() {
+        window.addSampleAIGenerated = function() {
             const sample = {
                 text: "A photon of wavelength 400 nm is incident on a metal surface. The work function is 2.0 eV. What is the maximum kinetic energy of photoelectrons? (Use hc = 1240 eV·nm)",
                 options: ["0.1 eV", "1.1 eV", "2.1 eV", "3.1 eV"],
@@ -252,7 +252,7 @@
                 explanation: "E = hc/λ = 1240/400 = 3.1 eV. KE = E - φ = 3.1 - 2.0 = 1.1 eV."
             };
             addQuestion(sample);
-        }
+        };
 
         document.getElementById('testForm').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -300,8 +300,8 @@
         }
 
         // ========== IMPORT ==========
-        function showImportModal() { importModal.show(); }
-        function processImport() {
+        window.showImportModal = function() { importModal.show(); };
+        window.processImport = function() {
             const text = document.getElementById('importText').value;
             if (!text.trim()) return;
             const lines = text.split('\n').filter(l => l.trim() !== '');
@@ -309,7 +309,7 @@
                 const parts = line.split('|').map(s => s.trim());
                 if (parts.length >= 6) {
                     let qText = parts[0];
-                    let opts = parts.slice(1,5).map(o => o.replace(/^[A-D]\)\s*/, '')); // remove "A) " prefix if present
+                    let opts = parts.slice(1,5).map(o => o.replace(/^[A-D]\)\s*/, '')); // remove "A) " prefix
                     let correct = parts[5].toUpperCase().replace(/[^A-D]/g, '');
                     let topic = parts[6] || '';
                     let explanation = parts[7] || '';
@@ -320,7 +320,7 @@
             });
             importModal.hide();
             document.getElementById('importText').value = '';
-        }
+        };
 
         // ========== LIST TESTS ==========
         function renderTestList() {
@@ -338,5 +338,352 @@
                             <small>${test.questions.length} questions · ${test.duration} min</small>
                         </div>
                         <div>
-                            <button class="btn btn-sm btn-primary me-2" onclick="takeTest('${test.id}')"><i class="bi bi-play-fill"></i> Start</button>
-              
+                            <button class="btn btn-sm btn-primary me-2" onclick="takeTest('${test.id}')"><i class="bi bi-play-fill"></i> Start</but
+                            // ========== PROFESSIONAL ENHANCEMENTS (add after submitTest) ==========
+
+// ---------- Edit Test ----------
+window.editTest = function(id) {
+    const test = tests.find(t => t.id === id);
+    if (!test) return;
+    // Populate create form with test data
+    document.getElementById('testTitle').value = test.title;
+    document.getElementById('testSubject').value = test.subject;
+    document.getElementById('testDuration').value = test.duration;
+    // Clear existing questions and load test questions
+    const container = document.getElementById('questionsContainer');
+    container.innerHTML = '';
+    test.questions.forEach(q => addQuestion(q));
+    // Remove old test and switch to create section
+    tests = tests.filter(t => t.id !== id);
+    localStorage.setItem('mockTestsPro', JSON.stringify(tests));
+    showSection('create');
+    alert('You can now edit the test. Save it when done.');
+};
+
+// Update test list to include edit button
+function renderTestList() {
+    const container = document.getElementById('testListContainer');
+    if (tests.length === 0) {
+        container.innerHTML = '<p class="text-muted">No tests yet. Create one now!</p>';
+        return;
+    }
+    let html = '';
+    tests.forEach(test => {
+        html += `
+            <div class="d-flex justify-content-between align-items-center p-3 mb-3 bg-white rounded-4 shadow-sm">
+                <div>
+                    <h5 class="fw-semibold">${test.title} <span class="badge bg-secondary">${test.subject}</span></h5>
+                    <small>${test.questions.length} questions · ${test.duration} min</small>
+                </div>
+                <div>
+                    <button class="btn btn-sm btn-outline-primary me-2" onclick="editTest('${test.id}')"><i class="bi bi-pencil"></i> Edit</button>
+                    <button class="btn btn-sm btn-primary me-2" onclick="takeTest('${test.id}')"><i class="bi bi-play-fill"></i> Start</button>
+                    <button class="btn btn-sm btn-outline-danger" onclick="deleteTest('${test.id}')"><i class="bi bi-trash3"></i></button>
+                </div>
+            </div>
+        `;
+    });
+    container.innerHTML = html;
+}
+
+// ---------- Question Bank (localStorage) ----------
+let questionBank = JSON.parse(localStorage.getItem('questionBank')) || [];
+
+window.showQuestionBank = function() {
+    let bankHtml = '<h5>Question Bank</h5><div class="list-group">';
+    questionBank.forEach((q, idx) => {
+        bankHtml += `
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+                <div>${q.text.substring(0,50)}...</div>
+                <button class="btn btn-sm btn-primary" onclick="addFromBank(${idx})">Add to Test</button>
+            </div>
+        `;
+    });
+    bankHtml += '</div>';
+    // Create a modal or sidebar to display bank (simplified: use an alert)
+    // For simplicity, we'll just log and add a button in create view
+    alert('Bank has ' + questionBank.length + ' questions. (See console)');
+    console.log(questionBank);
+};
+
+window.addFromBank = function(index) {
+    const q = questionBank[index];
+    addQuestion(q);
+};
+
+// Save current question to bank (add a button in question item)
+// We'll modify addQuestion to include a "Save to Bank" button
+// This requires updating the addQuestion function (replace existing)
+window.addQuestion = function(questionData = null) {
+    const container = document.getElementById('questionsContainer');
+    const qDiv = document.createElement('div');
+    qDiv.className = 'question-item';
+    const idx = container.children.length;
+    qDiv.innerHTML = `
+        <div class="d-flex justify-content-between align-items-start mb-2">
+            <span class="badge-topic">Q${idx+1}</span>
+            <div>
+                <button type="button" class="btn btn-sm btn-outline-secondary me-2" onclick="saveToBank(this)"><i class="bi bi-bookmark-plus"></i></button>
+                <button type="button" class="btn-close" onclick="this.closest('.question-item').remove()"></button>
+            </div>
+        </div>
+        <div class="mb-3">
+            <textarea class="form-control" rows="2" placeholder="Question text" required>${questionData?.text || ''}</textarea>
+        </div>
+        <div class="row g-2 mb-2">
+            <div class="col-md-6"><input type="text" class="form-control" placeholder="Option A" value="${questionData?.options?.[0] || ''}" required></div>
+            <div class="col-md-6"><input type="text" class="form-control" placeholder="Option B" value="${questionData?.options?.[1] || ''}" required></div>
+            <div class="col-md-6"><input type="text" class="form-control" placeholder="Option C" value="${questionData?.options?.[2] || ''}" required></div>
+            <div class="col-md-6"><input type="text" class="form-control" placeholder="Option D" value="${questionData?.options?.[3] || ''}" required></div>
+        </div>
+        <div class="row g-2">
+            <div class="col-md-2">
+                <input type="text" class="form-control" placeholder="Correct (A/B/C/D)" value="${questionData?.correct || ''}" maxlength="1" required>
+            </div>
+            <div class="col-md-4">
+                <input type="text" class="form-control" placeholder="Topic/Chapter (optional)" value="${questionData?.topic || ''}">
+            </div>
+            <div class="col-md-6">
+                <input type="text" class="form-control" placeholder="Explanation (optional)" value="${questionData?.explanation || ''}">
+            </div>
+        </div>
+    `;
+    container.appendChild(qDiv);
+};
+
+window.saveToBank = function(btn) {
+    const qItem = btn.closest('.question-item');
+    const text = qItem.querySelector('textarea').value.trim();
+    const opts = [
+        qItem.querySelectorAll('input[type="text"]')[0].value.trim(),
+        qItem.querySelectorAll('input[type="text"]')[1].value.trim(),
+        qItem.querySelectorAll('input[type="text"]')[2].value.trim(),
+        qItem.querySelectorAll('input[type="text"]')[3].value.trim()
+    ];
+    const correct = qItem.querySelector('input[placeholder*="Correct"]').value.trim().toUpperCase();
+    const topic = qItem.querySelector('input[placeholder*="Topic"]').value.trim();
+    const explanation = qItem.querySelector('input[placeholder*="Explanation"]').value.trim();
+    if (!text || opts.some(o => !o) || !correct) {
+        alert('Complete the question first.');
+        return;
+    }
+    questionBank.push({ text, options: opts, correct, topic, explanation });
+    localStorage.setItem('questionBank', JSON.stringify(questionBank));
+    alert('Saved to question bank!');
+};
+
+// Add "Question Bank" button in create view
+// Insert this button near "Add Question" and "AI Generate Sample"
+// In the HTML, after those buttons, add:
+// <button type="button" class="btn btn-outline-info" onclick="showQuestionBank()"><i class="bi bi-collection"></i> Question Bank</button>
+// We'll dynamically add it via JS after DOM loads, or you can edit the HTML directly.
+// For simplicity, we'll add it via JS:
+document.addEventListener('DOMContentLoaded', function() {
+    const btnGroup = document.querySelector('#testForm .d-flex.gap-2');
+    if (btnGroup) {
+        const bankBtn = document.createElement('button');
+        bankBtn.type = 'button';
+        bankBtn.className = 'btn btn-outline-info';
+        bankBtn.innerHTML = '<i class="bi bi-collection me-2"></i>Question Bank';
+        bankBtn.onclick = showQuestionBank;
+        btnGroup.appendChild(bankBtn);
+    }
+});
+
+// ---------- Export / Import Test ----------
+window.exportTest = function(id) {
+    const test = tests.find(t => t.id === id);
+    if (!test) return;
+    const dataStr = JSON.stringify(test, null, 2);
+    const blob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${test.title.replace(/\s+/g, '_')}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+};
+
+window.importTest = function() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+    input.onchange = e => {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        reader.onload = ev => {
+            try {
+                const test = JSON.parse(ev.target.result);
+                if (!test.title || !test.questions) throw new Error('Invalid test format');
+                test.id = Date.now().toString(); // new ID
+                tests.push(test);
+                localStorage.setItem('mockTestsPro', JSON.stringify(tests));
+                alert('Test imported successfully!');
+                renderTestList();
+            } catch (err) {
+                alert('Invalid JSON file.');
+            }
+        };
+        reader.readAsText(file);
+    };
+    input.click();
+};
+
+// Add export/import buttons to test list
+function renderTestList() {
+    // ... previous code, add export button next to edit/start/delete
+    // We'll modify the inner loop:
+    tests.forEach(test => {
+        html += `
+            <div class="d-flex justify-content-between align-items-center p-3 mb-3 bg-white rounded-4 shadow-sm">
+                <div>
+                    <h5 class="fw-semibold">${test.title} <span class="badge bg-secondary">${test.subject}</span></h5>
+                    <small>${test.questions.length} questions · ${test.duration} min</small>
+                </div>
+                <div>
+                    <button class="btn btn-sm btn-outline-primary me-2" onclick="editTest('${test.id}')"><i class="bi bi-pencil"></i></button>
+                    <button class="btn btn-sm btn-outline-success me-2" onclick="exportTest('${test.id}')"><i class="bi bi-download"></i></button>
+                    <button class="btn btn-sm btn-primary me-2" onclick="takeTest('${test.id}')"><i class="bi bi-play-fill"></i></button>
+                    <button class="btn btn-sm btn-outline-danger" onclick="deleteTest('${test.id}')"><i class="bi bi-trash3"></i></button>
+                </div>
+            </div>
+        `;
+    });
+    // Also add an import button above the list
+    container.innerHTML = '<div class="mb-3"><button class="btn btn-outline-secondary" onclick="importTest()"><i class="bi bi-upload"></i> Import Test</button></div>' + html;
+}
+
+// ---------- Randomize Questions on Start ----------
+window.takeTest = function(id, randomize = true) {
+    const test = tests.find(t => t.id === id);
+    if (!test) return;
+    currentTestId = id;
+    // Clone questions and optionally shuffle
+    let questions = [...test.questions];
+    if (randomize) {
+        for (let i = questions.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [questions[i], questions[j]] = [questions[j], questions[i]];
+        }
+    }
+    currentTest = { ...test, questions }; // keep original test data separate if needed
+    currentQIndex = 0;
+    userAnswers = questions.map(() => ({ selected: null, review: false }));
+
+    document.getElementById('takeTestTitle').innerText = test.title + (randomize ? ' (Randomized)' : '');
+    timeLeft = test.duration * 60;
+    updateTimerDisplay();
+    startTimer();
+
+    renderQuestion();
+    renderPalette();
+    showSection('take');
+};
+
+// Add a checkbox in test list to enable randomization? For simplicity, we'll always randomize.
+// Or we can add a "Start Randomized" button. Modify renderTestList to include a separate button.
+// In the button group, add:
+// <button class="btn btn-sm btn-info me-2" onclick="takeTest('${test.id}', true)"><i class="bi bi-shuffle"></i></button>
+
+// ---------- Post-Test Review: Show Answers & Explanations ----------
+// Modify submitTest to store the test and answers, then show a detailed review.
+// We'll create a new section or expand result section.
+
+// After calculating score in submitTest, build detailed review:
+function showDetailedReview() {
+    const container = document.getElementById('resultContainer');
+    // Assuming currentTest and userAnswers are still available
+    let reviewHtml = '<h5 class="fw-semibold mt-4">Detailed Review</h5>';
+    currentTest.questions.forEach((q, i) => {
+        const ans = userAnswers[i];
+        const correctIndex = q.correct.charCodeAt(0) - 65;
+        const isCorrect = (ans.selected === correctIndex);
+        const userLetter = ans.selected !== null ? String.fromCharCode(65 + ans.selected) : 'Not answered';
+        const correctLetter = String.fromCharCode(65 + correctIndex);
+        reviewHtml += `
+            <div class="card mb-3 p-3 ${isCorrect ? 'border-success' : 'border-danger'}">
+                <div class="d-flex justify-content-between">
+                    <strong>Q${i+1}: ${q.text}</strong>
+                    <span class="badge ${isCorrect ? 'bg-success' : 'bg-danger'}">${isCorrect ? 'Correct' : 'Incorrect'}</span>
+                </div>
+                <div class="row mt-2">
+                    ${q.options.map((opt, idx) => `
+                        <div class="col-md-6">
+                            <span class="${idx === correctIndex ? 'fw-bold text-success' : ''} ${idx === ans.selected && idx !== correctIndex ? 'text-danger' : ''}">
+                                ${String.fromCharCode(65+idx)}) ${opt}
+                                ${idx === correctIndex ? ' ✓' : ''}
+                                ${idx === ans.selected && idx !== correctIndex ? ' ✗' : ''}
+                            </span>
+                        </div>
+                    `).join('')}
+                </div>
+                <div class="mt-2 small">
+                    <span class="text-secondary">Your answer: ${userLetter}</span><br>
+                    <span class="text-success">Correct: ${correctLetter}</span>
+                    ${q.explanation ? `<br><span class="text-info">Explanation: ${q.explanation}</span>` : ''}
+                </div>
+            </div>
+        `;
+    });
+    // Append to existing result stats
+    const statsDiv = container.querySelector('.stats-card');
+    if (statsDiv) {
+        statsDiv.insertAdjacentHTML('afterend', reviewHtml);
+    } else {
+        container.innerHTML += reviewHtml;
+    }
+}
+
+// Override submitTest to call showDetailedReview after displaying stats
+window.submitTest = function() {
+    stopTimer();
+    if (!currentTest) return;
+
+    // ... (same score calculation as before) ...
+    let correctCount = 0, incorrectCount = 0, unanswered = 0;
+    const topicStats = {};
+    currentTest.questions.forEach((q, i) => {
+        const ans = userAnswers[i];
+        const topic = q.topic || 'General';
+        if (!topicStats[topic]) topicStats[topic] = { total: 0, correct: 0 };
+        topicStats[topic].total++;
+        if (ans.selected === null) unanswered++;
+        else {
+            const correctIndex = q.correct.charCodeAt(0) - 65;
+            if (ans.selected === correctIndex) {
+                correctCount++;
+                topicStats[topic].correct++;
+            } else incorrectCount++;
+        }
+    });
+
+    const total = currentTest.questions.length;
+    const score = correctCount;
+
+    let topicHtml = '';
+    for (let topic in topicStats) {
+        const stat = topicStats[topic];
+        const percent = Math.round((stat.correct / stat.total) * 100);
+        topicHtml += `<div class="mb-3"><div class="d-flex justify-content-between"><span><strong>${topic}</strong></span><span>${stat.correct}/${stat.total} (${percent}%)</span></div><div class="progress topic-progress"><div class="progress-bar bg-primary" style="width: ${percent}%"></div></div></div>`;
+    }
+
+    const resultContainer = document.getElementById('resultContainer');
+    resultContainer.innerHTML = `
+        <div class="stats-card mb-4">
+            <div class="row text-center">
+                <div class="col-4"><h2 class="text-success">${correctCount}</h2><small>Correct</small></div>
+                <div class="col-4"><h2 class="text-danger">${incorrectCount}</h2><small>Incorrect</small></div>
+                <div class="col-4"><h2 class="text-secondary">${unanswered}</h2><small>Unanswered</small></div>
+            </div>
+            <hr>
+            <div class="text-center"><h3>Score: ${score} / ${total}</h3><p>${Math.round((score/total)*100)}%</p></div>
+        </div>
+        <h5 class="fw-semibold">Topic-wise Performance</h5>
+        ${topicHtml}
+    `;
+
+    // Add detailed review
+    showDetailedReview();
+
+    showSection('result');
+};
