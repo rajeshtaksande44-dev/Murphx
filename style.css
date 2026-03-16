@@ -364,7 +364,32 @@ body::before {
     border-radius: 28px;
     color: #E0E5F0;
 }
-
+/* Import Alert Responsive Fix */
+.import-alert {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+}
+.import-alert .alert-text {
+    flex: 1 1 300px; /* allows text to shrink and wrap */
+    min-width: 200px;
+}
+.import-alert .button-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: flex-end;
+}
+.import-alert .button-group .btn {
+    white-space: nowrap;
+}
+@media (max-width: 576px) {
+    .import-alert .button-group .btn {
+        font-size: 0.8rem;
+        padding: 0.4rem 0.8rem;
+    }
+}
 /* ===== Modals ===== */
 .modal-content {
     background: rgba(12, 20, 32, 0.95);
