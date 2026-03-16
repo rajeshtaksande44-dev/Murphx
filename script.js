@@ -1,42 +1,46 @@
 // ========== GLOBAL VARIABLES ==========
-let tests = JSON.parse(localStorage.getItem('mockTestsPro')) || [];
-let questionBank = JSON.parse(localStorage.getItem('questionBank')) || [];
+let tests = JSON.parse(localStorage.getItem('cosmicTests')) || [];
+let questionBank = JSON.parse(localStorage.getItem('cosmicQuestionBank')) || [];
 let currentTestId = null;
 let currentTest = null;
-let userAnswers = [];
+let userAnswers = [];               // { selected: null/0-3, review: boolean }
 let currentQIndex = 0;
 let timerInterval = null;
 let timeLeft = 0;
-let importModal, smartImportModal, aiImportModal, pdfUploadModal;
-let aiParsedQuestions = [];
-let smartParsedQuestions = [];
 
+// Dashboard stats
 let stats = {
-    testsTaken: parseInt(localStorage.getItem('stats_testsTaken')) || 0,
-    totalScore: parseInt(localStorage.getItem('stats_totalScore')) || 0,
-    totalQuestions: parseInt(localStorage.getItem('stats_totalQuestions')) || 0,
-    recentTests: JSON.parse(localStorage.getItem('stats_recentTests')) || []
+    testsTaken: parseInt(localStorage.getItem('cosmicTestsTaken')) || 0,
+    totalScore: parseInt(localStorage.getItem('cosmicTotalScore')) || 0,
+    totalQuestions: parseInt(localStorage.getItem('cosmicTotalQuestions')) || 0,
+    recentTests: JSON.parse(localStorage.getItem('cosmicRecentTests')) || []
 };
 
-// ========== INIT ==========
+// ========== INITIALIZATION ==========
 document.addEventListener('DOMContentLoaded', function() {
-    importModal = new bootstrap.Modal(document.getElementById('importModal'));
-    smartImportModal = new bootstrap.Modal(document.getElementById('smartImportModal'));
-    aiImportModal = new bootstrap.Modal(document.getElementById('aiImportModal'));
-    pdfUploadModal = new bootstrap.Modal(document.getElementById('pdfUploadModal'));
-    if (document.getElementById('questionsContainer')?.children.length === 0) addQuestion();
+    // Add default question if container exists and is empty
+    if (document.getElementById('questionsContainer')?.children.length === 0) {
+        addQuestion();
+    }
+    // Set up form submission
     document.getElementById('testForm')?.addEventListener('submit', saveTest);
+    // Update dashboard stats
     updateDashboardStats();
+    // Show dashboard by default
     showSection('dashboard');
+    // Start daily countdown
+    updateDailyCountdown();
+    setInterval(updateDailyCountdown, 1000);
 });
 
 // ========== UI NAVIGATION ==========
-window.showSection = function(section) {
+window.showSection = function(sectionId) {
     document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
-    document.getElementById(section + '-section').style.display = 'block';
-    if (section === 'list') renderTestList();
-    if (section === 'create') resetCreateForm();
-    if (section === 'dashboard') updateDashboardStats();
+    const section = document.getElementById(sectionId + '-section');
+    if (section) section.style.display = 'block';
+    if (sectionId === 'dashboard') updateDashboardStats();
+    if (sectionId === 'library') renderTestList();
+    if (sectionId === 'create') resetCreateForm();
 };
 
 // ========== DASHBOARD ==========
@@ -47,69 +51,125 @@ function updateDashboardStats() {
     document.getElementById('statsAvgScore').innerText = avg + '%';
     let acc = stats.totalQuestions ? Math.round((stats.totalScore / stats.totalQuestions) * 100) : 0;
     document.getElementById('statsAccuracy').innerText = acc + '%';
-    let recent = document.getElementById('recentTestsList');
+
+    // Recent tests
+    const recentList = document.getElementById('recentTestsList');
     if (stats.recentTests.length) {
-        recent.innerHTML = stats.recentTests.map(t => `<div class="list-group-item bg-transparent text-white d-flex justify-content-between"><span>${t.title}</span><small>${t.date}</small></div>`).join('');
+        recentList.innerHTML = stats.recentTests.map(t => `
+            <div class="recommend-item">
+                <span>${t.title}</span>
+                <small>${t.date}</small>
+            </div>
+        `).join('');
     } else {
-        recent.innerHTML = '<p class="text-muted">No tests taken yet.</p>';
+        recentList.innerHTML = '<p class="text-muted">No tests taken yet.</p>';
     }
 }
 
-// ========== MINDFUL MODE ==========
+function updateDailyCountdown() {
+    // Mock countdown – ends at midnight
+    const now = new Date();
+    const midnight = new Date(now);
+    midnight.setHours(24, 0, 0, 0);
+    const diff = midnight - now;
+    if (diff <= 0) {
+        document.getElementById('dailyCountdown').innerText = '00:00:00';
+        return;
+    }
+    const hours = Math.floor(diff / 3600000);
+    const minutes = Math.floor((diff % 3600000) / 60000);
+    const seconds = Math.floor((diff % 60000) / 1000);
+    document.getElementById('dailyCountdown').innerText = 
+        `${hours.toString().padStart(2,'0')}:${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
+}
+
+window.startDailyChallenge = function() {
+    // Create a quick daily challenge test
+    const daily = {
+        id: 'daily-' + Date.now(),
+        title: 'Daily Challenge: Physics Fundamentals',
+        subject: 'Physics',
+        duration: 10,
+        questions: [
+            { text: 'SI unit of force?', options: ['Joule','Newton','Watt','Pascal'], correct: 'B', topic: 'Mechanics', explanation: 'Newton is correct.' },
+            { text: 'Acceleration due to gravity near Earth?', options: ['9.8','10','8.9','9.1'], correct: 'A', topic: 'Gravitation', explanation: '9.8 m/s²' },
+            { text: 'Which law is F = ma?', options: ['First','Second','Third','Gravitation'], correct: 'B', topic: 'Mechanics', explanation: 'Second Law' },
+            { text: 'Which is a scalar?', options: ['Velocity','Force','Mass','Acceleration'], correct: 'C', topic: 'Kinematics', explanation: 'Mass is scalar.' },
+            { text: 'Speed of light in vacuum?', options: ['3×10⁸','3×10⁶','3×10⁵','3×10⁷'], correct: 'A', topic: 'Optics', explanation: '3×10⁸ m/s' }
+        ]
+    };
+    tests.push(daily);
+    localStorage.setItem('cosmicTests', JSON.stringify(tests));
+    takeTest(daily.id, false);
+};
+
 window.startMindfulMode = function() {
     Swal.fire({
-        title: 'Grounding Exercise',
+        title: '🧘 Grounding Exercise',
         html: 'Take 3 deep breaths.<br><div class="breath-mini-circle mx-auto my-3"></div>',
         timer: 10000,
         timerProgressBar: true,
         showConfirmButton: true,
         confirmButtonText: 'Begin Test',
-        background: '#0B2B26',
-        color: '#DAF1DE'
+        background: '#0f1f2f',
+        color: '#e0e5f0'
     }).then(() => {
-        let mindfulTest = {
+        // Create a mindful test
+        const mindful = {
             id: 'mindful-' + Date.now(),
-            title: 'Mindful Practice: Physics Fundamentals',
-            subject: 'Physics',
+            title: 'Mindful Practice: Biology Basics',
+            subject: 'Biology',
             duration: 15,
             questions: [
-                { text: 'Take a deep breath. SI unit of force?', options: ['Joule','Newton','Watt','Pascal'], correct: 'B', topic: 'Mechanics', explanation: 'Newton.' },
-                { text: 'With relaxed mind, F = ma is which law?', options: ['First','Second','Third','Gravitation'], correct: 'B', topic: 'Mechanics', explanation: 'Second Law.' },
-                { text: 'Breathe out. Acceleration due to gravity?', options: ['9.8','10','8.9','9.1'], correct: 'A', topic: 'Gravitation', explanation: '9.8 m/s²' }
+                { text: 'Breathe in. Which organelle is the powerhouse?', options: ['Nucleus','Mitochondria','Ribosome','Golgi'], correct: 'B', topic: 'Cell', explanation: 'Mitochondria.' },
+                { text: 'Exhale. Which vitamin is produced in sunlight?', options: ['A','B','C','D'], correct: 'D', topic: 'Biochemistry', explanation: 'Vitamin D.' },
+                { text: 'Stay calm. Function of hemoglobin?', options: ['O₂ transport','CO₂ transport','Nutrient transport','Immunity'], correct: 'A', topic: 'Human Physiology', explanation: 'Oxygen transport.' }
             ]
         };
-        tests.push(mindfulTest);
-        localStorage.setItem('mockTestsPro', JSON.stringify(tests));
-        takeTest(mindfulTest.id, false);
+        tests.push(mindful);
+        localStorage.setItem('cosmicTests', JSON.stringify(tests));
+        takeTest(mindful.id, false);
     });
 };
 
 // ========== CREATE TEST ==========
-window.addQuestion = function(data = null) {
-    let container = document.getElementById('questionsContainer');
-    let idx = container.children.length;
-    let opt = data?.options || ['','','',''];
-    let correctOptions = ['A','B','C','D'].map(l => `<option value="${l}" ${data?.correct===l?'selected':''}>${l}</option>`).join('');
-    let html = `
-        <div class="question-item">
-            <div class="d-flex justify-content-between">
+window.addQuestion = function(questionData = null) {
+    const container = document.getElementById('questionsContainer');
+    const idx = container.children.length;
+    const opt = questionData?.options || ['','','',''];
+    const correctOptions = ['A','B','C','D'].map(l => 
+        `<option value="${l}" ${questionData?.correct===l?'selected':''}>${l}</option>`
+    ).join('');
+
+    const html = `
+        <div class="question-item" data-index="${idx}">
+            <div class="d-flex justify-content-between align-items-start">
                 <span class="badge-topic">Q${idx+1}</span>
                 <div>
-                    <button class="btn btn-sm btn-outline-secondary me-2" onclick="saveToBank(this)"><i class="bi bi-bookmark-plus"></i></button>
-                    <button class="btn-close" onclick="this.closest('.question-item').remove()"></button>
+                    <button type="button" class="btn btn-sm btn-outline-cosmic me-2" onclick="saveToBank(this)"><i class="fas fa-bookmark"></i></button>
+                    <button type="button" class="btn-close btn-close-white" onclick="this.closest('.question-item').remove()"></button>
                 </div>
             </div>
-            <textarea class="form-control mt-2" rows="2" placeholder="Question" required>${data?.text||''}</textarea>
+            <textarea class="form-control cosmic-input mt-2" rows="2" placeholder="Question text" required>${questionData?.text || ''}</textarea>
             <div class="row g-2 mt-2">
-                <div class="col-md-6"><input class="form-control" placeholder="Option A" value="${opt[0]}" required></div>
-                <div class="col-md-6"><input class="form-control" placeholder="Option B" value="${opt[1]}" required></div>
-                <div class="col-md-6"><input class="form-control" placeholder="Option C" value="${opt[2]}" required></div>
-                <div class="col-md-6"><input class="form-control" placeholder="Option D" value="${opt[3]}" required></div>
+                <div class="col-md-6"><input class="form-control cosmic-input" placeholder="Option A" value="${opt[0]}" required></div>
+                <div class="col-md-6"><input class="form-control cosmic-input" placeholder="Option B" value="${opt[1]}" required></div>
+                <div class="col-md-6"><input class="form-control cosmic-input" placeholder="Option C" value="${opt[2]}" required></div>
+                <div class="col-md-6"><input class="form-control cosmic-input" placeholder="Option D" value="${opt[3]}" required></div>
             </div>
             <div class="row g-2 mt-2">
-                <div class="col-md-2"><select class="form-control" required><option value="" disabled ${!data?.correct?'selected':''}>Correct</option>${correctOptions}</select></div>
-                <div class="col-md-4"><input class="form-control" placeholder="Topic" value="${data?.topic||''}"></div>
-                <div class="col-md-6"><input class="form-control" placeholder="Explanation" value="${data?.explanation||''}"></div>
+                <div class="col-md-2">
+                    <select class="form-control cosmic-select" required>
+                        <option value="" disabled ${!questionData?.correct?'selected':''}>Correct</option>
+                        ${correctOptions}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <input class="form-control cosmic-input" placeholder="Topic (optional)" value="${questionData?.topic || ''}">
+                </div>
+                <div class="col-md-6">
+                    <input class="form-control cosmic-input" placeholder="Explanation (optional)" value="${questionData?.explanation || ''}">
+                </div>
             </div>
         </div>
     `;
@@ -118,35 +178,45 @@ window.addQuestion = function(data = null) {
 
 window.addSampleAIGenerated = function() {
     addQuestion({
-        text: 'A photon of wavelength 400 nm...',
+        text: 'A photon of wavelength 400 nm is incident on a metal surface. Work function is 2.0 eV. What is max KE? (hc = 1240 eV·nm)',
         options: ['0.1 eV','1.1 eV','2.1 eV','3.1 eV'],
         correct: 'B',
         topic: 'Modern Physics',
-        explanation: 'E = hc/λ = 1240/400 = 3.1 eV, KE = 3.1-2.0=1.1 eV'
+        explanation: 'E = hc/λ = 1240/400 = 3.1 eV. KE = 3.1 - 2.0 = 1.1 eV.'
     });
 };
 
 function saveTest(e) {
     e.preventDefault();
-    let title = document.getElementById('testTitle').value.trim();
-    let subject = document.getElementById('testSubject').value;
-    let duration = parseInt(document.getElementById('testDuration').value) || 30;
-    let items = document.querySelectorAll('#questionsContainer .question-item');
+    const title = document.getElementById('testTitle').value.trim();
+    const subject = document.getElementById('testSubject').value;
+    const duration = parseInt(document.getElementById('testDuration').value) || 30;
+    const items = document.querySelectorAll('#questionsContainer .question-item');
     if (!items.length) { alert('Add at least one question.'); return; }
+
     let questions = [];
     for (let item of items) {
-        let text = item.querySelector('textarea').value.trim();
-        let opts = Array.from(item.querySelectorAll('input[type="text"]')).slice(0,4).map(i => i.value.trim());
-        let correct = item.querySelector('select').value;
-        let topic = item.querySelector('input[placeholder*="Topic"]').value.trim();
-        let exp = item.querySelector('input[placeholder*="Explanation"]').value.trim();
-        if (!text || opts.some(o=>!o) || !correct) { alert('Fill all required fields.'); return; }
+        const text = item.querySelector('textarea').value.trim();
+        const opts = Array.from(item.querySelectorAll('input[type="text"]')).slice(0,4).map(i => i.value.trim());
+        const correct = item.querySelector('select').value;
+        const topic = item.querySelector('input[placeholder*="Topic"]').value.trim();
+        const exp = item.querySelector('input[placeholder*="Explanation"]').value.trim();
+        if (!text || opts.some(o => !o) || !correct) {
+            alert('Please fill all required fields (question, options, correct).');
+            return;
+        }
         questions.push({ text, options: opts, correct, topic, explanation: exp });
     }
-    tests.push({ id: Date.now().toString(), title, subject, duration, questions });
-    localStorage.setItem('mockTestsPro', JSON.stringify(tests));
-    alert('Test saved!');
-    showSection('list');
+
+    const newTest = {
+        id: Date.now().toString(),
+        title, subject, duration,
+        questions
+    };
+    tests.push(newTest);
+    localStorage.setItem('cosmicTests', JSON.stringify(tests));
+    alert('Test saved to the cosmos!');
+    showSection('library');
 }
 
 function resetCreateForm() {
@@ -155,17 +225,32 @@ function resetCreateForm() {
     addQuestion();
 }
 
-// ========== IMPORT (Pipe) ==========
+// ========== IMPORT MODALS (shared) ==========
+let importModal, smartModal, aiModal, pdfModal;
+document.addEventListener('DOMContentLoaded', function() {
+    importModal = new bootstrap.Modal(document.getElementById('importModal'));
+    smartModal = new bootstrap.Modal(document.getElementById('smartImportModal'));
+    aiModal = new bootstrap.Modal(document.getElementById('aiImportModal'));
+    pdfModal = new bootstrap.Modal(document.getElementById('pdfUploadModal'));
+});
+
 window.showImportModal = () => importModal.show();
+
 window.processImport = function() {
-    let text = document.getElementById('importText').value;
-    if (!text) return;
-    text.split('\n').forEach(line => {
-        let parts = line.split('|').map(s => s.trim());
+    const text = document.getElementById('importText').value;
+    if (!text.trim()) return;
+    const lines = text.split('\n').filter(l => l.trim());
+    lines.forEach(line => {
+        const parts = line.split('|').map(s => s.trim());
         if (parts.length >= 6) {
-            let opts = parts.slice(1,5).map(o => o.replace(/^[A-D]\)\s*/, ''));
-            let correct = parts[5].toUpperCase().replace(/[^A-D]/g,'');
-            if (parts[0] && opts.length===4 && correct) addQuestion({ text: parts[0], options: opts, correct, topic: parts[6]||'', explanation: parts[7]||'' });
+            const qText = parts[0];
+            const opts = parts.slice(1,5).map(o => o.replace(/^[A-D]\)\s*/, ''));
+            const correct = parts[5].toUpperCase().replace(/[^A-D]/g, '');
+            const topic = parts[6] || '';
+            const exp = parts[7] || '';
+            if (qText && opts.length === 4 && correct) {
+                addQuestion({ text: qText, options: opts, correct, topic, explanation: exp });
+            }
         }
     });
     importModal.hide();
@@ -173,234 +258,167 @@ window.processImport = function() {
 };
 
 // ========== SMART IMPORT ==========
-window.smartImport = () => { document.getElementById('smartImportText').value=''; smartImportModal.show(); };
+let smartParsed = [];
+window.smartImport = () => {
+    document.getElementById('smartImportText').value = '';
+    document.getElementById('smartPreviewContainer').innerHTML = '';
+    document.getElementById('parseStatus').innerText = '';
+    smartParsed = [];
+    smartModal.show();
+};
+
 window.parseSmartImport = function() {
-    let lines = document.getElementById('smartImportText').value.split('\n').map(l=>l.trim()).filter(l=>l);
-    let questions = [], current = null;
+    const text = document.getElementById('smartImportText').value;
+    if (!text.trim()) return;
+    const lines = text.split('\n').map(l => l.trim()).filter(l => l);
+    let questions = [];
+    let current = null;
     for (let line of lines) {
-        if (/^Q\d*[.)]|^\d+[.)]\s/.test(line)) {
+        if (/^Q\d*[.)]|^\d+[.)]\s|^Question/i.test(line)) {
             if (current) questions.push(current);
-            current = { text: line.replace(/^Q\d*[.)]|^\d+[.)]\s*/,''), options: [], correct:'', topic:'', explanation:'' };
-        } else if (current && /^[A-D][.)]/.test(line)) {
-            current.options.push(line.replace(/^[A-D][.)]\s*/,''));
+            current = {
+                text: line.replace(/^Q\d*[.)]|^\d+[.)]\s*|^Question\s*\d*[:.)]\s*/i, '').trim(),
+                options: [],
+                correct: '',
+                topic: '',
+                explanation: ''
+            };
+        } else if (current && /^[A-D][.)]|^\([A-D]\)/i.test(line)) {
+            current.options.push(line.replace(/^[A-D][.)]\s*|^\([A-D]\)\s*/i, '').trim());
         } else if (current && /^(answer|ans|correct)[\s:]*/i.test(line)) {
-            let m = line.match(/[A-D]/i); if (m) current.correct = m[0].toUpperCase();
-        } else if (current) current.text += ' ' + line;
+            const m = line.match(/[A-D]/i);
+            if (m) current.correct = m[0].toUpperCase();
+        } else if (current) {
+            current.text += ' ' + line;
+        }
     }
     if (current) questions.push(current);
-    smartParsedQuestions = questions.filter(q => q.text && q.options.length===4);
-    let html = '<table class="table table-dark"><tr><th>Select</th><th>Question</th><th>Answer</th></tr>';
-    smartParsedQuestions.forEach((q,i) => html += `<tr><td><input type="checkbox" class="smart-cb" data-index="${i}" checked></td><td>${q.text.substring(0,50)}...</td><td>${q.correct}</td></tr>`);
-    html += '</table>';
+    smartParsed = questions.filter(q => q.text && q.options.length === 4);
+
+    let html = '<table class="table table-dark"><thead><tr><th>Select</th><th>Question</th><th>Correct</th></tr></thead><tbody>';
+    smartParsed.forEach((q,i) => {
+        html += `<tr><td><input type="checkbox" class="smart-cb" data-index="${i}" checked></td><td>${q.text.substring(0,50)}...</td><td>${q.correct}</td></tr>`;
+    });
+    html += '</tbody></table>';
     document.getElementById('smartPreviewContainer').innerHTML = html;
-    document.getElementById('parseStatus').innerText = `Found ${smartParsedQuestions.length}`;
+    document.getElementById('parseStatus').innerText = `Found ${smartParsed.length} questions.`;
 };
+
 window.importSelectedSmart = function() {
-    document.querySelectorAll('.smart-cb:checked').forEach(cb => addQuestion(smartParsedQuestions[cb.dataset.index]));
-    smartImportModal.hide();
+    document.querySelectorAll('.smart-cb:checked').forEach(cb => {
+        const idx = cb.dataset.index;
+        addQuestion(smartParsed[idx]);
+    });
+    smartModal.hide();
 };
 
 // ========== AI IMPORT ==========
-window.showAIImport = () => { document.getElementById('aiImportText').value=''; aiImportModal.show(); };
+let aiParsed = [];
+window.showAIImport = () => {
+    document.getElementById('aiImportText').value = '';
+    document.getElementById('aiPreviewContainer').innerHTML = '';
+    document.getElementById('aiStatus').innerText = '';
+    document.getElementById('importAiBtn').disabled = true;
+    aiParsed = [];
+    aiModal.show();
+};
+
 window.analyzeWithAI = function() {
+    const text = document.getElementById('aiImportText').value;
+    if (!text.trim()) return;
+    document.getElementById('aiStatus').innerHTML = '<i class="fas fa-spinner fa-pulse"></i> AI analyzing...';
     setTimeout(() => {
-        // mock AI parse – simplified
-        let lines = document.getElementById('aiImportText').value.split('\n').map(l=>l.trim()).filter(l=>l);
-        let qs = [];
+        // Mock AI parse – in real app, call an API
+        const lines = text.split('\n').map(l => l.trim()).filter(l => l);
+        const qs = [];
         for (let i=0; i<lines.length; i+=6) {
-            if (lines[i] && lines[i+1] && lines[i+2] && lines[i+3] && lines[i+4] && lines[i+5]) {
+            if (lines[i] && lines[i+1] && lines[i+2] && lines[i+3] && lines[i+4]) {
                 qs.push({
-                    text: lines[i].replace(/^Q\d*[.)]?/,''),
-                    options: [lines[i+1].replace(/^[A-D][.)]?/,''), lines[i+2].replace(/^[A-D][.)]?/,''), lines[i+3].replace(/^[A-D][.)]?/,''), lines[i+4].replace(/^[A-D][.)]?/,'')],
-                    correct: lines[i+5].match(/[A-D]/i)?.[0].toUpperCase() || 'A'
+                    text: lines[i].replace(/^\d*[.)]?\s*/,''),
+                    options: [lines[i+1].replace(/^[A-D][.)]?\s*/,''),
+                              lines[i+2].replace(/^[A-D][.)]?\s*/,''),
+                              lines[i+3].replace(/^[A-D][.)]?\s*/,''),
+                              lines[i+4].replace(/^[A-D][.)]?\s*/,'')],
+                    correct: lines[i+5]?.match(/[A-D]/i)?.[0].toUpperCase() || 'A'
                 });
             }
         }
-        aiParsedQuestions = qs;
+        aiParsed = qs;
         document.getElementById('aiPreviewContainer').innerHTML = `<p>Parsed ${qs.length} questions.</p>`;
+        document.getElementById('aiStatus').innerHTML = `<i class="fas fa-check-circle text-success"></i> Done.`;
         document.getElementById('importAiBtn').disabled = false;
-    }, 1000);
-};
-window.importAIParsed = function() {
-    aiParsedQuestions.forEach(q => addQuestion(q));
-    aiImportModal.hide();
+    }, 1500);
 };
 
-// ========== PDF UPLOAD ==========
-window.showPdfUploadModal = () => pdfUploadModal.show();
+window.importAIParsed = function() {
+    aiParsed.forEach(q => addQuestion(q));
+    aiModal.hide();
+};
+
+// ========== PDF UPLOAD (mock) ==========
+window.showPdfUploadModal = () => pdfModal.show();
+
 window.processPdfUpload = function() {
-    let status = document.getElementById('pdfUploadStatus');
-    status.classList.remove('d-none');
-    status.innerHTML = 'Processing... (mock)';
+    const file = document.getElementById('pdfModalFile').files[0];
+    const status = document.getElementById('pdfModalStatus');
+    if (!file) { status.innerHTML = '<span class="text-danger">Select a PDF</span>'; return; }
+    status.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Analyzing PDF...';
     setTimeout(() => {
-        status.innerHTML = 'Analysis complete (mock).';
-        localStorage.setItem('pdfContext','mock');
-        setTimeout(() => { pdfUploadModal.hide(); status.classList.add('d-none'); }, 1500);
+        // Mock – generate 3 random questions
+        const mockQuestions = [
+            { text: 'What is the first law of thermodynamics?', options: ['Energy conservation','Entropy increase','Absolute zero','Heat death'], correct: 'A', topic: 'Physics', explanation: 'Energy cannot be created or destroyed.' },
+            { text: 'Which element has atomic number 6?', options: ['Oxygen','Carbon','Nitrogen','Hydrogen'], correct: 'B', topic: 'Chemistry', explanation: 'Carbon.' },
+            { text: 'What is the powerhouse of the cell?', options: ['Nucleus','Mitochondria','Ribosome','Golgi'], correct: 'B', topic: 'Biology', explanation: 'Mitochondria.' }
+        ];
+        mockQuestions.forEach(q => addQuestion(q));
+        status.innerHTML = '<span class="text-success">Added 3 questions from PDF.</span>';
+        setTimeout(() => { pdfModal.hide(); status.innerHTML = ''; }, 1500);
     }, 2000);
 };
 
 // ========== QUESTION BANK ==========
 window.saveToBank = function(btn) {
-    let item = btn.closest('.question-item');
-    let q = {
+    const item = btn.closest('.question-item');
+    const q = {
         text: item.querySelector('textarea').value,
-        options: Array.from(item.querySelectorAll('input[type="text"]')).slice(0,4).map(i=>i.value),
+        options: Array.from(item.querySelectorAll('input[type="text"]')).slice(0,4).map(i => i.value),
         correct: item.querySelector('select').value,
         topic: item.querySelector('input[placeholder*="Topic"]').value,
         explanation: item.querySelector('input[placeholder*="Explanation"]').value
     };
     questionBank.push(q);
-    localStorage.setItem('questionBank', JSON.stringify(questionBank));
-    alert('Saved to bank');
+    localStorage.setItem('cosmicQuestionBank', JSON.stringify(questionBank));
+    alert('Saved to question bank!');
 };
+
 window.showQuestionBank = function() {
-    if (!questionBank.length) { alert('Bank empty'); return; }
-    let list = questionBank.map((q,i)=>`${i+1}. ${q.text.substring(0,30)}...`).join('\n');
-    let idx = prompt('Enter number to add:\n'+list);
-    if (idx && !isNaN(idx) && idx>0 && idx<=questionBank.length) addQuestion(questionBank[idx-1]);
+    if (!questionBank.length) { alert('Bank is empty.'); return; }
+    let list = questionBank.map((q,i) => `${i+1}. ${q.text.substring(0,30)}...`).join('\n');
+    let choice = prompt('Enter number to add:\n' + list);
+    if (choice && !isNaN(choice) && choice>0 && choice<=questionBank.length) {
+        addQuestion(questionBank[choice-1]);
+    }
 };
 
-// ========== TEST LIST ==========
+// ========== TEST LIBRARY ==========
 function renderTestList() {
-    let container = document.getElementById('testListContainer');
-    if (!tests.length) { container.innerHTML = '<p class="text-muted">No tests.</p>'; return; }
-    let html = '<div class="mb-3"><button class="btn btn-outline-secondary" onclick="importTest()">Import Test</button></div>';
+    const container = document.getElementById('testListContainer');
+    if (!tests.length) {
+        container.innerHTML = '<p class="text-muted">No tests yet. Create one!</p>';
+        return;
+    }
+    let html = '<div class="mb-3"><button class="btn btn-cosmic-outline" onclick="importTest()"><i class="fas fa-upload"></i> Import Test</button></div>';
     tests.forEach(t => {
-        html += `<div class="d-flex justify-content-between p-3 mb-2 border rounded">
-            <div><h5>${t.title} <span class="badge bg-secondary">${t.subject}</span></h5><small>${t.questions.length} Q · ${t.duration} min</small></div>
-            <div class="d-flex gap-2">
-                <button class="btn btn-sm btn-outline-primary" onclick="editTest('${t.id}')"><i class="bi bi-pencil"></i></button>
-                <button class="btn btn-sm btn-outline-success" onclick="exportTest('${t.id}')"><i class="bi bi-download"></i></button>
-                <button class="btn btn-sm btn-info" onclick="takeTest('${t.id}',true)"><i class="bi bi-shuffle"></i></button>
-                <button class="btn btn-sm btn-primary" onclick="takeTest('${t.id}')"><i class="bi bi-play-fill"></i></button>
-                <button class="btn btn-sm btn-outline-danger" onclick="deleteTest('${t.id}')"><i class="bi bi-trash"></i></button>
-            </div>
-        </div>`;
-    });
-    container.innerHTML = html;
-}
-window.deleteTest = function(id) { tests = tests.filter(t=>t.id!==id); localStorage.setItem('mockTestsPro',JSON.stringify(tests)); renderTestList(); };
-window.editTest = function(id) {
-    let t = tests.find(t=>t.id===id);
-    if (!t) return;
-    document.getElementById('testTitle').value = t.title;
-    document.getElementById('testSubject').value = t.subject;
-    document.getElementById('testDuration').value = t.duration;
-    document.getElementById('questionsContainer').innerHTML = '';
-    t.questions.forEach(q => addQuestion(q));
-    tests = tests.filter(tt=>tt.id!==id);
-    localStorage.setItem('mockTestsPro',JSON.stringify(tests));
-    showSection('create');
-};
-
-// ========== EXPORT/IMPORT ==========
-window.exportTest = function(id) {
-    let t = tests.find(t=>t.id===id);
-    let blob = new Blob([JSON.stringify(t,null,2)], {type:'application/json'});
-    let a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = t.title.replace(/\s+/g,'_')+'.json';
-    a.click();
-};
-window.importTest = function() {
-    let input = document.createElement('input');
-    input.type = 'file';
-    input.accept = '.json';
-    input.onchange = e => {
-        let file = e.target.files[0];
-        let reader = new FileReader();
-        reader.onload = ev => {
-            try {
-                let t = JSON.parse(ev.target.result);
-                if (!t.title || !t.questions) throw 'Invalid';
-                t.id = Date.now().toString();
-                tests.push(t);
-                localStorage.setItem('mockTestsPro',JSON.stringify(tests));
-                alert('Imported');
-                renderTestList();
-            } catch { alert('Invalid JSON'); }
-        };
-        reader.readAsText(file);
-    };
-    input.click();
-};
-
-// ========== TAKE TEST ==========
-window.takeTest = function(id, randomize=false) {
-    let t = tests.find(t=>t.id===id);
-    if (!t) return;
-    currentTestId = id;
-    let qs = [...t.questions];
-    if (randomize) qs.sort(()=>Math.random()-0.5);
-    currentTest = { ...t, questions: qs };
-    currentQIndex = 0;
-    userAnswers = qs.map(()=>({selected:null, review:false}));
-    document.getElementById('takeTestTitle').innerText = t.title;
-    timeLeft = t.duration*60;
-    updateTimerDisplay();
-    startTimer();
-    renderQuestion();
-    renderPalette();
-    showSection('take');
-};
-
-function renderQuestion() {
-    let q = currentTest.questions[currentQIndex];
-    let ans = userAnswers[currentQIndex];
-    let html = `<h5>Q${currentQIndex+1}. ${q.text}</h5>`;
-    q.options.forEach((opt,i) => {
-        let checked = ans.selected===i ? 'checked' : '';
-        html += `<div class="form-check"><input class="form-check-input" type="radio" name="qOpt" value="${i}" ${checked} onchange="saveAnswer(${currentQIndex},${i})"> <label>${String.fromCharCode(65+i)}) ${opt}</label></div>`;
-    });
-    if (q.topic) html += `<div class="mt-2 badge-topic">${q.topic}</div>`;
-    document.getElementById('takeTestContainer').innerHTML = html;
-    renderPalette();
-}
-window.saveAnswer = (idx,opt) => { userAnswers[idx].selected = opt; renderPalette(); };
-function renderPalette() {
-    let btns = '';
-    currentTest.questions.forEach((_,i) => {
-        let cls = 'palette-btn';
-        if (userAnswers[i].selected!==null) cls += ' answered';
-        if (userAnswers[i].review) cls += ' review';
-        if (i===currentQIndex) cls += ' current';
-        btns += `<button class="${cls}" onclick="goToQuestion(${i})">${i+1}</button>`;
-    });
-    document.getElementById('paletteContainer').innerHTML = btns;
-}
-window.goToQuestion = i => { currentQIndex = i; renderQuestion(); };
-window.prevQuestion = () => { if (currentQIndex>0) { currentQIndex--; renderQuestion(); } };
-window.nextQuestion = () => { if (currentQIndex<currentTest.questions.length-1) { currentQIndex++; renderQuestion(); } };
-window.markForReview = () => { userAnswers[currentQIndex].review = !userAnswers[currentQIndex].review; renderPalette(); };
-function startTimer() {
-    if (timerInterval) clearInterval(timerInterval);
-    timerInterval = setInterval(() => {
-        if (timeLeft<=0) { clearInterval(timerInterval); alert('Time up!'); submitTest(); }
-        else { timeLeft--; updateTimerDisplay(); }
-    },1000);
-}
-function updateTimerDisplay() {
-    let m = Math.floor(timeLeft/60), s = timeLeft%60;
-    document.getElementById('timerDisplay').innerText = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-}
-function stopTimer() { clearInterval(timerInterval); timerInterval=null; }
-
-// ========== SUBMIT ==========
-window.submitTest = function() {
-    stopTimer();
-    let correct=0, incorrect=0, unans=0;
-    let topicStats = {};
-    currentTest.questions.forEach((q,i) => {
-        let ans = userAnswers[i];
-        let t = q.topic||'General';
-        if (!topicStats[t]) topicStats[t] = { total:0, correct:0 };
-        topicStats[t].total++;
-        if (ans.selected===null) unans++;
-        else if (ans.selected === (q.correct.charCodeAt(0)-65)) { correct++; topicStats[t].correct++; }
-        else incorrect++;
-    });
-    let total = currentTest.questions.length;
-    stats.testsTaken++; stats.totalScore += correct; stats.totalQuestions += total;
-    stats.recentTests.unshift({title:currentTest.title, date:new Date().toLocaleDateString()});
-    if (stats.recentTests.length>5) stats.recentTests.pop();
-    localStorage.setItem('stats_testsTaken',stats.t
+        html += `
+            <div class="cosmic-card p-3 mb-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="mb-0">${t.title} <span class="badge bg-secondary">${t.subject}</span></h5>
+                        <small>${t.questions.length} Q · ${t.duration} min</small>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-sm btn-cosmic-outline" onclick="editTest('${t.id}')"><i class="fas fa-pen"></i></button>
+                        <button class="btn btn-sm btn-cosmic-outline" onclick="exportTest('${t.id}')"><i class="fas fa-download"></i></button>
+                        <button class="btn btn-sm btn-cosmic-outline" onclick="takeTest('${t.id}', true)"><i class="fas fa-random"></i></button>
+                        <button class="btn btn-sm btn-cosmic-success" onclick="takeTest('${t.id}')"><i class="fas fa-play"></i></button>
+                        <button class="btn btn-sm btn-outline-da
