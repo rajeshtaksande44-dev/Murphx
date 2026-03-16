@@ -232,3 +232,45 @@ Ans: b"></textarea>
         </div>
     </div>
 </div>
+<!-- AI Import Modal -->
+<div class="modal fade" id="aiImportModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content" style="border-radius: 28px;">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-cpu me-2"></i>AI-Powered Import</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="small text-secondary">Paste any text (even unstructured, match the following, etc.). Our AI will extract questions, options, and answers.</p>
+                <textarea class="form-control" rows="8" id="aiImportText" placeholder="e.g.
+Q1. Which of the following is not a defining property of life?
+A) Metabolism
+B) Consciousness
+C) Growth
+D) Reproduction
+Answer: C
+
+Q2. Match the following scientists with their classification systems:
+a. Linnaeus   i. Three kingdom
+b. Haeckel    ii. Two kingdom
+c. Whittaker  iii. Four kingdom
+d. Copeland   iv. Five kingdom
+Options:
+A) a-ii, b-i, c-iv, d-iii
+B) a-i, b-iii, c-iv, d-ii
+C) a-iii, b-ii, c-i, d-iv
+D) a-ii, b-iii, c-iv, d-i
+Answer: A"></textarea>
+                <div class="mt-3 d-flex justify-content-between">
+                    <button class="btn btn-primary" onclick="analyzeWithAI()"><i class="bi bi-stars"></i> Analyze with AI</button>
+                    <span id="aiStatus" class="text-muted"></span>
+                </div>
+                <div id="aiPreviewContainer" class="mt-4" style="max-height: 400px; overflow-y: auto;"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-success" onclick="importAIParsed()" id="importAiBtn" disabled>Import All</button>
+            </div>
+        </div>
+    </div>
+</div>
