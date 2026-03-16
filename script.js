@@ -458,3 +458,134 @@ window.showQuestionBank = function() {
     }
     let list = 'Question Bank:\n';
     questionBank.forEach((q, i) => { list += `${i+1}. ${q.text.substring(0,50)}...\n`; }
+// ========== FOCUS ZONE ==========
+let meditationInterval;
+let meditationTime = 300; // 5 minutes in seconds
+let meditationRunning = false;
+let breathInterval;
+let breathState = 'inhale';
+let mantraList = [
+    "I am calm and focused",
+    "My mind is clear and peaceful",
+    "I breathe in calm, breathe out stress",
+    "I am present in this moment",
+    "My potential is limitless",
+    "I radiate positive energy",
+    "I am in harmony with the universe"
+];
+let mantraIndex = 0;
+let focusSessions = parseInt(localStorage.getItem('focusSessions')) || 0;
+let totalFocusSeconds = parseInt(localStorage.getItem('totalFocusSeconds')) || 0;
+
+function updateMedTimerDisplay() {
+    const mins = Math.floor(meditationTime / 60);
+    const secs = meditationTime % 60;
+    document.getElementById('medTimer').innerText = `${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
+    const progress = ((300 - meditationTime) / 300) * 100;
+    document.getElementById('medProgress').style.width = progress + '%';
+}
+
+function startMeditation() {
+    if (meditationRunning) return;
+    meditationRunning = true;
+    document.getElementById('medStartBtn').innerHTML = '<i class="bi bi-play-fill fs-4"></i>';
+    meditationInterval = setInterval(() => {
+        if (meditationTime > 0) {
+            meditationTime--;
+            updateMedTimerDisplay();
+        } else {
+            // Session complete
+            clearInterval(meditationInterval);
+            meditationRunning = false;
+            focusSessions++;
+            totalFocusSeconds += 300;
+            localStorage.setItem('focusSessions', focusSessions);
+            localStorage.setItem('totalFocusSeconds', totalFocusSeconds);
+            document.getElementById('focusSessions').innerText = focusSessions;
+            alert('Meditation complete! Great job.');
+            resetMeditation();
+        }
+    }, 1000);
+}
+
+function pauseMeditation() {
+    clearInterval(meditationInterval);
+    meditationRunning = false;
+}
+
+function resetMeditation() {
+    pauseMeditation();
+    meditationTime = 300;
+    updateMedTimerDisplay();
+}
+
+// Breath circle animation
+function startBreathCycle() {
+    breathInterval = setInterval(() => {
+        const circle = document.getElementById('breathCircle');
+        const phase = document.getElementById('breathPhase');
+        if (breathState === 'inhale') {
+            circle.classList.add('inhale');
+            circle.classList.remove('exhale');
+            phase.innerText = 'Inhale';
+            breathState = 'exhale';
+        } else {
+            circle.classList.add('exhale');
+            circle.classList.remove('inhale');
+            phase.innerText = 'Exhale';
+            breathState = 'inhale';
+        }
+    }, 4000); // 4 sec inhale, 4 sec exhale
+}
+startBreathCycle();
+
+// Mantra cycling
+document.getElementById('mantraText').innerText = mantraList[0];
+window.nextMantra = function() {
+    mantraIndex = (mantraIndex + 1) % mantraList.length;
+    document.getElementById('mantraText').innerText = mantraList[mantraIndex];
+};
+
+// Focus mode buttons
+document.querySelectorAll('.focus-mode').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+        document.querySelectorAll('.focus-mode').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        const mode = this.dataset.mode;
+        document.getElementById('focusModeDisplay').innerText = this.innerText;
+        // Change timer speed or background based on mode
+        if (mode === 'fast') {
+            meditationTime = 60; // 1 min
+        } else if (mode === 'slow') {
+            meditationTime = 300; // 5 min
+        } else if (mode === 'homing') {
+            // just visual
+        }
+        updateMedTimerDisplay();
+    });
+});
+
+// Color psychology
+window.setMood = function(mood) {
+    const tips = {
+        passion: 'Red: Passion, love, energy – great for motivation.',
+        energy: 'Orange: Warmth, enthusiasm, creativity.',
+        growth: 'Green: Growth, health, harmony – perfect for focus.',
+        happiness: 'Yellow: Happiness, intellect, caution.',
+        calm: 'Blue: Calmness, trust, wisdom – ideal for meditation.',
+        creativity: 'Purple: Creativity, luxury, mystery.',
+        love: 'Pink: Love, compassion, innocence.',
+        power: 'Black: Power, sophistication, mystery.',
+        purity: 'White: Purity, cleanliness, peace.'
+    };
+    document.getElementById('psychologyTip').innerHTML = `<i class="bi bi-info-circle me-2"></i>${tips[mood]}`;
+    // Optionally change body background
+    // document.body.style.background = moodColors[mood];
+};
+
+// Update stats display
+document.getElementById('focusSessions').innerText = focusSessions;
+const hours = Math.floor(totalFocusSeconds / 3600);
+const minutes = Math.floor((totalFocusSeconds % 3600) / 60);
+document.getElementById('totalFocusTime').innerText = `${hours}h ${minutes}m`;
+document.getElementById('avgSession').innerText = focusSessions ? Math.round(totalFocusSeconds / focusSessions / 60) + 'm' : '0m';
