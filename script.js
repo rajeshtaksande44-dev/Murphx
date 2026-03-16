@@ -118,26 +118,178 @@ function resetCreateForm() {
 }
 
 // ========== IMPORT ==========
-window.showImportModal = function() { importModal.show(); };
-window.processImport = function() {
-    const text = document.getElementById('importText').value;
-    if (!text.trim()) return;
-    const lines = text.split('\n').filter(l => l.trim() !== '');
-    lines.forEach(line => {
-        const parts = line.split('|').map(s => s.trim());
-        if (parts.length >= 6) {
-            let qText = parts[0];
-            let opts = parts.slice(1,5).map(o => o.replace(/^[A-D]\)\s*/, ''));
-            let correct = parts[5].toUpperCase().replace(/[^A-D]/g, '');
-            let topic = parts[6] || '';
-            let explanation = parts[7] || '';
-            if (qText && opts.length === 4 && correct) {
-                addQuestion({ text: qText, options: opts, correct, topic, explanation });
-            }
+// ========== SMART IMPORT PROFESSIONAL ==========
+let smartParsedQuestions = []; // store parsed questions for preview
+
+window.smartImport = function() {
+    // Reset modal
+    document.getElementById('smartImportText').value = '';
+    document.getElementById('smartPreviewContainer').innerHTML = '';
+    document.getElementById('parseStatus').innerText = '';
+    smartParsedQuestions = [];
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById('smartImportModal'));
+    modal.show();
+};
+
+window.parseSmartImport = function() {
+    const text = document.getElementById('smartImportText').value;
+    if (!text.trim()) {
+        alert('Please paste some text.');
+        return;
+    }
+    
+    const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+    let questions = [];
+    let current = null;
+    let optionPatterns = [
+        /^[A-D][.)]/,           // A), A.
+        /^[a-d][.)]/,           // a), a.
+        /^\d+[.)]/,              // 1), 1.
+        /^\([A-D]\)/,            // (A)
+        /^\([a-d]\)/,            // (a)
+        /^[ivx]+[.)]/i           // i), ii.
+    ];
+    
+    for (let line of lines) {
+        // Detect question start (e.g., "Q1.", "1.", "Question 1:", etc.)
+        if (/^Q\d*[.)]|^\d+[.)]\s|^Question\s*\d*[:.)]|^\d+\.\s+\D/i.test(line)) {
+            if (current) questions.push(current);
+            current = {
+                text: line.replace(/^Q\d*[.)]|^\d+[.)]\s*|^Question\s*\d*[:.)]\s*/i, '').trim(),
+                options: [],
+                correct: '',
+                topic: '',
+                explanation: ''
+            };
+        }
+        // Option detection
+        else if (current && optionPatterns.some(p => p.test(line))) {
+            let optText = line.replace(/^[A-Da-d\divx]+[.)]\s*|^\([A-Da-d]\)\s*/, '').trim();
+            current.options.push(optText);
+        }
+        // Answer detection
+        else if (current && /^(answer|ans|correct|key)[\s:]*/i.test(line)) {
+            let ansMatch = line.match(/[A-Da-d]/); // find first letter A-D
+            if (ansMatch) current.correct = ansMatch[0].toUpperCase();
+        }
+        // Topic detection
+        else if (current && /^topic[\s:]*/i.test(line)) {
+            current.topic = line.replace(/^topic[\s:]*/i, '').trim();
+        }
+        // Explanation detection
+        else if (current && /^(explanation|exp|explain|note)[\s:]*/i.test(line)) {
+            current.explanation = line.replace(/^(explanation|exp|explain|note)[\s:]*/i, '').trim();
+        }
+        // Otherwise append to current question text (multiline)
+        else if (current) {
+            current.text += ' ' + line;
+        }
+    }
+    if (current) questions.push(current);
+    
+    // Filter valid questions (at least text and 4 options)
+    smartParsedQuestions = questions.filter(q => q.text && q.options.length === 4);
+    
+    // Render preview
+    renderSmartPreview();
+    document.getElementById('parseStatus').innerText = `Parsed ${smartParsedQuestions.length} questions.`;
+};
+
+function renderSmartPreview() {
+    const container = document.getElementById('smartPreviewContainer');
+    if (smartParsedQuestions.length === 0) {
+        container.innerHTML = '<p class="text-muted">No valid questions found. Check your format.</p>';
+        return;
+    }
+    
+    let html = `
+        <table class="smart-preview-table">
+            <thead>
+                <tr>
+                    <th style="width:40px"><input type="checkbox" id="selectAllPreview" checked onchange="toggleSelectAll(this)"></th>
+                    <th>Question</th>
+                    <th>Options</th>
+                    <th>Correct</th>
+                    <th>Topic</th>
+                    <th>Explanation</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+    
+    smartParsedQuestions.forEach((q, idx) => {
+        html += `
+            <tr>
+                <td><input type="checkbox" class="question-checkbox" data-index="${idx}" checked></td>
+                <td><input type="text" class="smart-edit-input" value="${escapeHtml(q.text)}" onchange="updateQuestion(${idx}, 'text', this.value)"></td>
+                <td>
+                    ${[0,1,2,3].map(i => `
+                        <input type="text" class="smart-edit-input mb-1" value="${escapeHtml(q.options[i] || '')}" placeholder="Option ${String.fromCharCode(65+i)}" onchange="updateOption(${idx}, ${i}, this.value)">
+                    `).join('')}
+                </td>
+                <td>
+                    <select class="smart-edit-input" onchange="updateQuestion(${idx}, 'correct', this.value)">
+                        <option value="">Select</option>
+                        <option value="A" ${q.correct === 'A' ? 'selected' : ''}>A</option>
+                        <option value="B" ${q.correct === 'B' ? 'selected' : ''}>B</option>
+                        <option value="C" ${q.correct === 'C' ? 'selected' : ''}>C</option>
+                        <option value="D" ${q.correct === 'D' ? 'selected' : ''}>D</option>
+                    </select>
+                </td>
+                <td><input type="text" class="smart-edit-input" value="${escapeHtml(q.topic || '')}" onchange="updateQuestion(${idx}, 'topic', this.value)"></td>
+                <td><input type="text" class="smart-edit-input" value="${escapeHtml(q.explanation || '')}" onchange="updateQuestion(${idx}, 'explanation', this.value)"></td>
+            </tr>
+        `;
+    });
+    
+    html += '</tbody></table>';
+    container.innerHTML = html;
+}
+
+// Helper to escape HTML for safe editing
+function escapeHtml(unsafe) {
+    return unsafe.replace(/[&<>"]/g, function(m) {
+        if(m === '&') return '&amp;'; if(m === '<') return '&lt;'; if(m === '>') return '&gt;'; if(m === '"') return '&quot;';
+        return m;
+    });
+}
+
+// Update question in smartParsedQuestions
+window.updateQuestion = function(idx, field, value) {
+    if (smartParsedQuestions[idx]) {
+        smartParsedQuestions[idx][field] = value;
+    }
+};
+
+window.updateOption = function(idx, optIndex, value) {
+    if (smartParsedQuestions[idx]) {
+        smartParsedQuestions[idx].options[optIndex] = value;
+    }
+};
+
+window.toggleSelectAll = function(checkbox) {
+    document.querySelectorAll('.question-checkbox').forEach(cb => cb.checked = checkbox.checked);
+};
+
+window.importSelectedSmart = function() {
+    const selectedIndices = [];
+    document.querySelectorAll('.question-checkbox:checked').forEach(cb => {
+        selectedIndices.push(parseInt(cb.dataset.index));
+    });
+    
+    let added = 0;
+    selectedIndices.forEach(idx => {
+        const q = smartParsedQuestions[idx];
+        if (q.text && q.options.length === 4 && q.correct) {
+            addQuestion(q);
+            added++;
         }
     });
-    importModal.hide();
-    document.getElementById('importText').value = '';
+    
+    alert(`Added ${added} questions.`);
+    // Close modal
+    bootstrap.Modal.getInstance(document.getElementById('smartImportModal')).hide();
 };
 
 // ========== LIST TESTS ==========
