@@ -1,13 +1,13 @@
 // ========== GLOBAL VARIABLES ==========
 let tests = JSON.parse(localStorage.getItem('mockTestsPro')) || [];
+let questionBank = JSON.parse(localStorage.getItem('questionBank')) || [];
 let currentTestId = null;
-let currentTest = null;               // questions array for the active test
-let userAnswers = [];                  // { selected: null/0-3, review: boolean }
+let currentTest = null;
+let userAnswers = [];
 let currentQIndex = 0;
 let timerInterval = null;
-let timeLeft = 0;                       // seconds
+let timeLeft = 0;
 let importModal = null;
-let questionBank = JSON.parse(localStorage.getItem('questionBank')) || [];
 
 // ========== INITIALIZATION ==========
 document.addEventListener('DOMContentLoaded', function() {
@@ -469,3 +469,20 @@ function showDetailedReview() {
                     ${q.options.map((opt, idx) => `
                         <div class="col-md-6">
                             <span class="${idx === correctIndex ? 'fw-bold text-success' : ''} ${idx === ans.selected && idx !== correctIndex ? 'text-danger' : ''}">
+                                ${String.fromCharCode(65+idx)}) ${opt}
+                                ${idx === correctIndex ? ' ✓' : ''}
+                                ${idx === ans.selected && idx !== correctIndex ? ' ✗' : ''}
+                            </span>
+                        </div>
+                    `).join('')}
+                </div>
+                <div class="mt-2 small">
+                    <span class="text-secondary">Your answer: ${userLetter}</span><br>
+                    <span class="text-success">Correct: ${correctLetter}</span>
+                    ${q.explanation ? `<br><span class="text-info">Explanation: ${q.explanation}</span>` : ''}
+                </div>
+            </div>
+        `;
+    });
+    container.innerHTML += reviewHtml;
+}
