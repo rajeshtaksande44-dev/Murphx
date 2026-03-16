@@ -486,3 +486,52 @@ function showDetailedReview() {
     });
     container.innerHTML += reviewHtml;
 }
+// ========== SMART IMPORT ==========
+window.smartImport = function() {
+    const text = prompt("Paste your questions below (format: Q1. ... / options / Answer: ...):");
+    if (!text) return;
+    
+    const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+    let questions = [];
+    let currentQuestion = null;
+    let optionPatterns = [/^[A-D][.)]/, /^\d+[.)]/, /^[ivx]+[.)]/i]; // detects A), 1), i), etc.
+    
+    for (let line of lines) {
+        // Detect new question (starts with Q or number followed by dot)
+        if (/^Q\d*[.)]|^\d+[.)]\s/.test(line)) {
+            if (currentQuestion) questions.push(currentQuestion);
+            currentQuestion = {
+                text: line.replace(/^Q\d*[.)]/, '').trim(),
+                options: [],
+                correct: '',
+                topic: '',
+                explanation: ''
+            };
+        }
+        // Detect option line
+        else if (currentQuestion && optionPatterns.some(p => p.test(line))) {
+            let optText = line.replace(/^[A-D\divx]+[.)]\s*/, '').trim();
+            currentQuestion.options.push(optText);
+        }
+        // Detect answer line
+        else if (currentQuestion && /^(answer|ans|correct)[\s:]*/i.test(line)) {
+            let ansMatch = line.match(/[A-D]/i);
+            if (ansMatch) currentQuestion.correct = ansMatch[0].toUpperCase();
+        }
+        // If no pattern matches, append to last question text (multiline question)
+        else if (currentQuestion) {
+            currentQuestion.text += ' ' + line;
+        }
+    }
+    if (currentQuestion) questions.push(currentQuestion);
+    
+    // Validate and add
+    let added = 0;
+    questions.forEach(q => {
+        if (q.text && q.options.length === 4 && q.correct) {
+            addQuestion(q);
+            added++;
+        }
+    });
+    alert(`Added ${added} questions. ${questions.length - added} skipped (incomplete).`);
+};
