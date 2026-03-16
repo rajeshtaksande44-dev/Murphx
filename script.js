@@ -786,3 +786,136 @@ window.processPdfUpload = function() {
     };
     reader.readAsArrayBuffer(file);
 };
+// ========== AI-POWERED IMPORT ==========
+let aiParsedQuestions = [];
+
+window.showAIImport = function() {
+    const modal = new bootstrap.Modal(document.getElementById('aiImportModal'));
+    document.getElementById('aiImportText').value = '';
+    document.getElementById('aiPreviewContainer').innerHTML = '';
+    document.getElementById('aiStatus').innerText = '';
+    document.getElementById('importAiBtn').disabled = true;
+    aiParsedQuestions = [];
+    modal.show();
+};
+
+window.analyzeWithAI = function() {
+    const text = document.getElementById('aiImportText').value.trim();
+    if (!text) {
+        alert('Please paste some text.');
+        return;
+    }
+    
+    const status = document.getElementById('aiStatus');
+    status.innerHTML = '<i class="bi bi-hourglass-split"></i> AI analyzing...';
+    
+    // Simulate AI processing delay
+    setTimeout(() => {
+        // Mock AI response – in real use, call an API
+        const mockParsed = mockAIParse(text);
+        aiParsedQuestions = mockParsed;
+        
+        renderAIPreview(mockParsed);
+        status.innerHTML = `<i class="bi bi-check-circle"></i> Found ${mockParsed.length} questions.`;
+        document.getElementById('importAiBtn').disabled = false;
+    }, 1500);
+};
+
+// Mock AI parser – handles match the following and basic MCQ
+function mockAIParse(text) {
+    const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+    const questions = [];
+    let current = null;
+    let buffer = [];
+    
+    // Very basic heuristic – you'd replace with a real AI call
+    for (let line of lines) {
+        if (/^Q\d*[.)]|^\d+[.)]\s|^Question\s*\d*[:.)]/i.test(line)) {
+            if (current) {
+                // Finalize current question
+                if (current.text && current.options.length > 0) {
+                    questions.push(current);
+                }
+            }
+            current = {
+                text: line.replace(/^Q\d*[.)]|^\d+[.)]\s*|^Question\s*\d*[:.)]\s*/i, '').trim(),
+                options: [],
+                correct: '',
+                topic: '',
+                explanation: ''
+            };
+        } else if (current && /^[A-D][.)]|^\([A-D]\)/i.test(line)) {
+            // Option line
+            let optText = line.replace(/^[A-D][.)]\s*|^\([A-D]\)\s*/i, '').trim();
+            current.options.push(optText);
+        } else if (current && /^(answer|ans|correct)[\s:]*/i.test(line)) {
+            let ansMatch = line.match(/[A-D]/i);
+            if (ansMatch) current.correct = ansMatch[0].toUpperCase();
+        } else if (current && /^topic[\s:]*/i.test(line)) {
+            current.topic = line.replace(/^topic[\s:]*/i, '').trim();
+        } else if (current && /^(explanation|exp|note)[\s:]*/i.test(line)) {
+            current.explanation = line.replace(/^(explanation|exp|note)[\s:]*/i, '').trim();
+        } else if (current) {
+            // Could be part of question or options for match the following
+            if (line.includes('->') || line.includes('—')) {
+                // Possible match the following line
+                current.options.push(line);
+            } else {
+                current.text += ' ' + line;
+            }
+        }
+    }
+    if (current) questions.push(current);
+    
+    // Post-process: detect match-the-following and generate proper options if missing
+    questions.forEach(q => {
+        if (q.options.length === 4 && q.options.every(opt => opt.includes('-'))) {
+            // Looks like match options – keep as is
+        } else if (q.options.length === 0 && q.text.toLowerCase().includes('match')) {
+            // Generate mock options for match the following
+            q.options = [
+                "A) a-i, b-ii, c-iii, d-iv",
+                "B) a-ii, b-i, c-iv, d-iii",
+                "C) a-iii, b-iv, c-i, d-ii",
+                "D) a-iv, b-iii, c-ii, d-i"
+            ];
+            q.correct = 'A'; // default
+        }
+    });
+    
+    return questions;
+}
+
+function renderAIPreview(questions) {
+    const container = document.getElementById('aiPreviewContainer');
+    if (questions.length === 0) {
+        container.innerHTML = '<p class="text-muted">No questions parsed.</p>';
+        return;
+    }
+    
+    let html = '<div class="list-group">';
+    questions.forEach((q, idx) => {
+        html += `
+            <div class="list-group-item p-3 mb-2 border rounded-3">
+                <div class="fw-semibold">Q${idx+1}: ${q.text.substring(0,100)}${q.text.length>100?'...':''}</div>
+                <div class="small text-secondary mt-1">Options: ${q.options.length} | Answer: ${q.correct || '?'}</div>
+            </div>
+        `;
+    });
+    html += '</div>';
+    container.innerHTML = html;
+}
+
+window.importAIParsed = function() {
+    let added = 0;
+    aiParsedQuestions.forEach(q => {
+        if (q.text && q.options.length >= 4 && q.correct) {
+            // Ensure exactly 4 options
+            if (q.options.length > 4) q.options = q.options.slice(0,4);
+            addQuestion(q);
+            added++;
+        }
+    });
+    alert(`Added ${added} questions.`);
+    bootstrap.Modal.getInstance(document.getElementById('aiImportModal')).hide();
+};
