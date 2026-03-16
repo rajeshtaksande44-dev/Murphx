@@ -304,3 +304,37 @@ body {
     .palette-btn { width: 40px; height: 40px; font-size: 1rem; }
     .card-header { font-size: 1.1rem; padding: 1.2rem; }
   }
+/* Smart Import Preview */
+.smart-preview-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+.smart-preview-table th {
+    background: #f0f4fa;
+    padding: 12px;
+    font-weight: 600;
+}
+.smart-preview-table td {
+    padding: 10px;
+    border-bottom: 1px solid #eef2f7;
+    vertical-align: top;
+}
+.smart-preview-table tr:hover {
+    background: #f9fcff;
+}
+.smart-edit-input {
+    width: 100%;
+    border: 1px solid #d0dae8;
+    border-radius: 12px;
+    padding: 6px 10px;
+    font-size: 0.9rem;
+}
+.smart-edit-input:focus {
+    border-color: #3a5fe5;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(58,95,229,0.1);
+}
