@@ -3,24 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>NEET/JEE Pro | Cosmic Mock Test Creator</title>
+    <title>NEET/JEE Pro | Mindful Test Platform</title>
     <!-- Bootstrap 5 + Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap" rel="stylesheet">
-    <!-- Custom Dark Cosmic CSS -->
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="style.css">
+    <!-- SweetAlert2 for mindful popups -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- PDF.js for upload feature -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
 </head>
 <body>
 
-    <!-- ========== NAVBAR ========== -->
+    <!-- Navigation -->
     <nav class="navbar navbar-dark py-3">
         <div class="container">
             <span class="navbar-brand fs-4"><i class="bi bi-journal-bookmark-fill me-2"></i>MockTest Pro (NEET/JEE)</span>
             <div>
+                <button class="btn btn-sm btn-outline-light me-2" onclick="showSection('dashboard')"><i class="bi bi-house-door"></i> Dashboard</button>
                 <button class="btn btn-sm btn-outline-light me-2" onclick="showSection('create')"><i class="bi bi-plus-circle"></i> Create</button>
                 <button class="btn btn-sm btn-outline-light" onclick="showSection('list')"><i class="bi bi-collection"></i> My Tests</button>
             </div>
@@ -28,136 +31,79 @@
     </nav>
 
     <div class="container mt-4 pb-5">
-        <!-- ========== DASHBOARD SECTION (shown by default) ========== -->
-  <!-- ========== FOCUS ZONE ========== -->
-<div class="row mt-5">
-    <div class="col-12">
-        <h2 class="fw-bold mb-4"><i class="bi bi-moon-stars me-2"></i>Focus Zone · Scientific + Spiritual</h2>
-    </div>
-    <div class="col-lg-7">
-        <div class="card p-4 h-100" style="background: linear-gradient(145deg, #0B2B26, #163832); border: 1px solid #235347;">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h4 class="fw-semibold"><i class="bi bi-hourglass-split me-2"></i>Meditation Timer</h4>
-                <div class="badge bg-dark px-3 py-2 rounded-pill" id="focusModeDisplay">Slow</div>
-            </div>
-            <div class="text-center">
-                <div class="display-1 fw-bold text-info mb-2" id="medTimer">05:00</div>
-                <div class="progress mb-4" style="height: 10px;">
-                    <div class="progress-bar bg-info" id="medProgress" style="width: 0%"></div>
-                </div>
-                <div class="d-flex justify-content-center gap-3 mb-4">
-                    <button class="btn btn-outline-info rounded-circle p-3" onclick="startMeditation()" id="medStartBtn"><i class="bi bi-play-fill fs-4"></i></button>
-                    <button class="btn btn-outline-warning rounded-circle p-3" onclick="pauseMeditation()"><i class="bi bi-pause-fill fs-4"></i></button>
-                    <button class="btn btn-outline-secondary rounded-circle p-3" onclick="resetMeditation()"><i class="bi bi-arrow-repeat fs-4"></i></button>
-                </div>
-            </div>
-
-            <hr class="border-secondary">
-
-            <div class="row align-items-center">
-                <div class="col-md-6">
-                    <h5><i class="bi bi-flower1 me-2 text-success"></i>Breath Circle</h5>
-                    <div class="breath-circle mx-auto my-3" id="breathCircle"></div>
-                    <p class="text-center text-secondary" id="breathPhase">Inhale</p>
-                </div>
-                <div class="col-md-6">
-                    <h5><i class="bi bi-chat-quote me-2 text-warning"></i>Daily Mantra</h5>
-                    <div class="mantra-box p-3 rounded-3 bg-dark bg-opacity-25">
-                        <p class="fs-5 fst-italic mb-0" id="mantraText">I am calm and focused</p>
-                    </div>
-                    <button class="btn btn-sm btn-outline-light mt-2 w-100" onclick="nextMantra()"><i class="bi bi-arrow-repeat"></i> Next</button>
-                </div>
-            </div>
-
-            <hr class="border-secondary">
-
-            <div class="d-flex flex-wrap gap-2 justify-content-between align-items-center">
-                <div>
-                    <span class="text-secondary">Focus Mode:</span>
-                    <div class="btn-group ms-2" role="group">
-                        <button class="btn btn-sm btn-outline-info focus-mode" data-mode="slow">Slow</button>
-                        <button class="btn btn-sm btn-outline-warning focus-mode" data-mode="fast">Fast</button>
-                        <button class="btn btn-sm btn-outline-success focus-mode" data-mode="homing">Homing</button>
-                        <button class="btn btn-sm btn-outline-danger focus-mode" data-mode="revenge">Revenge</button>
-                        <button class="btn btn-sm btn-outline-secondary focus-mode" data-mode="dark">Dark</button>
-                        <button class="btn btn-sm btn-outline-purple focus-mode" data-mode="curse">Curse</button>
-                    </div>
-                </div>
-                <div>
-                    <span class="badge bg-success" id="focusSessions">0</span> sessions
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-5">
-        <div class="card p-4 h-100" style="background: #0F1A2F; border: 1px solid #8EB69B;">
-            <h4 class="fw-semibold mb-3"><i class="bi bi-palette me-2"></i>Color Psychology</h4>
-            <p class="text-secondary small">Choose a mood to change background</p>
-            <div class="row g-2 mb-4">
-                <div class="col-4"><button class="btn w-100 py-3" style="background: #FF6B6B;" onclick="setMood('passion')"></button></div>
-                <div class="col-4"><button class="btn w-100 py-3" style="background: #FFA726;" onclick="setMood('energy')"></button></div>
-                <div class="col-4"><button class="btn w-100 py-3" style="background: #66BB6A;" onclick="setMood('growth')"></button></div>
-                <div class="col-4"><button class="btn w-100 py-3" style="background: #FFD54F;" onclick="setMood('happiness')"></button></div>
-                <div class="col-4"><button class="btn w-100 py-3" style="background: #5C6BC0;" onclick="setMood('calm')"></button></div>
-                <div class="col-4"><button class="btn w-100 py-3" style="background: #AB47BC;" onclick="setMood('creativity')"></button></div>
-                <div class="col-4"><button class="btn w-100 py-3" style="background: #EC407A;" onclick="setMood('love')"></button></div>
-                <div class="col-4"><button class="btn w-100 py-3" style="background: #000000;" onclick="setMood('power')"></button></div>
-                <div class="col-4"><button class="btn w-100 py-3" style="background: #FFFFFF;" onclick="setMood('purity')"></button></div>
-            </div>
-            <div id="psychologyTip" class="p-3 rounded-3 bg-dark bg-opacity-25">
-                <i class="bi bi-info-circle me-2"></i>Select a color to see its meaning
-            </div>
-
-            <hr class="border-secondary">
-
-            <h5 class="mt-3"><i class="bi bi-bar-chart-steps me-2"></i>Mindful Stats</h5>
-            <div class="d-flex justify-content-between">
-                <span>Total Focus Time:</span>
-                <span class="fw-bold" id="totalFocusTime">12h 34m</span>
-            </div>
-            <div class="d-flex justify-content-between">
-                <span>Avg. Session:</span>
-                <span class="fw-bold" id="avgSession">18m</span>
-            </div>
-        </div>
-    </div>
-</div>                          <i class="bi bi-sun fs-1 me-3 text-warning"></i>
+        <!-- ========== DASHBOARD SECTION ========== -->
+        <div id="dashboard-section" class="section">
+            <!-- Stats Cards -->
+            <div class="row g-4 mb-5">
+                <div class="col-md-3">
+                    <div class="card stat-card p-4" style="background: #0B2B26;">
+                        <div class="d-flex justify-content-between">
                             <div>
-                                <h4 class="fw-semibold">Daily Challenge</h4>
-                                <p class="text-secondary">5 questions · Today's topic: Physics</p>
+                                <p class="text-secondary mb-1">Tests Created</p>
+                                <h2 class="text-white" id="statsTestsCreated">0</h2>
                             </div>
+                            <i class="bi bi-pencil-square fs-1" style="color: #8EB69B;"></i>
                         </div>
-                        <button class="btn btn-primary w-100" onclick="startDailyChallenge()">Start Challenge</button>
                     </div>
                 </div>
-                <div class="col-lg-6">
-                    <div class="card p-4">
-                        <div class="d-flex align-items-center mb-3">
-                            <i class="bi bi-stars fs-1 me-3 text-info"></i>
+                <div class="col-md-3">
+                    <div class="card stat-card p-4" style="background: #163832;">
+                        <div class="d-flex justify-content-between">
                             <div>
-                                <h4 class="fw-semibold">Recommended for You</h4>
-                                <p class="text-secondary">Based on your performance</p>
+                                <p class="text-secondary mb-1">Tests Taken</p>
+                                <h2 class="text-white" id="statsTestsTaken">0</h2>
                             </div>
+                            <i class="bi bi-check-circle fs-1" style="color: #8EB69B;"></i>
                         </div>
-                        <div class="list-group">
-                            <a href="#" class="list-group-item bg-transparent text-white d-flex justify-content-between align-items-center" onclick="takeTest('mock1')">
-                                Electrostatics Challenge
-                                <span class="badge bg-primary">Start</span>
-                            </a>
-                            <a href="#" class="list-group-item bg-transparent text-white d-flex justify-content-between align-items-center" onclick="takeTest('mock2')">
-                                Mole Concept · Chemistry
-                                <span class="badge bg-primary">Start</span>
-                            </a>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stat-card p-4" style="background: #1A4238;">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <p class="text-secondary mb-1">Avg. Score</p>
+                                <h2 class="text-white" id="statsAvgScore">0%</h2>
+                            </div>
+                            <i class="bi bi-trophy fs-1" style="color: #8EB69B;"></i>
                         </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stat-card p-4" style="background: #235347;">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <p class="text-secondary mb-1">Accuracy</p>
+                                <h2 class="text-white" id="statsAccuracy">0%</h2>
+                            </div>
+                            <i class="bi bi-bullseye fs-1" style="color: #8EB69B;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mindful Test Card -->
+            <div class="card p-4 mb-5" style="background: linear-gradient(145deg, #0B2B26, #163832); border: 1px solid #235347;">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h3 class="fw-bold mb-2" style="color: #DAF1DE;">Start a Mindful Test</h3>
+                        <p class="mb-3" style="color: #8EB69B;">Includes pre‑test breathing, focus reminders, and post‑test reflection.</p>
+                        <div class="d-flex gap-3">
+                            <button class="btn btn-success" onclick="startMindfulMode()"><i class="bi bi-flower1 me-2"></i>Try Mindful Mode</button>
+                            <button class="btn btn-outline-secondary" onclick="showSection('create')">Create Test</button>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <div class="breath-mini-circle mx-auto" id="breathMini"></div>
+                        <small class="text-secondary">Breathe</small>
                     </div>
                 </div>
             </div>
 
             <!-- Recent Tests -->
-            <div class="card mt-5 p-4">
-                <h4 class="fw-semibold mb-3"><i class="bi bi-clock-history me-2"></i>Recent Tests</h4>
+            <div class="card p-4">
+                <h4 class="fw-semibold mb-3"><i class="bi bi-clock-history me-2" style="color: #8EB69B;"></i>Recent Activity</h4>
                 <div id="recentTestsList" class="list-group">
-                    <p class="text-muted">No tests taken yet. Create or start a test!</p>
+                    <p class="text-muted">No tests taken yet.</p>
                 </div>
             </div>
         </div>
@@ -170,15 +116,15 @@
                     <span class="ms-auto badge bg-light text-dark">Advanced mode</span>
                 </div>
                 <div class="card-body">
-                    <!-- Import Buttons (Professional Layout) -->
-                    <div class="alert alert-secondary p-3 mb-4" style="border-radius: 20px;">
+                    <!-- Import Buttons -->
+                    <div class="alert alert-secondary p-3 mb-4" style="border-radius: 20px; background: #0B2B26; border-color: #235347;">
                         <div class="row g-2 align-items-center">
                             <div class="col-12 col-md-7 col-lg-8">
                                 <div class="d-flex align-items-center">
-                                    <i class="bi bi-file-text fs-4 me-3"></i>
+                                    <i class="bi bi-file-text fs-4 me-3" style="color: #8EB69B;"></i>
                                     <div>
                                         <span class="fw-semibold">Import questions from text</span>
-                                        <p class="mb-0 small text-secondary text-break">Paste formatted: <code>Question? | A) opt1 | B) opt2 | C) opt3 | D) opt4 | CorrectLetter | Topic | Explanation</code></p>
+                                        <p class="mb-0 small text-secondary">Paste formatted, smart import, or use AI.</p>
                                     </div>
                                 </div>
                             </div>
@@ -246,7 +192,6 @@
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <!-- Question Palette Sidebar -->
                         <div class="col-lg-3 mb-4">
                             <div class="question-panel">
                                 <h6 class="fw-semibold mb-3"><i class="bi bi-grid-3x3-gap-fill me-2"></i>Question Palette</h6>
@@ -259,7 +204,6 @@
                                 <button class="btn btn-sm btn-outline-secondary w-100" onclick="markForReview()"><i class="bi bi-bookmark-star"></i> Mark for review</button>
                             </div>
                         </div>
-                        <!-- Questions Area -->
                         <div class="col-lg-9">
                             <div id="takeTestContainer"></div>
                             <div class="d-flex justify-content-between mt-4">
@@ -281,18 +225,17 @@
                 <div class="card-header"><i class="bi bi-bar-chart-steps me-2"></i>Performance Analysis</div>
                 <div class="card-body" id="resultContainer"></div>
                 <div class="card-footer">
-                    <button class="btn btn-primary" onclick="showSection('list')"><i class="bi bi-arrow-left"></i> Back to Library</button>
+                    <button class="btn btn-primary" onclick="showSection('dashboard')"><i class="bi bi-arrow-left"></i> Back to Dashboard</button>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- ========== MODALS ========== -->
-
-    <!-- Regular Import Modal -->
+    <!-- Import Modal -->
     <div class="modal fade" id="importModal" tabindex="-1">
         <div class="modal-dialog modal-lg">
-            <div class="modal-content" style="border-radius: 28px;">
+            <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title"><i class="bi bi-file-text me-2"></i>Import Questions (Pipe Format)</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -313,25 +256,18 @@
     <!-- Smart Import Modal -->
     <div class="modal fade" id="smartImportModal" tabindex="-1">
         <div class="modal-dialog modal-xl">
-            <div class="modal-content" style="border-radius: 28px;">
+            <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title"><i class="bi bi-magic me-2"></i>Smart Import</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <p class="small text-secondary">Paste your questions in any common format (numbered, lettered options, answer key). Then click Parse.</p>
-                    <textarea class="form-control" rows="8" id="smartImportText" placeholder="e.g.
-Q1. What is 2+2?
-A) 3
-B) 4
-C) 5
-D) 6
-Answer: B"></textarea>
+                    <textarea class="form-control" rows="8" id="smartImportText" placeholder="Paste questions in any format..."></textarea>
                     <div class="mt-3 d-flex justify-content-between">
                         <button class="btn btn-outline-primary" onclick="parseSmartImport()"><i class="bi bi-gear"></i> Parse</button>
                         <span id="parseStatus" class="text-muted"></span>
                     </div>
-                    <div id="smartPreviewContainer" class="mt-4" style="max-height: 400px; overflow-y: auto;"></div>
+                    <div id="smartPreviewContainer" class="mt-4"></div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -344,25 +280,18 @@ Answer: B"></textarea>
     <!-- AI Import Modal -->
     <div class="modal fade" id="aiImportModal" tabindex="-1">
         <div class="modal-dialog modal-xl">
-            <div class="modal-content" style="border-radius: 28px;">
+            <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title"><i class="bi bi-cpu me-2"></i>AI-Powered Import</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <p class="small text-secondary">Paste any text (even match the following). Our AI will extract questions, options, and answers.</p>
-                    <textarea class="form-control" rows="8" id="aiImportText" placeholder="e.g.
-Q1. Which of the following is not a defining property of life?
-A) Metabolism
-B) Consciousness
-C) Growth
-D) Reproduction
-Answer: C"></textarea>
+                    <textarea class="form-control" rows="8" id="aiImportText" placeholder="Paste any text..."></textarea>
                     <div class="mt-3 d-flex justify-content-between">
                         <button class="btn btn-primary" onclick="analyzeWithAI()"><i class="bi bi-stars"></i> Analyze with AI</button>
                         <span id="aiStatus" class="text-muted"></span>
                     </div>
-                    <div id="aiPreviewContainer" class="mt-4" style="max-height: 400px; overflow-y: auto;"></div>
+                    <div id="aiPreviewContainer" class="mt-4"></div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -375,13 +304,12 @@ Answer: C"></textarea>
     <!-- PDF Upload Modal -->
     <div class="modal fade" id="pdfUploadModal" tabindex="-1">
         <div class="modal-dialog modal-lg">
-            <div class="modal-content" style="border-radius: 28px;">
+            <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title"><i class="bi bi-file-pdf me-2"></i>Upload PDF for AI Analysis</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <p class="small text-secondary">Upload a chapter PDF (NCERT/reference). Our AI will extract context for each question.</p>
                     <input type="file" id="pdfFileInput" accept=".pdf" class="form-control mb-3">
                     <div id="pdfUploadStatus" class="alert alert-info d-none"></div>
                     <div class="d-flex justify-content-end">
@@ -392,15 +320,8 @@ Answer: C"></textarea>
         </div>
     </div>
 
-    <!-- Bootstrap JS -->
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Custom JS with all features -->
     <script src="script.js"></script>
-    <script>
-        // Dashboard stats update (run when page loads)
-        document.addEventListener('DOMContentLoaded', function() {
-            updateDashboardStats();
-        });
-    </script>
 </body>
     </html>
