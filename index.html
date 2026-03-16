@@ -3,325 +3,367 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>NEET/JEE Pro | Mindful Test Platform</title>
-    <!-- Bootstrap 5 + Icons -->
+    <title>Cosmic Prep • NEET/JEE</title>
+    <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap" rel="stylesheet">
-    <!-- Custom CSS -->
+    <!-- Font Awesome 6 (free) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Fonts: Space Grotesk + Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- AOS (Animate on Scroll) -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Custom Cosmic CSS (link) -->
     <link rel="stylesheet" href="style.css">
-    <!-- SweetAlert2 for mindful popups -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- PDF.js for upload feature -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
 </head>
 <body>
 
-    <!-- Navigation -->
-    <nav class="navbar navbar-dark py-3">
+    <!-- ========== COSMIC BACKGROUND ========== -->
+    <div class="stars"></div>
+    <div class="twinkling"></div>
+    <div class="clouds"></div>
+
+    <!-- ========== NAVBAR ========== -->
+    <nav class="navbar navbar-dark navbar-expand-lg cosmic-navbar">
         <div class="container">
-            <span class="navbar-brand fs-4"><i class="bi bi-journal-bookmark-fill me-2"></i>MockTest Pro (NEET/JEE)</span>
-            <div>
-                <button class="btn btn-sm btn-outline-light me-2" onclick="showSection('dashboard')"><i class="bi bi-house-door"></i> Dashboard</button>
-                <button class="btn btn-sm btn-outline-light me-2" onclick="showSection('create')"><i class="bi bi-plus-circle"></i> Create</button>
-                <button class="btn btn-sm btn-outline-light" onclick="showSection('list')"><i class="bi bi-collection"></i> My Tests</button>
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-meteor me-2"></i>Cosmic<span class="text-gradient">Prep</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" onclick="showSection('dashboard')"><i class="fas fa-home me-1"></i>Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" onclick="showSection('create')"><i class="fas fa-pen me-1"></i>Create Test</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" onclick="showSection('library')"><i class="fas fa-layer-group me-1"></i>My Tests</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" onclick="showSection('ai-teacher')"><i class="fas fa-robot me-1"></i>AI Teacher</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" onclick="showSection('analyzer')"><i class="fas fa-file-pdf me-1"></i>PDF Analyzer</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="fas fa-user-astronaut me-1"></i>Profile</a>
+                    </li>
+                </ul>
             </div>
         </div>
     </nav>
 
+    <!-- ========== MAIN CONTAINER ========== -->
     <div class="container mt-4 pb-5">
-        <!-- ========== DASHBOARD SECTION ========== -->
+
+        <!-- DASHBOARD SECTION -->
         <div id="dashboard-section" class="section">
-            <!-- Stats Cards -->
+            <!-- Welcome & Stats -->
+            <div class="row align-items-center mb-4">
+                <div class="col-md-8">
+                    <h2 class="glow-text">Welcome back, <span class="cosmic-highlight">Cosmic Warrior</span> 👋</h2>
+                    <p class="text-secondary">Your journey to the stars continues. Keep pushing!</p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <div class="streak-badge">
+                        <i class="fas fa-fire flame"></i> <span id="streakCount">7</span> day streak
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Cards (glassmorphism) -->
             <div class="row g-4 mb-5">
-                <div class="col-md-3">
-                    <div class="card stat-card p-4" style="background: #0B2B26;">
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <p class="text-secondary mb-1">Tests Created</p>
-                                <h2 class="text-white" id="statsTestsCreated">0</h2>
+                <div class="col-md-3" data-aos="fade-up" data-aos-delay="100">
+                    <div class="stat-card">
+                        <i class="fas fa-rocket stat-icon"></i>
+                        <h3 id="statsTestsCreated">0</h3>
+                        <p>Tests Created</p>
+                    </div>
+                </div>
+                <div class="col-md-3" data-aos="fade-up" data-aos-delay="200">
+                    <div class="stat-card">
+                        <i class="fas fa-check-double stat-icon"></i>
+                        <h3 id="statsTestsTaken">0</h3>
+                        <p>Tests Taken</p>
+                    </div>
+                </div>
+                <div class="col-md-3" data-aos="fade-up" data-aos-delay="300">
+                    <div class="stat-card">
+                        <i class="fas fa-trophy stat-icon"></i>
+                        <h3 id="statsAvgScore">0%</h3>
+                        <p>Avg. Score</p>
+                    </div>
+                </div>
+                <div class="col-md-3" data-aos="fade-up" data-aos-delay="400">
+                    <div class="stat-card">
+                        <i class="fas fa-bullseye stat-icon"></i>
+                        <h3 id="statsAccuracy">0%</h3>
+                        <p>Accuracy</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Daily Challenge + Mindful Mode -->
+            <div class="row g-4 mb-5">
+                <div class="col-lg-6">
+                    <div class="cosmic-card daily-challenge" data-aos="fade-right">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="challenge-icon">
+                                <i class="fas fa-sun"></i>
                             </div>
-                            <i class="bi bi-pencil-square fs-1" style="color: #8EB69B;"></i>
+                            <div class="ms-3">
+                                <h4 class="mb-0">Daily Challenge</h4>
+                                <small class="text-secondary">5 questions · Physics</small>
+                            </div>
+                        </div>
+                        <div class="countdown mb-3">
+                            <span>⏳ Ends in:</span>
+                            <span class="time" id="dailyCountdown">06:45:22</span>
+                        </div>
+                        <button class="btn btn-cosmic w-100" onclick="startDailyChallenge()"><i class="fas fa-play me-2"></i>Start Challenge</button>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="cosmic-card mindful-mode" data-aos="fade-left">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="mindful-icon">
+                                <i class="fas fa-brain"></i>
+                            </div>
+                            <div class="ms-3">
+                                <h4 class="mb-0">Mindful Mode</h4>
+                                <small class="text-secondary">Breathing + focus</small>
+                            </div>
+                        </div>
+                        <p class="mb-3">Includes pre-test grounding & post-test reflection.</p>
+                        <button class="btn btn-outline-cosmic w-100" onclick="startMindfulMode()"><i class="fas fa-flower me-2"></i>Enter Mindful Zone</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity & Recommended -->
+            <div class="row">
+                <div class="col-lg-7 mb-4">
+                    <div class="cosmic-card">
+                        <h5><i class="fas fa-history me-2"></i>Recent Activity</h5>
+                        <div id="recentTestsList" class="mt-3">
+                            <p class="text-muted">No tests taken yet.</p>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="card stat-card p-4" style="background: #163832;">
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <p class="text-secondary mb-1">Tests Taken</p>
-                                <h2 class="text-white" id="statsTestsTaken">0</h2>
+                <div class="col-lg-5 mb-4">
+                    <div class="cosmic-card">
+                        <h5><i class="fas fa-star me-2"></i>Recommended for You</h5>
+                        <div class="recommend-list mt-3">
+                            <div class="recommend-item">
+                                <span>Electrostatics · 10 Q</span>
+                                <button class="btn btn-sm btn-cosmic-outline" onclick="takeTest('rec1')">Start</button>
                             </div>
-                            <i class="bi bi-check-circle fs-1" style="color: #8EB69B;"></i>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card stat-card p-4" style="background: #1A4238;">
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <p class="text-secondary mb-1">Avg. Score</p>
-                                <h2 class="text-white" id="statsAvgScore">0%</h2>
+                            <div class="recommend-item">
+                                <span>Mole Concept · 8 Q</span>
+                                <button class="btn btn-sm btn-cosmic-outline" onclick="takeTest('rec2')">Start</button>
                             </div>
-                            <i class="bi bi-trophy fs-1" style="color: #8EB69B;"></i>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card stat-card p-4" style="background: #235347;">
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <p class="text-secondary mb-1">Accuracy</p>
-                                <h2 class="text-white" id="statsAccuracy">0%</h2>
+                            <div class="recommend-item">
+                                <span>Thermodynamics · 12 Q</span>
+                                <button class="btn btn-sm btn-cosmic-outline" onclick="takeTest('rec3')">Start</button>
                             </div>
-                            <i class="bi bi-bullseye fs-1" style="color: #8EB69B;"></i>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Mindful Test Card -->
-            <div class="card p-4 mb-5" style="background: linear-gradient(145deg, #0B2B26, #163832); border: 1px solid #235347;">
-                <div class="row align-items-center">
-                    <div class="col-md-8">
-                        <h3 class="fw-bold mb-2" style="color: #DAF1DE;">Start a Mindful Test</h3>
-                        <p class="mb-3" style="color: #8EB69B;">Includes pre‑test breathing, focus reminders, and post‑test reflection.</p>
-                        <div class="d-flex gap-3">
-                            <button class="btn btn-success" onclick="startMindfulMode()"><i class="bi bi-flower1 me-2"></i>Try Mindful Mode</button>
-                            <button class="btn btn-outline-secondary" onclick="showSection('create')">Create Test</button>
-                        </div>
-                    </div>
-                    <div class="col-md-4 text-center">
-                        <div class="breath-mini-circle mx-auto" id="breathMini"></div>
-                        <small class="text-secondary">Breathe</small>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Recent Tests -->
-            <div class="card p-4">
-                <h4 class="fw-semibold mb-3"><i class="bi bi-clock-history me-2" style="color: #8EB69B;"></i>Recent Activity</h4>
-                <div id="recentTestsList" class="list-group">
-                    <p class="text-muted">No tests taken yet.</p>
+            <!-- Leaderboard Preview -->
+            <div class="cosmic-card mt-3">
+                <h5><i class="fas fa-crown me-2 text-warning"></i>Leaderboard – This Week</h5>
+                <div class="leaderboard">
+                    <div class="leaderboard-item"><span>🥇 CosmicPanda</span> <span>1245 pts</span></div>
+                    <div class="leaderboard-item"><span>🥈 NebulaNinja</span> <span>1180 pts</span></div>
+                    <div class="leaderboard-item"><span>🥉 QuasarQueen</span> <span>1090 pts</span></div>
+                    <div class="leaderboard-item"><span>4️⃣ you</span> <span>980 pts</span></div>
                 </div>
             </div>
         </div>
 
-        <!-- ========== CREATE TEST SECTION ========== -->
+        <!-- CREATE TEST SECTION -->
         <div id="create-section" class="section" style="display: none;">
-            <div class="card">
-                <div class="card-header d-flex align-items-center">
-                    <i class="bi bi-pencil-square fs-5 me-2"></i> Design New Mock Test
-                    <span class="ms-auto badge bg-light text-dark">Advanced mode</span>
-                </div>
-                <div class="card-body">
-                    <!-- Import Buttons -->
-                    <div class="alert alert-secondary p-3 mb-4" style="border-radius: 20px; background: #0B2B26; border-color: #235347;">
-                        <div class="row g-2 align-items-center">
-                            <div class="col-12 col-md-7 col-lg-8">
-                                <div class="d-flex align-items-center">
-                                    <i class="bi bi-file-text fs-4 me-3" style="color: #8EB69B;"></i>
-                                    <div>
-                                        <span class="fw-semibold">Import questions from text</span>
-                                        <p class="mb-0 small text-secondary">Paste formatted, smart import, or use AI.</p>
-                                    </div>
+            <div class="cosmic-card">
+                <h4 class="mb-4"><i class="fas fa-pen-fancy me-2"></i>Design New Mock Test</h4>
+                <!-- Import Buttons -->
+                <div class="import-panel mb-4">
+                    <div class="row g-2 align-items-center">
+                        <div class="col-md-7">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-cloud-upload-alt fs-3 me-3"></i>
+                                <div>
+                                    <span class="fw-bold">Import questions</span>
+                                    <p class="mb-0 small text-secondary">Pipe format, smart import, AI, or PDF</p>
                                 </div>
                             </div>
-                            <div class="col-12 col-md-5 col-lg-4">
-                                <div class="d-flex flex-wrap gap-2 justify-content-md-end">
-                                    <button class="btn btn-sm btn-outline-primary" onclick="showImportModal()"><i class="bi bi-upload"></i> Import</button>
-                                    <button class="btn btn-sm btn-outline-success" onclick="smartImport()"><i class="bi bi-stars"></i> Smart</button>
-                                    <button class="btn btn-sm btn-outline-info" onclick="showPdfUploadModal()"><i class="bi bi-file-pdf"></i> PDF</button>
-                                    <button class="btn btn-sm btn-outline-warning" onclick="showAIImport()"><i class="bi bi-cpu"></i> AI</button>
-                                </div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="d-flex flex-wrap gap-2 justify-content-md-end">
+                                <button class="btn btn-sm btn-outline-cosmic" onclick="showImportModal()"><i class="fas fa-upload"></i> Import</button>
+                                <button class="btn btn-sm btn-outline-cosmic" onclick="smartImport()"><i class="fas fa-magic"></i> Smart</button>
+                                <button class="btn btn-sm btn-outline-cosmic" onclick="showAIImport()"><i class="fas fa-robot"></i> AI</button>
+                                <button class="btn btn-sm btn-outline-cosmic" onclick="showPdfUploadModal()"><i class="fas fa-file-pdf"></i> PDF</button>
                             </div>
                         </div>
                     </div>
-
-                    <form id="testForm">
-                        <div class="row g-3 mb-4">
-                            <div class="col-md-6">
-                                <label class="form-label fw-semibold">Test Title</label>
-                                <input type="text" class="form-control form-control-lg" id="testTitle" placeholder="e.g. Physics: Electrostatics Challenge" required>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label fw-semibold">Subject</label>
-                                <select class="form-select form-select-lg" id="testSubject">
-                                    <option>Physics</option>
-                                    <option>Chemistry</option>
-                                    <option>Biology</option>
-                                    <option>Mathematics</option>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label fw-semibold">Duration (minutes)</label>
-                                <input type="number" class="form-control form-control-lg" id="testDuration" value="30" min="1" max="180">
-                            </div>
-                        </div>
-
-                        <div id="questionsContainer"></div>
-
-                        <div class="d-flex flex-wrap gap-2 mt-3">
-                            <button type="button" class="btn btn-outline-primary" onclick="addQuestion()"><i class="bi bi-plus-circle me-2"></i>Add Question</button>
-                            <button type="button" class="btn btn-outline-secondary" onclick="addSampleAIGenerated()"><i class="bi bi-stars me-2"></i>✨ AI Sample</button>
-                            <button type="button" class="btn btn-outline-info" onclick="showQuestionBank()"><i class="bi bi-collection me-2"></i>Question Bank</button>
-                        </div>
-
-                        <hr class="my-4">
-                        <button type="submit" class="btn btn-primary btn-lg w-100"><i class="bi bi-save me-2"></i>Save Test</button>
-                    </form>
                 </div>
+
+                <form id="testForm">
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label">Test Title</label>
+                            <input type="text" class="form-control cosmic-input" id="testTitle" placeholder="e.g. Physics: Electrostatics" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Subject</label>
+                            <select class="form-select cosmic-select" id="testSubject">
+                                <option>Physics</option>
+                                <option>Chemistry</option>
+                                <option>Biology</option>
+                                <option>Mathematics</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Duration (min)</label>
+                            <input type="number" class="form-control cosmic-input" id="testDuration" value="30" min="1">
+                        </div>
+                    </div>
+
+                    <div id="questionsContainer"></div>
+
+                    <div class="d-flex flex-wrap gap-2 mt-3">
+                        <button type="button" class="btn btn-cosmic-outline" onclick="addQuestion()"><i class="fas fa-plus-circle me-2"></i>Add Question</button>
+                        <button type="button" class="btn btn-cosmic-outline" onclick="addSampleAIGenerated()"><i class="fas fa-microchip me-2"></i>AI Sample</button>
+                        <button type="button" class="btn btn-cosmic-outline" onclick="showQuestionBank()"><i class="fas fa-database me-2"></i>Question Bank</button>
+                    </div>
+
+                    <hr class="my-4">
+                    <button type="submit" class="btn btn-cosmic w-100"><i class="fas fa-save me-2"></i>Save Test to Universe</button>
+                </form>
             </div>
         </div>
 
-        <!-- ========== MY TESTS SECTION ========== -->
-        <div id="list-section" class="section" style="display: none;">
-            <div class="card">
-                <div class="card-header"><i class="bi bi-collection me-2"></i>Your Test Library</div>
-                <div class="card-body" id="testListContainer">Loading...</div>
+        <!-- MY TESTS SECTION (LIBRARY) -->
+        <div id="library-section" class="section" style="display: none;">
+            <div class="cosmic-card">
+                <h4 class="mb-4"><i class="fas fa-layer-group me-2"></i>Your Test Library</h4>
+                <div id="testListContainer">Loading...</div>
             </div>
         </div>
 
-        <!-- ========== TAKE TEST SECTION ========== -->
+        <!-- TAKE TEST SECTION -->
         <div id="take-section" class="section" style="display: none;">
-            <div class="card">
-                <div class="card-header d-flex flex-wrap align-items-center justify-content-between">
-                    <span class="fs-5 fw-semibold" id="takeTestTitle"></span>
-                    <span class="timer-badge" id="timerDisplay">30:00</span>
+            <div class="cosmic-card">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 id="takeTestTitle"></h4>
+                    <div class="timer" id="timerDisplay">30:00</div>
                 </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-lg-3 mb-4">
-                            <div class="question-panel">
-                                <h6 class="fw-semibold mb-3"><i class="bi bi-grid-3x3-gap-fill me-2"></i>Question Palette</h6>
-                                <div id="paletteContainer" class="d-flex flex-wrap"></div>
-                                <div class="mt-3 small text-secondary">
-                                    <span class="badge bg-primary me-1">●</span> Answered 
-                                    <span class="badge bg-warning ms-2 me-1">●</span> Review
-                                </div>
-                                <hr>
-                                <button class="btn btn-sm btn-outline-secondary w-100" onclick="markForReview()"><i class="bi bi-bookmark-star"></i> Mark for review</button>
-                            </div>
+                <div class="row">
+                    <div class="col-lg-3 mb-4">
+                        <div class="palette">
+                            <h6><i class="fas fa-th me-2"></i>Question Palette</h6>
+                            <div id="paletteContainer" class="d-flex flex-wrap"></div>
+                            <hr>
+                            <button class="btn btn-sm btn-cosmic-outline w-100" onclick="markForReview()"><i class="fas fa-bookmark me-2"></i>Mark for Review</button>
                         </div>
-                        <div class="col-lg-9">
-                            <div id="takeTestContainer"></div>
-                            <div class="d-flex justify-content-between mt-4">
-                                <button class="btn btn-outline-secondary" onclick="prevQuestion()"><i class="bi bi-chevron-left"></i> Previous</button>
-                                <button class="btn btn-outline-secondary" onclick="nextQuestion()">Next <i class="bi bi-chevron-right"></i></button>
-                            </div>
+                    </div>
+                    <div class="col-lg-9">
+                        <div id="takeTestContainer"></div>
+                        <div class="d-flex justify-content-between mt-4">
+                            <button class="btn btn-cosmic-outline" onclick="prevQuestion()"><i class="fas fa-chevron-left"></i> Previous</button>
+                            <button class="btn btn-cosmic-outline" onclick="nextQuestion()">Next <i class="fas fa-chevron-right"></i></button>
                         </div>
                     </div>
                 </div>
-                <div class="card-footer text-end">
-                    <button class="btn btn-success btn-lg px-5" onclick="submitTest()"><i class="bi bi-check2-circle"></i> Submit Test</button>
+                <div class="text-end mt-4">
+                    <button class="btn btn-cosmic-success" onclick="submitTest()"><i class="fas fa-check-circle me-2"></i>Submit Test</button>
                 </div>
             </div>
         </div>
 
-        <!-- ========== RESULT SECTION ========== -->
+        <!-- RESULT SECTION -->
         <div id="result-section" class="section" style="display: none;">
-            <div class="card">
-                <div class="card-header"><i class="bi bi-bar-chart-steps me-2"></i>Performance Analysis</div>
-                <div class="card-body" id="resultContainer"></div>
-                <div class="card-footer">
-                    <button class="btn btn-primary" onclick="showSection('dashboard')"><i class="bi bi-arrow-left"></i> Back to Dashboard</button>
+            <div class="cosmic-card">
+                <h4 class="mb-4"><i class="fas fa-chart-bar me-2"></i>Performance Analysis</h4>
+                <div id="resultContainer"></div>
+                <div class="mt-4">
+                    <button class="btn btn-cosmic-outline" onclick="showSection('dashboard')"><i class="fas fa-arrow-left me-2"></i>Back to Dashboard</button>
                 </div>
+            </div>
+        </div>
+
+        <!-- AI TEACHER SECTION (Chatbot) -->
+        <div id="ai-teacher-section" class="section" style="display: none;">
+            <div class="cosmic-card">
+                <h4 class="mb-4"><i class="fas fa-robot me-2"></i>AI Teacher – Doubt Solver</h4>
+                <div class="chat-container" id="chatMessages">
+                    <div class="message bot">
+                        <i class="fas fa-robot me-2"></i> Hi! I'm your cosmic AI teacher. Ask me anything about NEET/JEE.
+                    </div>
+                </div>
+                <div class="input-group mt-3">
+                    <input type="text" class="form-control cosmic-input" id="chatInput" placeholder="Type your doubt..." onkeypress="if(event.key==='Enter') sendMessage()">
+                    <button class="btn btn-cosmic" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- PDF ANALYZER SECTION -->
+        <div id="analyzer-section" class="section" style="display: none;">
+            <div class="cosmic-card">
+                <h4 class="mb-4"><i class="fas fa-file-pdf me-2"></i>PDF Analyzer</h4>
+                <p class="text-secondary">Upload a PDF (NCERT, reference book) and our AI will generate MCQ questions automatically.</p>
+                <div class="upload-area" id="pdfDropZone">
+                    <i class="fas fa-cloud-upload-alt fa-3x mb-3"></i>
+                    <p>Drag & drop a PDF here, or click to select</p>
+                    <input type="file" id="pdfFileInput" accept=".pdf" hidden>
+                    <button class="btn btn-cosmic-outline" onclick="document.getElementById('pdfFileInput').click()">Choose PDF</button>
+                </div>
+                <div id="pdfStatus" class="mt-3"></div>
+                <div id="pdfPreview" class="mt-4"></div>
             </div>
         </div>
     </div>
 
-    <!-- ========== MODALS ========== -->
-    <!-- Import Modal -->
-    <div class="modal fade" id="importModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
+    <!-- MODALS -->
+
+    <!-- Import Modal (Pipe format) -->
+    <div class="modal fade cosmic-modal" id="importModal" tabindex="-1">
+        <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title"><i class="bi bi-file-text me-2"></i>Import Questions (Pipe Format)</h5>
+                    <h5 class="modal-title"><i class="fas fa-upload me-2"></i>Import Questions</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <p class="small text-secondary">Paste lines in this format:</p>
-                    <pre class="bg-light p-3 rounded text-dark">Question text | A) option1 | B) option2 | C) option3 | D) option4 | CorrectLetter | Topic | Explanation</pre>
-                    <textarea class="form-control" rows="6" id="importText" placeholder="Paste here..."></textarea>
+                    <p class="small">Paste lines in format: <code>Question | A) opt1 | B) opt2 | C) opt3 | D) opt4 | Correct | Topic | Exp</code></p>
+                    <textarea class="form-control cosmic-input" rows="6" id="importText" placeholder="Paste here..."></textarea>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" onclick="processImport()">Import & Add</button>
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button class="btn btn-cosmic" onclick="processImport()">Import & Add</button>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Smart Import Modal -->
-    <div class="modal fade" id="smartImportModal" tabindex="-1">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title"><i class="bi bi-magic me-2"></i>Smart Import</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <textarea class="form-control" rows="8" id="smartImportText" placeholder="Paste questions in any format..."></textarea>
-                    <div class="mt-3 d-flex justify-content-between">
-                        <button class="btn btn-outline-primary" onclick="parseSmartImport()"><i class="bi bi-gear"></i> Parse</button>
-                        <span id="parseStatus" class="text-muted"></span>
-                    </div>
-                    <div id="smartPreviewContainer" class="mt-4"></div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" onclick="importSelectedSmart()">Import Selected</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- AI Import Modal -->
-    <div class="modal fade" id="aiImportModal" tabindex="-1">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title"><i class="bi bi-cpu me-2"></i>AI-Powered Import</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <textarea class="form-control" rows="8" id="aiImportText" placeholder="Paste any text..."></textarea>
-                    <div class="mt-3 d-flex justify-content-between">
-                        <button class="btn btn-primary" onclick="analyzeWithAI()"><i class="bi bi-stars"></i> Analyze with AI</button>
-                        <span id="aiStatus" class="text-muted"></span>
-                    </div>
-                    <div id="aiPreviewContainer" class="mt-4"></div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-success" onclick="importAIParsed()" id="importAiBtn" disabled>Import All</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- PDF Upload Modal -->
-    <div class="modal fade" id="pdfUploadModal" tabindex="-1">
+    <div class="modal fade cosmic-modal" id="smartImportModal" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title"><i class="bi bi-file-pdf me-2"></i>Upload PDF for AI Analysis</h5>
+                    <h5 class="modal-title"><i class="fas fa-magic me-2"></i>Smart Import</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <input type="file" id="pdfFileInput" accept=".pdf" class="form-control mb-3">
-                    <div id="pdfUploadStatus" class="alert alert-info d-none"></div>
-                    <div class="d-flex justify-content-end">
-                        <button class="btn btn-primary" onclick="processPdfUpload()"><i class="bi bi-robot"></i> Analyze with AI</button>
+                    <textarea class="form-control cosmic-input" rows="8" id="smartImportText" placeholder="Paste questions in any format..."></textarea>
+                    <div class="mt-3">
+                        <button class="btn btn-cosmic-outline" onclick="parseSmartImport()"><i class="fas fa-cogs"></i> Parse</button>
+                        <span id="parseStatus" class="ms-3"></span>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="script.js"></script>
-</body>
-    </html>
+                
