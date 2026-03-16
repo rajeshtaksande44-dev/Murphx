@@ -185,17 +185,27 @@
         // ========== DATA ==========
         let tests = JSON.parse(localStorage.getItem('mockTestsPro')) || [];
         let currentTestId = null;
-        let userAnswers = [];           // array of { selected, review }
+        let currentTest = null;               // questions array for the active test
+        let userAnswers = [];                  // { selected: null/0-3, review: boolean }
         let currentQIndex = 0;
         let timerInterval = null;
-        let timeLeft = 0;
+        let timeLeft = 0;                       // seconds
 
-        // ========== UI NAV ==========
+        // Bootstrap modal instance
+        let importModal;
+        document.addEventListener('DOMContentLoaded', function() {
+            importModal = new bootstrap.Modal(document.getElementById('importModal'));
+            // Add one default question on create page
+            if (document.getElementById('questionsContainer').children.length === 0) addQuestion();
+        });
+
+        // ========== UI NAVIGATION ==========
         function showSection(sectionName) {
             document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
             document.getElementById(sectionName + '-section').style.display = 'block';
             if (sectionName === 'list') renderTestList();
             if (sectionName === 'create') resetCreateForm();
+            if (sectionName === 'take') { /* handled by takeTest */ }
         }
 
         // ========== CREATE TEST ==========
@@ -232,9 +242,6 @@
             `;
             container.appendChild(qDiv);
         }
-
-        // Add one default
-        addQuestion();
 
         function addSampleAIGenerated() {
             const sample = {
@@ -273,7 +280,7 @@
                 }
                 questions.push({ text, options: opts, correct: correctRaw, topic, explanation });
             });
-            if (!valid) { alert('Please fill all required fields.'); return; }
+            if (!valid) { alert('Please fill all required fields (question, options, correct letter).'); return; }
 
             const newTest = {
                 id: Date.now().toString(),
@@ -293,24 +300,20 @@
         }
 
         // ========== IMPORT ==========
-        let importModal;
-        document.addEventListener('DOMContentLoaded', ()=>{
-            importModal = new bootstrap.Modal(document.getElementById('importModal'));
-        });
         function showImportModal() { importModal.show(); }
         function processImport() {
             const text = document.getElementById('importText').value;
             if (!text.trim()) return;
-            const lines = text.split('\n').filter(l => l.trim());
+            const lines = text.split('\n').filter(l => l.trim() !== '');
             lines.forEach(line => {
                 const parts = line.split('|').map(s => s.trim());
                 if (parts.length >= 6) {
-                    const qText = parts[0];
-                    const opts = parts.slice(1,5).map(o => o.replace(/^[A-D]\)\s*/, '')); // remove A) prefix if present
-                    const correct = parts[5].toUpperCase().replace(/[^A-D]/g, '');
-                    const topic = parts[6] || '';
-                    const explanation = parts[7] || '';
-                    if (qText && opts.length===4 && correct) {
+                    let qText = parts[0];
+                    let opts = parts.slice(1,5).map(o => o.replace(/^[A-D]\)\s*/, '')); // remove "A) " prefix if present
+                    let correct = parts[5].toUpperCase().replace(/[^A-D]/g, '');
+                    let topic = parts[6] || '';
+                    let explanation = parts[7] || '';
+                    if (qText && opts.length === 4 && correct) {
                         addQuestion({ text: qText, options: opts, correct, topic, explanation });
                     }
                 }
@@ -336,56 +339,4 @@
                         </div>
                         <div>
                             <button class="btn btn-sm btn-primary me-2" onclick="takeTest('${test.id}')"><i class="bi bi-play-fill"></i> Start</button>
-                            <button class="btn btn-sm btn-outline-danger" onclick="deleteTest('${test.id}')"><i class="bi bi-trash3"></i></button>
-                        </div>
-                    </div>
-                `;
-            });
-            container.innerHTML = html;
-        }
-
-        function deleteTest(id) {
-            if (confirm('Delete this test?')) {
-                tests = tests.filter(t 
-<div class="d-flex align-items-center" id="userSection">
-  <span id="userName" class="text-white me-2 d-none"></span>
-  <button class="btn btn-sm btn-outline-light" onclick="handleAuth()" id="authBtn">Login</button>
-</div>
-                // Google Auth Provider
-const provider = new firebase.auth.GoogleAuthProvider();
-
-// Handle login/logout button
-window.handleAuth = function() {
-  const user = auth.currentUser;
-  if (user) {
-    auth.signOut();
-  } else {
-    auth.signInWithPopup(provider).catch(error => {
-      console.error("Login failed:", error);
-      alert("Login failed: " + error.message);
-    });
-  }
-};
-
-// Listen to auth state changes
-auth.onAuthStateChanged(user => {
-  const authBtn = document.getElementById('authBtn');
-  const userNameSpan = document.getElementById('userName');
-  if (user) {
-    // User is signed in
-    authBtn.textContent = 'Logout';
-    userNameSpan.textContent = user.displayName;
-    userNameSpan.classList.remove('d-none');
-    
-    // Load cloud tests for this user
-    loadUserTestsFromCloud();
-  } else {
-    // User is signed out
-    authBtn.textContent = 'Login';
-    userNameSpan.classList.add('d-none');
-    
-    // Show only local tests (from localStorage)
-    loadLocalTests();
-  }
-});
-                
+              
