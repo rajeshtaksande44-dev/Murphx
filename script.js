@@ -180,6 +180,21 @@ window.parseSmartImport = function() {
         // Explanation detection
         else if (current && /^(explanation|exp|explain|note)[\s:]*/i.test(line)) {
             current.explanation = line.replace(/^(explanation|exp|explain|note)[\s:]*/i, '').trim();
+            // Inside the question loop, after explanation
+if (pdfContextData.perQuestion && pdfContextData.perQuestion[i]) {
+    reviewHtml += `
+        <div class="mt-3 p-3 bg-warning bg-opacity-10 rounded-3 border-start border-warning border-4">
+            <i class="bi bi-book-fill text-warning me-2"></i>📘 NCERT Context: ${pdfContextData.perQuestion[i]}
+        </div>
+    `;
+} else {
+    // Fallback mock context for demonstration
+    reviewHtml += `
+        <div class="mt-3 p-3 bg-light rounded-3 border-start border-secondary border-4">
+            <i class="bi bi-info-circle me-2"></i>ℹ️ Upload a PDF to get AI-generated NCERT lines for each question.
+        </div>
+    `;
+}
         }
         // Otherwise append to current question text (multiline)
         else if (current) {
@@ -556,6 +571,20 @@ window.submitTest = function() {
     stopTimer();
     if (!currentTest) return;
 
+    // Load PDF context if available
+    const storedContext = localStorage.getItem('pdfContext');
+    if (storedContext) {
+        pdfContextData = JSON.parse(storedContext);
+    } else {
+        pdfContextData = { perQuestion: {} };
+    }
+
+    // ... rest of your submitTest code
+};
+window.submitTest = function() {
+    stopTimer();
+    if (!currentTest) return;
+
     let correctCount = 0, incorrectCount = 0, unanswered = 0;
     const topicStats = {};
     currentTest.questions.forEach((q, i) => {
@@ -686,4 +715,74 @@ window.smartImport = function() {
         }
     });
     alert(`Added ${added} questions. ${questions.length - added} skipped (incomplete).`);
+};
+// ========== PDF UPLOAD & AI ANALYSIS ==========
+let pdfContextData = {}; // Stores AI-generated context per question index (after test creation)
+
+window.showPdfUploadModal = function() {
+    const modal = new bootstrap.Modal(document.getElementById('pdfUploadModal'));
+    modal.show();
+};
+
+window.processPdfUpload = function() {
+    const fileInput = document.getElementById('pdfFileInput');
+    const statusDiv = document.getElementById('pdfUploadStatus');
+    statusDiv.classList.remove('d-none');
+    
+    if (!fileInput.files.length) {
+        statusDiv.innerHTML = '<i class="bi bi-exclamation-triangle"></i> Please select a PDF file.';
+        return;
+    }
+    
+    const file = fileInput.files[0];
+    statusDiv.innerHTML = '<i class="bi bi-hourglass-split"></i> Reading PDF...';
+    
+    // Use PDF.js to extract text (first few pages as mock)
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const typedarray = new Uint8Array(e.target.result);
+        
+        pdfjsLib.getDocument(typedarray).promise.then(function(pdf) {
+            let fullText = '';
+            const numPages = Math.min(pdf.numPages, 5); // Limit to first 5 pages for demo
+            const pagePromises = [];
+            
+            for (let i = 1; i <= numPages; i++) {
+                pagePromises.push(pdf.getPage(i).then(page => 
+                    page.getTextContent().then(textContent => 
+                        textContent.items.map(item => item.str).join(' ')
+                    )
+                ));
+            }
+            
+            Promise.all(pagePromises).then(pagesText => {
+                fullText = pagesText.join('\n');
+                statusDiv.innerHTML = '<i class="bi bi-robot"></i> Analyzing with AI... (mock)';
+                
+                // Simulate AI analysis: generate mock context based on extracted text
+                setTimeout(() => {
+                    // In a real implementation, you'd send fullText to an AI API (e.g., OpenAI)
+                    // and receive context per question. Here we mock it.
+                    const mockContext = {
+                        general: "Based on the uploaded PDF, here are key lines:\n" + fullText.substring(0, 200) + "...",
+                        perQuestion: {} // will be filled when test is taken
+                    };
+                    
+                    // Store context globally (could be associated with test later)
+                    localStorage.setItem('pdfContext', JSON.stringify(mockContext));
+                    
+                    statusDiv.innerHTML = '<i class="bi bi-check-circle"></i> Analysis complete! Context will appear in review.';
+                    
+                    // Close modal after a delay
+                    setTimeout(() => {
+                        bootstrap.Modal.getInstance(document.getElementById('pdfUploadModal')).hide();
+                        statusDiv.classList.add('d-none');
+                    }, 2000);
+                }, 1500);
+            });
+        }).catch(error => {
+            statusDiv.innerHTML = '<i class="bi bi-exclamation-triangle"></i> Error reading PDF: ' + error;
+        });
+    };
+    reader.readAsArrayBuffer(file);
 };
