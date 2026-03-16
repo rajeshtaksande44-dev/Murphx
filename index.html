@@ -89,7 +89,18 @@
                 <div class="card-body" id="testListContainer">Loading...</div>
             </div>
         </div>
-
+<div class="alert alert-secondary d-flex align-items-center p-3 mb-4" style="border-radius: 20px;">
+    <i class="bi bi-file-text fs-4 me-3"></i>
+    <div class="flex-grow-1">
+        <span class="fw-semibold">Import questions from text</span>
+        <p class="mb-0 small text-secondary">Paste formatted, smart import, or upload PDF for AI analysis.</p>
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
+        <button class="btn btn-sm btn-outline-primary" onclick="showImportModal()"><i class="bi bi-upload"></i> Import</button>
+        <button class="btn btn-sm btn-outline-success" onclick="smartImport()"><i class="bi bi-stars"></i> Smart Import</button>
+        <button class="btn btn-sm btn-outline-info" onclick="showPdfUploadModal()"><i class="bi bi-file-pdf"></i> PDF Upload</button>
+    </div>
+</div>
         <!-- Take Test Section -->
         <div id="take-section" class="section" style="display: none;">
             <div class="card">
@@ -164,6 +175,7 @@
     <script src="script.js"></script>
 </body>
 </html>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
 <!-- Smart Import Modal -->
 <div class="modal fade" id="smartImportModal" tabindex="-1">
     <div class="modal-dialog modal-xl">
@@ -197,6 +209,25 @@ Ans: b"></textarea>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 <button type="button" class="btn btn-primary" onclick="importSelectedSmart()">Import Selected</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- PDF Upload Modal -->
+<div class="modal fade" id="pdfUploadModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="border-radius: 28px;">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-file-pdf me-2"></i>Upload PDF for AI Analysis</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="small text-secondary">Upload a chapter PDF (NCERT/reference). Our AI will extract context for each question to show relevant lines during review.</p>
+                <input type="file" id="pdfFileInput" accept=".pdf" class="form-control mb-3">
+                <div id="pdfUploadStatus" class="alert alert-info d-none"></div>
+                <div class="d-flex justify-content-end">
+                    <button class="btn btn-primary" onclick="processPdfUpload()"><i class="bi bi-robot"></i> Analyze with AI</button>
+                </div>
             </div>
         </div>
     </div>
