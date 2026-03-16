@@ -136,7 +136,19 @@ we<!DOCTYPE html>
                 </div>
             </div>
         </div>
-
+<div class="alert alert-secondary import-alert p-3 mb-4" style="border-radius: 20px;">
+    <i class="bi bi-file-text fs-4 me-3"></i>
+    <div class="alert-text flex-grow-1">
+        <span class="fw-semibold">Import questions from text</span>
+        <p class="mb-0 small text-secondary">Paste formatted: <code>Question? | A) opt1 | B) opt2 | C) opt3 | D) opt4 | CorrectLetter | Topic | Explanation</code></p>
+    </div>
+    <div class="button-group">
+        <button class="btn btn-sm btn-outline-primary" onclick="showImportModal()"><i class="bi bi-upload"></i> Import</button>
+        <button class="btn btn-sm btn-outline-success" onclick="smartImport()"><i class="bi bi-stars"></i> Smart</button>
+        <button class="btn btn-sm btn-outline-info" onclick="showPdfUploadModal()"><i class="bi bi-file-pdf"></i> PDF</button>
+        <button class="btn btn-sm btn-outline-warning" onclick="showAIImport()"><i class="bi bi-cpu"></i> AI</button>
+    </div>
+</div>
         <!-- Result Section -->
         <div id="result-section" class="section" style="display: none;">
             <div class="card">
