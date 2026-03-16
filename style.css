@@ -419,3 +419,40 @@ body::before {
     .palette-btn { width: 40px; height: 40px; font-size: 1rem; }
     .card-header { font-size: 1.1rem; padding: 1.2rem; }
     }
+/* ===== FOCUS ZONE ===== */
+.breath-circle {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: rgba(142, 182, 155, 0.2);
+    border: 3px solid #8EB69B;
+    margin: 0 auto;
+    transition: transform 4s ease-in-out;
+}
+.breath-circle.inhale {
+    transform: scale(1.5);
+    border-color: #66BB6A;
+}
+.breath-circle.exhale {
+    transform: scale(1);
+    border-color: #5C6BC0;
+}
+.mantra-box {
+    min-height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-left: 4px solid #FFD54F;
+}
+.btn-outline-purple {
+    border: 1px solid #AB47BC;
+    color: #AB47BC;
+}
+.btn-outline-purple:hover {
+    background: #AB47BC;
+    color: white;
+}
+.focus-mode.active {
+    box-shadow: 0 0 15px currentColor;
+    transform: scale(1.05);
+}
