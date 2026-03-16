@@ -35,12 +35,15 @@
                 <div class="card-body">
                     <!-- Quick import area -->
                     <div class="alert alert-secondary d-flex align-items-center p-3 mb-4" style="border-radius: 20px;">
-                        <i class="bi bi-file-text fs-4 me-3"></i>
-                        <div class="flex-grow-1">
-                            <span class="fw-semibold">Import questions from text</span>
-                            <p class="mb-0 small text-secondary">Paste formatted: <code>Question? | A) opt1 | B) opt2 | C) opt3 | D) opt4 | CorrectLetter | Topic | Explanation</code></p>
-                        </div>
-                        <button class="btn btn-sm btn-outline-primary" onclick="showImportModal()"><i class="bi bi-upload"></i> Import</button>
+    <i class="bi bi-file-text fs-4 me-3"></i>
+    <div class="flex-grow-1">
+        <span class="fw-semibold">Import questions from text</span>
+        <p class="mb-0 small text-secondary">Paste formatted: <code>Question? | A) opt1 | B) opt2 | C) opt3 | D) opt4 | CorrectLetter | Topic | Explanation</code></p>
+    </div>
+    <div class="d-flex gap-2">
+        <button class="btn btn-sm btn-outline-primary" onclick="showImportModal()"><i class="bi bi-upload"></i> Import</button>
+        <button class="btn btn-sm btn-outline-success" onclick="smartImport()"><i class="bi bi-stars"></i> Smart Import</button>
+    </div>
                     </div>
 
                     <form id="testForm">
