@@ -513,18 +513,58 @@
         }
 
         // Daily countdown (mock)
-        function updateCountdown() {
-            let now = new Date();
-            let midnight = new Date(now);
-            midnight.setHours(24,0,0,0);
-            let diff = midnight - now;
-            if (diff <= 0) { document.getElementById('dailyCountdown').innerText = '00:00:00'; return; }
-            let h = Math.floor(diff/3600000);
-            let m = Math.floor((diff%3600000)/60000);
-            let s = Math.floor((diff%60000)/1000);
-            document.getElementById('dailyCountdown').innerText = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-        }
-        setInterval(updateCountdown, 1000);
+        // ========== SMART AI MENTOR FOR NEET/JEE ==========
+const knowledgeBase = {
+    // Physics
+    newton: "**Newton's Laws of Motion:**\n\n• **First Law (Law of Inertia):** An object at rest stays at rest, and an object in motion stays in motion with the same speed and in the same direction unless acted upon by an unbalanced force.\n• **Second Law:** F = ma (Force = mass × acceleration). This is the fundamental equation of classical mechanics.\n• **Third Law:** For every action, there is an equal and opposite reaction.\n\n**Example:** When you push a wall, the wall pushes back with equal force.",
+    
+    force: "**Force** is any interaction that, when unopposed, will change the motion of an object. It is a vector quantity (has both magnitude and direction). SI unit: Newton (N).\n\n**Formula:** F = ma (from Newton's second law).\n\n**Types of forces:** Gravitational, electromagnetic, nuclear, frictional, tension, normal, etc.",
+    
+    acceleration: "**Acceleration** is the rate of change of velocity per unit time. It is a vector quantity. SI unit: m/s².\n\n**Formula:** a = (v - u)/t, where v = final velocity, u = initial velocity, t = time.\n\n**In gravitation:** Near Earth's surface, acceleration due to gravity g = 9.8 m/s².",
+    
+    gravity: "**Gravity** is the force of attraction between any two masses. Newton's law of universal gravitation: F = G·m₁·m₂/r², where G = 6.67×10⁻¹¹ N·m²/kg².\n\n**Acceleration due to gravity** g = GM/R² ≈ 9.8 m/s² on Earth.\n\n**Variation:** g decreases with height and depth; maximum at poles, minimum at equator.",
+    
+    electrostatics: "**Electrostatics** deals with electric charges at rest.\n\n• **Coulomb's Law:** F = k·q₁·q₂/r², where k = 9×10⁹ N·m²/C².\n• **Electric field** E = F/q = kQ/r².\n• **Potential** V = kQ/r.\n• **Capacitance** C = Q/V. For parallel plate capacitor: C = ε₀A/d.\n\n**Key point:** Like charges repel, unlike attract.",
+    
+    thermodynamics: "**Thermodynamics** studies heat, work, and energy.\n\n• **Zeroth Law:** Thermal equilibrium.\n• **First Law:** ΔU = Q - W (change in internal energy = heat added - work done).\n• **Second Law:** Entropy of an isolated system always increases.\n• **Third Law:** Entropy approaches zero as temperature approaches absolute zero.\n\n**Important processes:** Isothermal, adiabatic, isobaric, isochoric.",
+    
+    // Chemistry
+    mole: "**Mole Concept**\n\n• 1 mole = 6.022 × 10²³ particles (Avogadro's number).\n• Molar mass = mass of 1 mole in grams.\n• **Formulas:**\n  - Number of moles = given mass / molar mass\n  - Number of moles = (number of particles) / N_A\n  - For gases: PV = nRT (ideal gas equation)\n\n**Example:** 18g of water = 1 mole = 6.022×10²³ molecules.",
+    
+    periodic: "**Periodic Table**\n\n• Arranged by increasing atomic number.\n• **Groups (columns):** 1-18, elements with similar valence electron configuration.\n• **Periods (rows):** 7 periods, elements in same period have same number of shells.\n• **Trends:**\n  - Atomic radius decreases left to right, increases top to bottom.\n  - Ionization energy increases left to right, decreases top to bottom.\n  - Electronegativity (highest: Fluorine).",
+    
+    organic: "**Organic Chemistry** – Study of carbon compounds.\n\n• **Functional groups:** -OH (alcohol), -COOH (carboxylic acid), -CHO (aldehyde), -CO- (ketone), -NH₂ (amine).\n• **Reactions:** Substitution, addition, elimination, rearrangement.\n• **Important:** Hydrocarbons (alkanes, alkenes, alkynes), aromatic compounds (benzene).\n\n**IUPAC naming:** Find longest chain, number carbons, identify substituents.",
+    
+    // Biology
+    mitochondria: "**Mitochondria** – The powerhouse of the cell.\n\n• **Structure:** Double membrane, inner membrane folded into cristae, matrix inside.\n• **Function:** Site of aerobic respiration; produces ATP (energy currency) via Krebs cycle and oxidative phosphorylation.\n• **DNA:** Has its own circular DNA and ribosomes (semi-autonomous).\n• **Found in:** Eukaryotic cells (plants, animals, fungi).",
+    
+    photosynthesis: "**Photosynthesis** – Process by which plants convert light energy into chemical energy.\n\n• **Equation:** 6CO₂ + 6H₂O → C₆H₁₂O₆ + 6O₂ (in presence of sunlight and chlorophyll).\n• **Stages:**\n  1. Light reactions (in thylakoids): Produce ATP and NADPH.\n  2. Calvin cycle (in stroma): Fix CO₂ into glucose.\n• **Factors affecting:** Light intensity, CO₂ concentration, temperature, water.",
+    
+    meiosis: "**Meiosis** – Cell division that produces gametes (sperm and egg) with half the chromosome number.\n\n• **Purpose:** Genetic diversity through crossing over and independent assortment.\n• **Stages:** Meiosis I (reductional) and Meiosis II (equational).\n  - Prophase I: Crossing over occurs.\n  - Metaphase I: Homologous pairs align.\n  - Anaphase I: Homologous separate.\n  - Telophase I: Two haploid cells form.\n• **Result:** 4 genetically unique haploid cells.\n\n**Significance:** Essential for sexual reproduction and evolution.",
+    
+    // General
+    default: "That's a great question! I'm here to help. Could you please provide more details or rephrase? I can explain concepts in Physics, Chemistry, and Biology for NEET/JEE preparation."
+};
+
+function getAIReply(question) {
+    const q = question.toLowerCase().trim();
+    
+    // Check for exact matches or keywords
+    if (q.includes('newton') || q.includes('force')) return knowledgeBase.newton;
+    if (q.includes('acceleration')) return knowledgeBase.acceleration;
+    if (q.includes('gravity') || q.includes('gravitation')) return knowledgeBase.gravity;
+    if (q.includes('electrostatics') || q.includes('coulomb')) return knowledgeBase.electrostatics;
+    if (q.includes('thermodynamics') || q.includes('heat') || q.includes('entropy')) return knowledgeBase.thermodynamics;
+    if (q.includes('mole') || q.includes('avogadro')) return knowledgeBase.mole;
+    if (q.includes('periodic') || q.includes('table')) return knowledgeBase.periodic;
+    if (q.includes('organic') || q.includes('functional group')) return knowledgeBase.organic;
+    if (q.includes('mitochondria') || q.includes('powerhouse')) return knowledgeBase.mitochondria;
+    if (q.includes('photosynthesis')) return knowledgeBase.photosynthesis;
+    if (q.includes('meiosis')) return knowledgeBase.meiosis;
+    
+    // If no keywords match, return a helpful default
+    return knowledgeBase.default;
+}
 
         // AI Mentor chat
         function sendMessage() {
