@@ -1,636 +1,958 @@
-/* ===============================
-   MURPHX V2 - FUNCTIONAL STATIC APP
-   Premium NEET Prep Frontend Engine
-   =============================== */
+// ===============================
+// MURPHX PREP V2 - FINAL SCRIPT
+// Professional Glass Rain App Logic
+// ===============================
 
 document.addEventListener("DOMContentLoaded", () => {
-  /* ===============================
-     DOM HELPERS
-     =============================== */
-  const $ = (selector, scope = document) => scope.querySelector(selector);
-  const $$ = (selector, scope = document) => Array.from(scope.querySelectorAll(selector));
-
-  /* ===============================
-     STORAGE KEYS
-     =============================== */
-  const STORAGE_KEYS = {
-    stats: "murphx_stats_v2",
-    history: "murphx_history_v2",
-    settings: "murphx_settings_v2",
-    streak: "murphx_streak_v2",
-    chat: "murphx_chat_v2",
-  };
-
-  /* ===============================
-     APP STATE
-     =============================== */
+  // -------------------------------
+  // STATE
+  // -------------------------------
   const state = {
     currentSection: "dashboard",
-    currentTest: null,
-    currentQuestionIndex: 0,
-    userAnswers: [],
+    streak: 1,
+    testsDone: 0,
+    averageScore: 0,
+    accuracy: 0,
+    darkMode: true,
     timerInterval: null,
-    remainingSeconds: 0,
-    breathInterval: null,
-    breathPhase: "inhale",
-    breathRunning: false,
-    stats: {
-      testsTaken: 0,
-      questionsSolved: 0,
-      avgAccuracy: 0,
-      studyStreak: 1,
-      totalStudyMinutes: 0,
-      bestScore: 0,
-    },
-    history: [],
-    chatMessages: [],
+    timerRunning: false,
+    timerSeconds: 300,
+    dailyChallengeStarted: false,
+    quotes: [
+      "The rain teaches patience. The storm teaches power.",
+      "A calm mind cuts deeper than chaos.",
+      "Every master was once a beginner.",
+      "Discipline is your sharpest weapon.",
+      "Small progress every day becomes greatness.",
+      "You are not here to be average.",
+      "Focus is the art of becoming unstoppable."
+    ],
+    quickTests: [],
+    customTests: [],
+    doubts: [
+      {
+        id: 1,
+        subject: "Physics",
+        topic: "Electrostatics",
+        question: "Why is electric field zero inside a conductor in electrostatic equilibrium?",
+        status: "Answered"
+      },
+      {
+        id: 2,
+        subject: "Chemistry",
+        topic: "Chemical Bonding",
+        question: "How to identify bond order quickly in MOT questions?",
+        status: "Pending"
+      }
+    ],
+    subjects: [
+      {
+        name: "Physics",
+        progress: 68,
+        completed: 12,
+        total: 18,
+        topics: [
+          "Units & Dimensions",
+          "Kinematics",
+          "Laws of Motion",
+          "Work Energy Power",
+          "Rotational Motion",
+          "Gravitation",
+          "Thermodynamics",
+          "SHM",
+          "Waves",
+          "Electrostatics",
+          "Current Electricity",
+          "Magnetism",
+          "EMI",
+          "Optics",
+          "Modern Physics"
+        ]
+      },
+      {
+        name: "Chemistry",
+        progress: 64,
+        completed: 9,
+        total: 14,
+        topics: [
+          "Mole Concept",
+          "Atomic Structure",
+          "Periodic Table",
+          "Chemical Bonding",
+          "Thermodynamics",
+          "Equilibrium",
+          "Redox",
+          "Organic Basics",
+          "Hydrocarbons",
+          "Biomolecules"
+        ]
+      },
+      {
+        name: "Biology",
+        progress: 70,
+        completed: 15,
+        total: 22,
+        topics: [
+          "Cell",
+          "Biomolecules",
+          "Cell Cycle",
+          "Plant Kingdom",
+          "Animal Kingdom",
+          "Morphology",
+          "Anatomy",
+          "Genetics",
+          "Evolution",
+          "Human Physiology",
+          "Ecology"
+        ]
+      }
+    ],
+    notes: [],
+    mentorMessages: [
+      {
+        role: "assistant",
+        text: "I am your Murphx AI mentor. Ask me anything about NEET prep, discipline, focus, strategy, or concepts."
+      }
+    ],
+    searchIndex: []
   };
 
-  /* ===============================
-     DEFAULT DATA
-     =============================== */
-  const subjectProgress = {
-    Physics: 42,
-    Chemistry: 57,
-    Botany: 61,
-    Zoology: 54,
-  };
+  // -------------------------------
+  // HELPERS
+  // -------------------------------
+  const $ = (selector) => document.querySelector(selector);
+  const $$ = (selector) => document.querySelectorAll(selector);
 
-  const chapterBank = {
-    Physics: [
-      "Units & Dimensions",
-      "Motion in 1D",
-      "Laws of Motion",
-      "Work Energy Power",
-      "Gravitation",
-      "Thermodynamics",
-      "Electrostatics",
-      "Current Electricity",
-      "Magnetism",
-      "Ray Optics",
-      "Modern Physics",
-    ],
-    Chemistry: [
-      "Mole Concept",
-      "Atomic Structure",
-      "Chemical Bonding",
-      "Thermodynamics",
-      "Equilibrium",
-      "Redox Reactions",
-      "Electrochemistry",
-      "Organic Basics",
-      "Hydrocarbons",
-      "Biomolecules",
-    ],
-    Botany: [
-      "Cell: The Unit of Life",
-      "Biological Classification",
-      "Plant Kingdom",
-      "Morphology of Flowering Plants",
-      "Anatomy of Flowering Plants",
-      "Photosynthesis",
-      "Respiration in Plants",
-      "Plant Growth & Development",
-      "Genetics",
-    ],
-    Zoology: [
-      "Animal Kingdom",
-      "Structural Organisation in Animals",
-      "Biomolecules",
-      "Digestion & Absorption",
-      "Breathing & Exchange of Gases",
-      "Body Fluids & Circulation",
-      "Neural Control",
-      "Chemical Coordination",
-      "Human Reproduction",
-      "Evolution",
-    ],
-  };
-
-  /* ===============================
-     QUESTION BANK
-     =============================== */
-  const questionBank = {
-    Physics: [
-      {
-        question: "The dimensional formula of pressure is:",
-        options: ["[MLT⁻²]", "[ML⁻¹T⁻²]", "[ML²T⁻²]", "[M⁰LT⁻²]"],
-        answer: 1,
-        explanation: "Pressure = Force / Area = [MLT⁻²] / [L²] = [ML⁻¹T⁻²]",
-        difficulty: "Easy",
-      },
-      {
-        question: "A body moving with uniform acceleration has velocity-time graph:",
-        options: ["Parabola", "Straight line", "Hyperbola", "Circle"],
-        answer: 1,
-        explanation: "For uniform acceleration, v = u + at, so velocity changes linearly with time.",
-        difficulty: "Easy",
-      },
-      {
-        question: "The work done in uniform circular motion is:",
-        options: ["Maximum", "Minimum", "Zero", "Infinite"],
-        answer: 2,
-        explanation: "Force is centripetal and perpendicular to displacement, so work done is zero.",
-        difficulty: "Medium",
-      },
-      {
-        question: "Escape velocity from Earth is approximately:",
-        options: ["7.9 km/s", "11.2 km/s", "9.8 km/s", "15 km/s"],
-        answer: 1,
-        explanation: "Standard escape velocity of Earth ≈ 11.2 km/s.",
-        difficulty: "Medium",
-      },
-      {
-        question: "Equivalent resistance in series combination is:",
-        options: ["Product of resistances", "Reciprocal sum", "Sum of resistances", "Always zero"],
-        answer: 2,
-        explanation: "For series: Req = R1 + R2 + R3 ...",
-        difficulty: "Easy",
-      },
-      {
-        question: "Power of a lens is measured in:",
-        options: ["Watt", "Tesla", "Dioptre", "Henry"],
-        answer: 2,
-        explanation: "Lens power = 1/f (in meters), unit = Dioptre.",
-        difficulty: "Easy",
-      },
-    ],
-    Chemistry: [
-      {
-        question: "1 mole of any gas at STP occupies:",
-        options: ["11.2 L", "22.4 L", "44.8 L", "1 L"],
-        answer: 1,
-        explanation: "At STP, 1 mole gas occupies 22.4 L.",
-        difficulty: "Easy",
-      },
-      {
-        question: "Hybridization of carbon in methane is:",
-        options: ["sp", "sp²", "sp³", "dsp²"],
-        answer: 2,
-        explanation: "Methane has tetrahedral geometry, so carbon is sp³ hybridized.",
-        difficulty: "Easy",
-      },
-      {
-        question: "Oxidation number of Mn in KMnO₄ is:",
-        options: ["+4", "+6", "+7", "+2"],
-        answer: 2,
-        explanation: "K = +1, O = -2 × 4 = -8, so Mn = +7.",
-        difficulty: "Medium",
-      },
-      {
-        question: "pH of a neutral solution at 25°C is:",
-        options: ["0", "14", "7", "1"],
-        answer: 2,
-        explanation: "At 25°C, neutral solution has pH = 7.",
-        difficulty: "Easy",
-      },
-      {
-        question: "Anode is the site of:",
-        options: ["Reduction", "Oxidation", "Neutralization", "Hydrolysis"],
-        answer: 1,
-        explanation: "Oxidation always occurs at anode.",
-        difficulty: "Medium",
-      },
-      {
-        question: "Benzene undergoes mainly:",
-        options: ["Addition", "Substitution", "Elimination", "Oxidation only"],
-        answer: 1,
-        explanation: "Benzene prefers electrophilic substitution to preserve aromaticity.",
-        difficulty: "Medium",
-      },
-    ],
-    Botany: [
-      {
-        question: "The powerhouse of the cell is:",
-        options: ["Golgi body", "Lysosome", "Mitochondria", "Ribosome"],
-        answer: 2,
-        explanation: "Mitochondria produce ATP, hence called powerhouse of the cell.",
-        difficulty: "Easy",
-      },
-      {
-        question: "Middle lamella is mainly made of:",
-        options: ["Cellulose", "Pectin", "Lignin", "Suberin"],
-        answer: 1,
-        explanation: "Middle lamella is rich in calcium pectate/pectin.",
-        difficulty: "Medium",
-      },
-      {
-        question: "Grana are present in:",
-        options: ["Mitochondria", "Golgi apparatus", "Chloroplast", "Nucleus"],
-        answer: 2,
-        explanation: "Grana are stacks of thylakoids in chloroplast.",
-        difficulty: "Easy",
-      },
-      {
-        question: "The site of protein synthesis is:",
-        options: ["Ribosome", "Vacuole", "Centrosome", "Peroxisome"],
-        answer: 0,
-        explanation: "Ribosomes are the site of protein synthesis.",
-        difficulty: "Easy",
-      },
-      {
-        question: "NCERT states that prokaryotic cells generally lack:",
-        options: ["Cell wall", "Ribosomes", "Membrane-bound organelles", "Plasma membrane"],
-        answer: 2,
-        explanation: "Prokaryotes lack membrane-bound organelles like mitochondria, ER, Golgi.",
-        difficulty: "Medium",
-      },
-      {
-        question: "The fluid mosaic model was proposed by:",
-        options: ["Watson and Crick", "Singer and Nicolson", "Darwin and Wallace", "Mendel and Morgan"],
-        answer: 1,
-        explanation: "Fluid mosaic model was proposed by Singer and Nicolson (1972).",
-        difficulty: "Medium",
-      },
-    ],
-    Zoology: [
-      {
-        question: "The functional unit of kidney is:",
-        options: ["Neuron", "Nephron", "Alveolus", "Sarcomere"],
-        answer: 1,
-        explanation: "Nephron is the structural and functional unit of kidney.",
-        difficulty: "Easy",
-      },
-      {
-        question: "Bile is produced by:",
-        options: ["Pancreas", "Liver", "Gall bladder", "Duodenum"],
-        answer: 1,
-        explanation: "Bile is produced by liver and stored in gall bladder.",
-        difficulty: "Easy",
-      },
-      {
-        question: "The pacemaker of human heart is:",
-        options: ["AV node", "SA node", "Bundle of His", "Purkinje fibers"],
-        answer: 1,
-        explanation: "SA node initiates heartbeat and acts as pacemaker.",
-        difficulty: "Easy",
-      },
-      {
-        question: "The hormone insulin is secreted by:",
-        options: ["Alpha cells", "Beta cells", "Delta cells", "Acinar cells"],
-        answer: 1,
-        explanation: "Insulin is secreted by beta cells of islets of Langerhans.",
-        difficulty: "Easy",
-      },
-      {
-        question: "The site of fertilization in human female is usually:",
-        options: ["Ovary", "Uterus", "Ampullary-isthmic junction", "Cervix"],
-        answer: 2,
-        explanation: "NCERT: fertilization usually occurs at ampullary-isthmic junction.",
-        difficulty: "Medium",
-      },
-      {
-        question: "Myelinated nerve fibres are found mainly in:",
-        options: ["Grey matter of brain", "White matter of brain", "Liver", "Blood plasma"],
-        answer: 1,
-        explanation: "White matter mainly contains myelinated fibres.",
-        difficulty: "Medium",
-      },
-    ],
-  };
-
-  /* ===============================
-     DOM REFERENCES
-     =============================== */
-  const sections = $$(".section");
-  const navButtons = $$(".nav-btn");
-  const quickNavButtons = $$("[data-go-section]");
-  const modal = $("#testModal");
-  const openTestModalBtns = $$("[data-open-test-modal]");
-  const closeModalBtns = $$("[data-close-modal]");
-
-  // Dashboard stats
-  const testsTakenEls = $$("[data-stat='testsTaken']");
-  const questionsSolvedEls = $$("[data-stat='questionsSolved']");
-  const avgAccuracyEls = $$("[data-stat='avgAccuracy']");
-  const streakEls = $$("[data-stat='studyStreak']");
-  const bestScoreEls = $$("[data-stat='bestScore']");
-
-  // Lists
-  const progressList = $("#progressList");
-  const historyList = $("#historyList");
-  const profileHistoryList = $("#profileHistoryList");
-
-  // Test Builder
-  const subjectSelect = $("#testSubject");
-  const chapterSelect = $("#testChapter");
-  const difficultyChips = $$(".difficulty-chip");
-  const questionCountChips = $$(".question-count-chip");
-  const testTimeChips = $$(".test-time-chip");
-  const generateTestBtn = $("#generateTestBtn");
-
-  // Quiz
-  const quizShell = $("#quizShell");
-  const resultCard = $("#resultCard");
-  const quizTitle = $("#quizTitle");
-  const quizTimer = $("#quizTimer");
-  const quizProgressText = $("#quizProgressText");
-  const quizProgressFill = $("#quizProgressFill");
-  const questionText = $("#questionText");
-  const questionDifficulty = $("#questionDifficulty");
-  const optionsList = $("#optionsList");
-  const prevQuestionBtn = $("#prevQuestionBtn");
-  const nextQuestionBtn = $("#nextQuestionBtn");
-  const submitTestBtn = $("#submitTestBtn");
-
-  // Result
-  const resultScore = $("#resultScore");
-  const resultCorrect = $("#resultCorrect");
-  const resultWrong = $("#resultWrong");
-  const resultAccuracy = $("#resultAccuracy");
-  const resultTime = $("#resultTime");
-  const reviewAnswersBtn = $("#reviewAnswersBtn");
-  const retakeTestBtn = $("#retakeTestBtn");
-
-  // Doubt Solver
-  const doubtInput = $("#doubtInput");
-  const solveDoubtBtn = $("#solveDoubtBtn");
-  const doubtResponse = $("#doubtResponse");
-  const doubtResponseBody = $("#doubtResponseBody");
-
-  // AI Mentor
-  const chatWindow = $("#chatWindow");
-  const chatInput = $("#chatInput");
-  const sendChatBtn = $("#sendChatBtn");
-
-  // Breath
-  const breathOrb = $("#breathOrb");
-  const breathLabel = $("#breathLabel");
-  const breathSub = $("#breathSub");
-  const startBreathBtn = $("#startBreathBtn");
-  const stopBreathBtn = $("#stopBreathBtn");
-
-  // Toast
-  const toastWrap = $("#toastWrap");
-
-  /* ===============================
-     UTILITIES
-     =============================== */
-  function safeJSONParse(value, fallback) {
-    try {
-      return JSON.parse(value) ?? fallback;
-    } catch {
-      return fallback;
-    }
-  }
-
-  function saveToStorage() {
-    localStorage.setItem(STORAGE_KEYS.stats, JSON.stringify(state.stats));
-    localStorage.setItem(STORAGE_KEYS.history, JSON.stringify(state.history));
-    localStorage.setItem(STORAGE_KEYS.chat, JSON.stringify(state.chatMessages));
-  }
-
-  function loadFromStorage() {
-    state.stats = safeJSONParse(localStorage.getItem(STORAGE_KEYS.stats), state.stats);
-    state.history = safeJSONParse(localStorage.getItem(STORAGE_KEYS.history), []);
-    state.chatMessages = safeJSONParse(localStorage.getItem(STORAGE_KEYS.chat), []);
-  }
-
-  function showToast(message) {
-    if (!toastWrap) return;
-    const toast = document.createElement("div");
-    toast.className = "toast";
-    toast.textContent = message;
-    toastWrap.appendChild(toast);
-
-    setTimeout(() => {
-      toast.style.opacity = "0";
-      toast.style.transform = "translateY(-8px)";
-      toast.style.transition = "all 0.25s ease";
-      setTimeout(() => toast.remove(), 250);
-    }, 2200);
-  }
-
-  function formatTime(seconds) {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
+  const formatTime = (totalSeconds) => {
+    const mins = Math.floor(totalSeconds / 60);
+    const secs = totalSeconds % 60;
     return `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
-  }
+  };
 
-  function shuffleArray(arr) {
-    const copy = [...arr];
-    for (let i = copy.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [copy[i], copy[j]] = [copy[j], copy[i]];
+  const showToast = (message) => {
+    const toast = $("#toast");
+    if (!toast) return;
+    toast.textContent = message;
+    toast.classList.add("show");
+    setTimeout(() => {
+      toast.classList.remove("show");
+    }, 2500);
+  };
+
+  const randomFrom = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+  const saveState = () => {
+    localStorage.setItem("murphx_prep_state_v2", JSON.stringify({
+      streak: state.streak,
+      testsDone: state.testsDone,
+      averageScore: state.averageScore,
+      accuracy: state.accuracy,
+      darkMode: state.darkMode,
+      quickTests: state.quickTests,
+      customTests: state.customTests,
+      notes: state.notes,
+      doubts: state.doubts,
+      mentorMessages: state.mentorMessages,
+      subjects: state.subjects
+    }));
+  };
+
+  const loadState = () => {
+    const raw = localStorage.getItem("murphx_prep_state_v2");
+    if (!raw) return;
+    try {
+      const data = JSON.parse(raw);
+      state.streak = data.streak ?? state.streak;
+      state.testsDone = data.testsDone ?? state.testsDone;
+      state.averageScore = data.averageScore ?? state.averageScore;
+      state.accuracy = data.accuracy ?? state.accuracy;
+      state.darkMode = data.darkMode ?? state.darkMode;
+      state.quickTests = data.quickTests ?? state.quickTests;
+      state.customTests = data.customTests ?? state.customTests;
+      state.notes = data.notes ?? state.notes;
+      state.doubts = data.doubts ?? state.doubts;
+      state.mentorMessages = data.mentorMessages ?? state.mentorMessages;
+      state.subjects = data.subjects ?? state.subjects;
+    } catch (err) {
+      console.warn("Failed to load saved state", err);
     }
-    return copy;
-  }
+  };
 
-  function getSelectedChipValue(chips) {
-    const active = chips.find((chip) => chip.classList.contains("active"));
-    return active ? active.dataset.value : null;
-  }
-
-  function setChipGroup(chips, clickedChip) {
-    chips.forEach((chip) => chip.classList.remove("active"));
-    clickedChip.classList.add("active");
-  }
-
-  /* ===============================
-     NAVIGATION
-     =============================== */
-  function switchSection(sectionId) {
-    state.currentSection = sectionId;
-
-    sections.forEach((section) => {
-      section.classList.toggle("active", section.id === sectionId);
+  const buildSearchIndex = () => {
+    const index = [];
+    state.subjects.forEach(subject => {
+      index.push({
+        type: "subject",
+        label: subject.name,
+        section: "tests"
+      });
+      subject.topics.forEach(topic => {
+        index.push({
+          type: "topic",
+          label: `${topic} (${subject.name})`,
+          section: "tests"
+        });
+      });
     });
 
-    navButtons.forEach((btn) => {
-      btn.classList.toggle("active", btn.dataset.section === sectionId);
+    [
+      "Dashboard",
+      "Mock Tests",
+      "Breath Focus",
+      "AI Mentor",
+      "Doubts",
+      "Community",
+      "Profile",
+      "Daily Challenge",
+      "Quick Builder",
+      "Subject Progress",
+      "Focus Timer"
+    ].forEach(label => {
+      index.push({
+        type: "page",
+        label,
+        section: label.toLowerCase().includes("dashboard")
+          ? "dashboard"
+          : label.toLowerCase().includes("breath")
+          ? "breath"
+          : label.toLowerCase().includes("mentor")
+          ? "mentor"
+          : label.toLowerCase().includes("doubts")
+          ? "doubts"
+          : label.toLowerCase().includes("community")
+          ? "community"
+          : label.toLowerCase().includes("profile")
+          ? "profile"
+          : "tests"
+      });
     });
 
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }
+    state.searchIndex = index;
+  };
 
-  navButtons.forEach((btn) => {
+  // -------------------------------
+  // NAVIGATION
+  // -------------------------------
+  const sections = $$(".app-section");
+  const navButtons = $$("[data-nav]");
+
+  const switchSection = (sectionName) => {
+    state.currentSection = sectionName;
+
+    sections.forEach(section => {
+      section.classList.toggle("active", section.dataset.section === sectionName);
+    });
+
+    navButtons.forEach(btn => {
+      btn.classList.toggle("active", btn.dataset.nav === sectionName);
+    });
+
+    renderSectionHeader();
+  };
+
+  const renderSectionHeader = () => {
+    const title = $("#mobile-section-title");
+    const subtitle = $("#mobile-section-subtitle");
+    if (!title || !subtitle) return;
+
+    const map = {
+      dashboard: {
+        title: "Dashboard",
+        subtitle: "your study overview"
+      },
+      tests: {
+        title: "Mock Tests",
+        subtitle: "create, solve, review, and improve"
+      },
+      breath: {
+        title: "Breath Focus",
+        subtitle: "calm the storm, sharpen the mind"
+      },
+      mentor: {
+        title: "AI Mentor",
+        subtitle: "ask, learn, improve instantly"
+      },
+      doubts: {
+        title: "Doubts",
+        subtitle: "capture and resolve confusion"
+      },
+      community: {
+        title: "Community",
+        subtitle: "learn with focused aspirants"
+      },
+      profile: {
+        title: "Profile",
+        subtitle: "track your warrior evolution"
+      }
+    };
+
+    title.textContent = map[state.currentSection]?.title || "Murphx Prep";
+    subtitle.textContent = map[state.currentSection]?.subtitle || "rainy glass focus";
+  };
+
+  navButtons.forEach(btn => {
     btn.addEventListener("click", () => {
-      switchSection(btn.dataset.section);
-    });
-  });
-
-  quickNavButtons.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const target = btn.dataset.goSection;
+      const target = btn.dataset.nav;
       if (target) switchSection(target);
     });
   });
 
-  /* ===============================
-     MODAL
-     =============================== */
-  function openModal() {
-    if (modal) modal.classList.add("active");
-  }
+  // -------------------------------
+  // DASHBOARD RENDER
+  // -------------------------------
+  const renderQuote = () => {
+    const quoteEl = $("#rain-quote");
+    if (quoteEl) {
+      quoteEl.textContent = `"${randomFrom(state.quotes)}"`;
+    }
+  };
 
-  function closeModal() {
-    if (modal) modal.classList.remove("active");
-  }
+  const renderStats = () => {
+    const streakEl = $("#streak-count");
+    const testsDoneEl = $("#tests-done");
+    const avgScoreEl = $("#avg-score");
+    const accuracyEl = $("#accuracy-score");
+    const profileStreak = $("#profile-streak");
+    const profileTests = $("#profile-tests");
+    const profileAvg = $("#profile-avg");
+    const profileAccuracy = $("#profile-accuracy");
 
-  openTestModalBtns.forEach((btn) => btn.addEventListener("click", openModal));
-  closeModalBtns.forEach((btn) => btn.addEventListener("click", closeModal));
+    if (streakEl) streakEl.textContent = `${state.streak} day`;
+    if (testsDoneEl) testsDoneEl.textContent = state.testsDone;
+    if (avgScoreEl) avgScoreEl.textContent = `${state.averageScore}%`;
+    if (accuracyEl) accuracyEl.textContent = `${state.accuracy}%`;
 
-  if (modal) {
-    modal.addEventListener("click", (e) => {
-      if (e.target === modal) closeModal();
-    });
-  }
+    if (profileStreak) profileStreak.textContent = `${state.streak} days`;
+    if (profileTests) profileTests.textContent = state.testsDone;
+    if (profileAvg) profileAvg.textContent = `${state.averageScore}%`;
+    if (profileAccuracy) profileAccuracy.textContent = `${state.accuracy}%`;
+  };
 
-  /* ===============================
-     SUBJECT + CHAPTER
-     =============================== */
-  function populateSubjects() {
-    if (!subjectSelect) return;
+  const renderSubjects = () => {
+    const container = $("#subject-progress-list");
+    const testSubjectSelect = $("#test-subject");
+    const chapterSelect = $("#test-chapter");
 
-    subjectSelect.innerHTML = `
-      <option value="">Choose Subject</option>
-      <option value="Physics">Physics</option>
-      <option value="Chemistry">Chemistry</option>
-      <option value="Botany">Botany</option>
-      <option value="Zoology">Zoology</option>
-    `;
-  }
+    if (container) {
+      container.innerHTML = "";
+      state.subjects.forEach(subject => {
+        const card = document.createElement("div");
+        card.className = "glass-card subject-card";
+        card.innerHTML = `
+          <div class="subject-card-top">
+            <div>
+              <h4>${subject.name}</h4>
+              <p>${subject.completed}/${subject.total} topics</p>
+            </div>
+            <span class="subject-percent">${subject.progress}%</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width:${subject.progress}%"></div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
 
-  function populateChapters(subject) {
-    if (!chapterSelect) return;
+    if (testSubjectSelect) {
+      testSubjectSelect.innerHTML = `<option value="">Choose Subject</option>`;
+      state.subjects.forEach(subject => {
+        const option = document.createElement("option");
+        option.value = subject.name;
+        option.textContent = subject.name;
+        testSubjectSelect.appendChild(option);
+      });
+    }
 
-    if (!subject || !chapterBank[subject]) {
+    if (chapterSelect && !chapterSelect.dataset.initialized) {
       chapterSelect.innerHTML = `<option value="">Choose Chapter</option>`;
+      chapterSelect.dataset.initialized = "true";
+    }
+  };
+
+  // -------------------------------
+  // TEST BUILDER
+  // -------------------------------
+  const renderTests = () => {
+    const testList = $("#custom-test-list");
+    if (!testList) return;
+
+    testList.innerHTML = "";
+
+    if (state.customTests.length === 0) {
+      testList.innerHTML = `
+        <div class="glass-card empty-card">
+          <h4>No custom tests yet</h4>
+          <p>Create your first high-focus mock test now.</p>
+        </div>
+      `;
       return;
     }
 
-    chapterSelect.innerHTML = `<option value="">Choose Chapter</option>`;
-    chapterBank[subject].forEach((chapter) => {
-      const option = document.createElement("option");
-      option.value = chapter;
-      option.textContent = chapter;
-      chapterSelect.appendChild(option);
+    state.customTests.forEach((test, index) => {
+      const card = document.createElement("div");
+      card.className = "glass-card test-card";
+      card.innerHTML = `
+        <div class="test-card-head">
+          <div>
+            <h4>${test.subject} • ${test.chapter}</h4>
+            <p>${test.questions} Questions • ${test.duration} mins</p>
+          </div>
+          <span class="pill">${test.mode}</span>
+        </div>
+        <div class="test-card-actions">
+          <button class="ghost-btn" data-start-test="${index}">Start</button>
+          <button class="ghost-btn danger" data-delete-test="${index}">Delete</button>
+        </div>
+      `;
+      testList.appendChild(card);
     });
-  }
 
-  if (subjectSelect) {
-    subjectSelect.addEventListener("change", (e) => {
-      populateChapters(e.target.value);
+    $$("[data-start-test]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const idx = Number(btn.dataset.startTest);
+        const test = state.customTests[idx];
+        if (!test) return;
+
+        const score = Math.floor(Math.random() * 41) + 60; // 60-100
+        state.testsDone += 1;
+        state.averageScore = state.testsDone === 1
+          ? score
+          : Math.round(((state.averageScore * (state.testsDone - 1)) + score) / state.testsDone);
+        state.accuracy = Math.min(100, Math.max(50, state.averageScore - Math.floor(Math.random() * 8)));
+        showToast(`Test completed! Score: ${score}%`);
+        renderStats();
+        saveState();
+      });
     });
-  }
 
-  difficultyChips.forEach((chip) => {
-    chip.addEventListener("click", () => setChipGroup(difficultyChips, chip));
-  });
+    $$("[data-delete-test]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const idx = Number(btn.dataset.deleteTest);
+        state.customTests.splice(idx, 1);
+        renderTests();
+        saveState();
+        showToast("Test deleted");
+      });
+    });
+  };
 
-  questionCountChips.forEach((chip) => {
-    chip.addEventListener("click", () => setChipGroup(questionCountChips, chip));
-  });
+  const setupTestBuilder = () => {
+    const subjectSelect = $("#test-subject");
+    const chapterSelect = $("#test-chapter");
+    const createBtn = $("#create-test-btn");
 
-  testTimeChips.forEach((chip) => {
-    chip.addEventListener("click", () => setChipGroup(testTimeChips, chip));
-  });
+    if (subjectSelect) {
+      subjectSelect.addEventListener("change", () => {
+        const selected = state.subjects.find(s => s.name === subjectSelect.value);
+        if (!chapterSelect) return;
+        chapterSelect.innerHTML = `<option value="">Choose Chapter</option>`;
 
-  /* ===============================
-     TEST GENERATION
-     =============================== */
-  function generateTest() {
-    const subject = subjectSelect?.value;
-    const chapter = chapterSelect?.value || "Mixed Concepts";
-    const difficulty = getSelectedChipValue(difficultyChips) || "Mixed";
-    const questionCount = Number(getSelectedChipValue(questionCountChips) || 5);
-    const timeMinutes = Number(getSelectedChipValue(testTimeChips) || 10);
-
-    if (!subject) {
-      showToast("Please select a subject first.");
-      return;
+        if (selected) {
+          selected.topics.forEach(topic => {
+            const option = document.createElement("option");
+            option.value = topic;
+            option.textContent = topic;
+            chapterSelect.appendChild(option);
+          });
+        }
+      });
     }
 
-    const baseQuestions = questionBank[subject] || [];
-    if (baseQuestions.length === 0) {
-      showToast("No questions available for this subject yet.");
-      return;
+    if (createBtn) {
+      createBtn.addEventListener("click", () => {
+        const subject = $("#test-subject")?.value || "";
+        const chapter = $("#test-chapter")?.value || "";
+        const questions = Number($("#test-questions")?.value || 0);
+        const duration = Number($("#test-duration")?.value || 0);
+        const mode = $("#test-mode")?.value || "Rank 1";
+
+        if (!subject || !chapter || !questions || !duration) {
+          showToast("Please fill all test fields");
+          return;
+        }
+
+        state.customTests.push({
+          subject,
+          chapter,
+          questions,
+          duration,
+          mode
+        });
+
+        renderTests();
+        saveState();
+        showToast("Custom test created successfully");
+      });
+    }
+  };
+
+  // -------------------------------
+  // BREATH / FOCUS TIMER
+  // -------------------------------
+  const renderTimer = () => {
+    const timerEl = $("#focus-timer");
+    if (timerEl) timerEl.textContent = formatTime(state.timerSeconds);
+  };
+
+  const setupBreath = () => {
+    const startBtn = $("#start-breath-btn");
+    const resetBtn = $("#reset-breath-btn");
+    const presetBtns = $$("[data-timer-preset]");
+
+    presetBtns.forEach(btn => {
+      btn.addEventListener("click", () => {
+        if (state.timerRunning) return;
+        state.timerSeconds = Number(btn.dataset.timerPreset);
+        renderTimer();
+        showToast(`Timer set to ${Math.floor(state.timerSeconds / 60)} mins`);
+      });
+    });
+
+    if (startBtn) {
+      startBtn.addEventListener("click", () => {
+        if (state.timerRunning) {
+          clearInterval(state.timerInterval);
+          state.timerRunning = false;
+          startBtn.textContent = "Start Focus";
+          showToast("Focus paused");
+          return;
+        }
+
+        state.timerRunning = true;
+        startBtn.textContent = "Pause Focus";
+
+        state.timerInterval = setInterval(() => {
+          if (state.timerSeconds > 0) {
+            state.timerSeconds--;
+            renderTimer();
+          } else {
+            clearInterval(state.timerInterval);
+            state.timerRunning = false;
+            startBtn.textContent = "Start Focus";
+            showToast("Focus session complete. Breathe like thunder.");
+          }
+        }, 1000);
+      });
     }
 
-    let filtered = [...baseQuestions];
-    if (difficulty !== "Mixed") {
-      filtered = baseQuestions.filter((q) => q.difficulty.toLowerCase() === difficulty.toLowerCase());
-      if (filtered.length === 0) filtered = [...baseQuestions];
+    if (resetBtn) {
+      resetBtn.addEventListener("click", () => {
+        clearInterval(state.timerInterval);
+        state.timerRunning = false;
+        state.timerSeconds = 300;
+        renderTimer();
+        if (startBtn) startBtn.textContent = "Start Focus";
+        showToast("Timer reset");
+      });
     }
+  };
 
-    const expandedPool = [];
-    while (expandedPool.length < questionCount) {
-      expandedPool.push(...shuffleArray(filtered));
+  // -------------------------------
+  // AI MENTOR
+  // -------------------------------
+  const renderMentorMessages = () => {
+    const chat = $("#mentor-chat");
+    if (!chat) return;
+
+    chat.innerHTML = "";
+    state.mentorMessages.forEach(msg => {
+      const bubble = document.createElement("div");
+      bubble.className = `chat-bubble ${msg.role}`;
+      bubble.textContent = msg.text;
+      chat.appendChild(bubble);
+    });
+
+    chat.scrollTop = chat.scrollHeight;
+  };
+
+  const getMentorReply = (input) => {
+    const text = input.toLowerCase();
+
+    if (text.includes("physics")) {
+      return "For NEET Physics: concepts first, formulas second, questions third. Weak chapter? Do 20 focused numericals + 10 error log corrections.";
     }
+    if (text.includes("motivation") || text.includes("discipline")) {
+      return "Discipline is stronger than motivation. Study even when the mind resists. That is where rank is built.";
+    }
+    if (text.includes("biology") || text.includes("botany") || text.includes("zoology")) {
+      return "NCERT is king for Biology. Read line by line, underline traps, revise diagrams, and solve assertion-reason questions.";
+    }
+    if (text.includes("chemistry")) {
+      return "Chemistry strategy: Physical = numericals, Organic = mechanism memory, Inorganic = repeated NCERT revision + exception list.";
+    }
+    if (text.includes("test")) {
+      return "After every mock: classify errors into concept gap, silly mistake, speed issue, and overthinking. Fix the pattern, not just the question.";
+    }
+    return "Good question. My best advice: break it into concept → repetition → testing → error correction. That is how toppers create inevitability.";
+  };
 
-    const selectedQuestions = shuffleArray(expandedPool).slice(0, questionCount);
+  const setupMentor = () => {
+    const input = $("#mentor-input");
+    const sendBtn = $("#mentor-send-btn");
 
-    state.currentTest = {
-      subject,
-      chapter,
-      difficulty,
-      questionCount,
-      timeMinutes,
-      questions: selectedQuestions,
-      startedAt: Date.now(),
+    const sendMessage = () => {
+      const text = input?.value?.trim();
+      if (!text) return;
+
+      state.mentorMessages.push({
+        role: "user",
+        text
+      });
+
+      const reply = getMentorReply(text);
+
+      setTimeout(() => {
+        state.mentorMessages.push({
+          role: "assistant",
+          text: reply
+        });
+        renderMentorMessages();
+        saveState();
+      }, 350);
+
+      input.value = "";
+      renderMentorMessages();
+      saveState();
     };
 
-    state.currentQuestionIndex = 0;
-    state.userAnswers = new Array(questionCount).fill(null);
-    state.remainingSeconds = timeMinutes * 60;
+    if (sendBtn) sendBtn.addEventListener("click", sendMessage);
+    if (input) {
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") sendMessage();
+      });
+    }
+  };
 
-    closeModal();
-    switchSection("tests");
-    startQuiz();
-    showToast(`${subject} test generated successfully.`);
-  }
+  // -------------------------------
+  // DOUBTS
+  // -------------------------------
+  const renderDoubts = () => {
+    const list = $("#doubts-list");
+    if (!list) return;
 
-  if (generateTestBtn) {
-    generateTestBtn.addEventListener("click", generateTest);
-  }
+    list.innerHTML = "";
 
-  /* ===============================
-     QUIZ ENGINE
-     =============================== */
-  function startQuiz() {
-    if (!state.currentTest || !quizShell) return;
-
-    quizShell.classList.add("active");
-    resultCard?.classList.remove("active");
-
-    if (quizTitle) {
-      quizTitle.textContent = `${state.currentTest.subject} • ${state.currentTest.chapter}`;
+    if (state.doubts.length === 0) {
+      list.innerHTML = `
+        <div class="glass-card empty-card">
+          <h4>No doubts saved</h4>
+          <p>Your clarity board is empty. Add a doubt now.</p>
+        </div>
+      `;
+      return;
     }
 
-    startTimer();
-    renderQuestion();
-  }
+    state.doubts.forEach((doubt, index) => {
+      const card = document.createElement("div");
+      card.className = "glass-card doubt-card";
+      card.innerHTML = `
+        <div class="doubt-meta">
+          <span class="pill">${doubt.subject}</span>
+          <span class="status ${doubt.status.toLowerCase()}">${doubt.status}</span>
+        </div>
+        <h4>${doubt.topic}</h4>
+        <p>${doubt.question}</p>
+        <div class="doubt-actions">
+          <button class="ghost-btn" data-resolve-doubt="${index}">
+            ${doubt.status === "Pending" ? "Mark Answered" : "Mark Pending"}
+          </button>
+          <button class="ghost-btn danger" data-delete-doubt="${index}">Delete</button>
+        </div>
+      `;
+      list.appendChild(card);
+    });
 
-  function startTimer() {
-    clearInterval(state.timerInterval);
+    $$("[data-resolve-doubt]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const idx = Number(btn.dataset.resolveDoubt);
+        const doubt = state.doubts[idx];
+        if (!doubt) return;
+        doubt.status = doubt.status === "Pending" ? "Answered" : "Pending";
+        renderDoubts();
+        saveState();
+      });
+    });
 
-    if (quizTimer) quizTimer.textContent = formatTime(state.remainingSeconds);
+    $$("[data-delete-doubt]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const idx = Number(btn.dataset.deleteDoubt);
+        state.doubts.splice(idx, 1);
+        renderDoubts();
+        saveState();
+        showToast("Doubt deleted");
+      });
+    });
+  };
 
-    state.timerInterval = setInterval(() => {
-      state.remainingSeconds--;
-      if (quizTimer) quizTimer.textContent = formatTime(Math.max(0, state.remainingSeconds));
+  const setupDoubts = () => {
+    const addBtn = $("#add-doubt-btn");
+    if (!addBtn) return;
 
-      if (state.remainingSeconds <= 0) {
-        clearInterval(state.timerInterval);
-        showToast("Time's up! Submitting test...");
-        submitTest();
+    addBtn.addEventListener("click", () => {
+      const subject = $("#doubt-subject")?.value || "";
+      const topic = $("#doubt-topic")?.value?.trim() || "";
+      const question = $("#doubt-question")?.value?.trim() || "";
+
+      if (!subject || !topic || !question) {
+        showToast("Please fill all doubt fields");
+        return;
       }
-    }, 1000);
-  }
 
-  function renderQuestion() {
-    if (!state.currentTest) return;
+      state.doubts.unshift({
+        id: Date.now(),
+        subject,
+        topic,
+        question,
+        status: "Pending"
+      });
 
-    const q = state.currentTest.questions[state.currentQuestionIndex];
-    if (!q) return;
+      $("#doubt-topic").value = "";
+      $("#doubt-question").value = "";
 
-    if (quizProgressText) {
-      quizProgressText.textContent = `Question ${state.currentQuestionIndex + 1} / ${state.currentTest.questions.length}`;
+      renderDoubts();
+      saveState();
+      showToast("Doubt saved");
+    });
+  };
+
+  // -------------------------------
+  // COMMUNITY
+  // -------------------------------
+  const setupCommunity = () => {
+    const joinBtn = $("#join-community-btn");
+    const postBtn = $("#community-post-btn");
+    const feed = $("#community-feed");
+
+    if (joinBtn) {
+      joinBtn.addEventListener("click", () => {
+        showToast("Joined Rain Glass Focus Circle 🌧️");
+      });
     }
 
-    if (quizProgressFill) {
-      const percent = ((state.currentQuestionIndex + 1) / state.currentTest.questions.length) * 100;
-      quizProgressFill.style.width = `${percent}%`;
+    if (postBtn && feed) {
+      postBtn.addEventListener("click", () => {
+        const input = $("#community-input");
+        const text = input?.value?.trim();
+        if (!text) {
+          showToast("Write something first");
+          return;
+        }
+
+        const card = document.createElement("div");
+        card.className = "glass-card community-post";
+        card.innerHTML = `
+          <div class="community-post-head">
+            <span class="avatar">A</span>
+            <div>
+              <h4>Aditya NEET 2026</h4>
+              <p>Just now</p>
+            </div>
+          </div>
+          <p>${text}</p>
+        `;
+        feed.prepend(card);
+
+        input.value = "";
+        showToast("Posted to community");
+      });
+    }
+  };
+
+  // -------------------------------
+  // PROFILE
+  // -------------------------------
+  const setupProfile = () => {
+    const themeBtn = $("#theme-toggle-btn");
+    const resetBtn = $("#reset-data-btn");
+
+    if (themeBtn) {
+      themeBtn.addEventListener("click", () => {
+        state.darkMode = !state.darkMode;
+        document.body.classList.toggle("light-mode", !state.darkMode);
+        saveState();
+        showToast(state.darkMode ? "Dark rain mode enabled" : "Light mode enabled");
+      });
     }
 
-    if (questionText) questionText.textContent = 
+    if (resetBtn) {
+      resetBtn.addEventListener("click", () => {
+        const confirmReset = confirm("Reset all Murphx progress and local data?");
+        if (!confirmReset) return;
+
+        localStorage.removeItem("murphx_prep_state_v2");
+        location.reload();
+      });
+    }
+  };
+
+  // -------------------------------
+  // SEARCH
+  // -------------------------------
+  const setupSearch = () => {
+    const input = $("#global-search");
+    const results = $("#search-results");
+
+    if (!input || !results) return;
+
+    input.addEventListener("input", () => {
+      const query = input.value.trim().toLowerCase();
+
+      if (!query) {
+        results.innerHTML = "";
+        results.classList.remove("show");
+        return;
+      }
+
+      const matched = state.searchIndex.filter(item =>
+        item.label.toLowerCase().includes(query)
+      ).slice(0, 8);
+
+      results.innerHTML = "";
+
+      if (matched.length === 0) {
+        results.innerHTML = `<div class="search-empty">No results found</div>`;
+        results.classList.add("show");
+        return;
+      }
+
+      matched.forEach(item => {
+        const row = document.createElement("button");
+        row.className = "search-item";
+        row.innerHTML = `
+          <span>${item.label}</span>
+          <small>${item.type}</small>
+        `;
+        row.addEventListener("click", () => {
+          switchSection(item.section);
+          input.value = item.label;
+          results.innerHTML = "";
+          results.classList.remove("show");
+          showToast(`Opened ${item.label}`);
+        });
+        results.appendChild(row);
+      });
+
+      results.classList.add("show");
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!input.contains(e.target) && !results.contains(e.target)) {
+        results.classList.remove("show");
+      }
+    });
+  };
+
+  // -------------------------------
+  // DAILY CHALLENGE
+  // -------------------------------
+  const setupDailyChallenge = () => {
+    const startBtn = $("#start-challenge-btn");
+    const statusEl = $("#challenge-status");
+
+    if (!startBtn) return;
+
+    startBtn.addEventListener("click", () => {
+      if (!state.dailyChallengeStarted) {
+        state.dailyChallengeStarted = true;
+        startBtn.textContent = "Complete Challenge";
+        if (statusEl) statusEl.textContent = "Challenge in progress • 5 questions • Physics";
+        showToast("Daily challenge started");
+      } else {
+        state.dailyChallengeStarted = false;
+        startBtn.textContent = "Start Challenge";
+        if (statusEl) statusEl.textContent = "Completed for today • Great work";
+        state.testsDone += 1;
+        const challengeScore = Math.floor(Math.random() * 21) + 80;
+        state.averageScore = state.testsDone === 1
+          ? challengeScore
+          : Math.round(((state.averageScore * (state.testsDone - 1)) + challengeScore) / state.testsDone);
+        state.accuracy = Math.min(100, Math.max(60, state.averageScore - Math.floor(Math.random() * 5)));
+        renderStats();
+        saveState();
+        showToast(`Challenge completed • Score ${challengeScore}%`);
+      }
+    });
+  };
+
+  // -------------------------------
+  // QUICK ACTIONS
+  // -------------------------------
+  const setupQuickActions = () => {
+    const quickMock = $("#quick-mock-btn");
+    const quickBreath = $("#quick-breath-btn");
+    const quickMentor = $("#quick-mentor-btn");
+    const quickDoubt = $("#quick-doubt-btn");
+
+    if (quickMock) {
+      quickMock.addEventListener("click", () => switchSection("tests"));
+    }
+
+    if (quickBreath) {
+      quickBreath.addEventListener("click", () => switchSection("breath"));
+    }
+
+    if (quickMentor) {
+      quickMentor.addEventListener("click", () => switchSection("mentor"));
+    }
+
+    if (quickDoubt) {
+      quickDoubt.addEventListener("click", () => switchSection("doubts"));
+    }
+  };
+
+  // -------------------------------
+  // RAIN FX
+  // -------------------------------
+  const createRain = () => {
+    const rainLayer = $("#rain-layer");
+    if (!rainLayer) return;
+
+    rainLayer.innerHTML = "";
+
+    for (let i = 0; i < 40; i++) {
+      const drop = document.createElement("span");
+      drop.className = "rain-drop";
+      drop.style.left = `${Math.random() * 100}%`;
+      drop.style.animationDuration = `${0.8 + Math.random() * 1.6}s`;
+      drop.style.animationDelay = `${Math.random() * 2}s`;
+      drop.style.opacity = `${0.08 + Math.random() * 0.2}`;
+      drop.style.height = `${10 + Math.random() * 18}px`;
+      rainLayer.appendChild(drop);
+    }
+  };
+
+  // -------------------------------
+  // INIT
+  // -------------------------------
+  const init = () => {
+    loadState();
+    buildSearchIndex();
+    renderSectionHeader();
+    renderQuote();
+    renderStats();
+    renderSubjects();
+    renderTests();
+    renderTimer();
+    renderMentorMessages();
+    renderDoubts();
+    createRain();
+
+    setupTestBuilder();
+    setupBreath();
+    setupMentor();
+    setupDoubts();
+    setupCommunity();
+    setupProfile();
+    setupSearch();
+    setupDailyChallenge();
+    setupQuickActions();
+
+    document.body.classList.toggle("light-mode", !state.darkMode);
+
+    setInterval(renderQuote, 8000);
+    switchSection("dashboard");
+  };
+
+  init();
+});
