@@ -1,663 +1,504 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Murphx Prep · Rainy Glass</title>
-    <!-- Google Fonts & Font Awesome -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
-    <link rel="stylesheet" href="style.css"> <!-- your existing CSS -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Murphx Prep — Rainy Glass Focus</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    <!-- Background layers (rain + stars) -->
-    <div class="rain-layer"></div>
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-    <div class="orb orb-3"></div>
+  <div class="rain-layer"></div>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
 
-    <!-- App Shell (sidebar + main) -->
-    <div class="app-shell">
-        <!-- SIDEBAR -->
-        <aside class="sidebar">
-            <div class="brand">
-                <div class="brand-logo"><i class="fa-solid fa-cloud-rain"></i></div>
-                <div class="brand-text">
-                    <h1>Murphx Prep</h1>
-                    <p>rainy glass focus</p>
-                </div>
-            </div>
-
-            <div class="nav-group">
-                <div class="nav-label">navigation</div>
-                <button class="nav-btn active" data-section="dashboard"><i class="fa-solid fa-house"></i>Dashboard</button>
-                <button class="nav-btn" data-section="tests"><i class="fa-solid fa-flask"></i>Tests</button>
-                <button class="nav-btn" data-section="breath"><i class="fa-solid fa-wind"></i>Breath</button>
-                <button class="nav-btn" data-section="mentor"><i class="fa-solid fa-robot"></i>AI Mentor</button>
-                <button class="nav-btn" data-section="doubts"><i class="fa-solid fa-question"></i>Doubts</button>
-                <button class="nav-btn" data-section="community"><i class="fa-solid fa-users"></i>Community</button>
-                <button class="nav-btn" data-section="profile"><i class="fa-solid fa-user"></i>Profile</button>
-            </div>
-
-            <div class="sidebar-bottom">
-                <div class="streak-card glass">
-                    <div class="streak-top">
-                        <h4>🔥 Streak</h4>
-                        <span class="streak-badge" id="streakCount">7 days</span>
-                    </div>
-                    <div class="progress-track">
-                        <div class="progress-fill" style="width: 65%"></div>
-                    </div>
-                    <p class="streak-text">You're on fire! Keep it up.</p>
-                </div>
-            </div>
-        </aside>
-
-        <!-- MAIN CONTENT -->
-        <main class="main-content">
-            <!-- TOPBAR -->
-            <div class="topbar glass">
-                <div class="topbar-left">
-                    <button class="menu-toggle" id="menuToggle"><i class="fa-solid fa-bars"></i></button>
-                    <div class="page-meta">
-                        <h2 id="pageTitle">Dashboard</h2>
-                        <p id="pageSubtitle">your study overview</p>
-                    </div>
-                </div>
-                <div class="topbar-right">
-                    <div class="search-box glass">
-                        <i class="fa-regular fa-magnifying-glass"></i>
-                        <input type="text" placeholder="Search...">
-                    </div>
-                    <button class="icon-btn"><i class="fa-regular fa-bell"></i><span class="notification-dot"></span></button>
-                    <div class="profile-chip glass">
-                        <div class="avatar">A</div>
-                        <div class="profile-text">
-                            <h4>Aditya</h4>
-                            <p>NEET 2026</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- DASHBOARD SECTION -->
-            <section class="page-section active" id="dashboard-section">
-                <!-- Hero Grid -->
-                <div class="hero-grid">
-                    <div class="hero-card glass">
-                        <span class="hero-badge"><i class="fa-regular fa-star"></i> daily focus</span>
-                        <h1 class="hero-title">Study like a storm,<br><span class="gradient-text">stay calm like rain</span></h1>
-                        <p class="hero-subtitle">Your rainy glass workspace is ready. Track progress, practice tests, and breathe mindfully.</p>
-                        <div class="hero-actions">
-                            <button class="btn btn-primary" id="quickTestBtn"><i class="fa-regular fa-plus"></i> Quick Test</button>
-                            <button class="btn btn-secondary" data-section="breath"><i class="fa-regular fa-cloud-rain"></i> Breath Focus</button>
-                        </div>
-                    </div>
-                    <div class="side-stack">
-                        <div class="mini-card glass">
-                            <h3><i class="fa-regular fa-chart-simple"></i> Today's stats</h3>
-                            <div class="stat-row">
-                                <div class="stat-box"><p>tests done</p><h4 id="statTestsTaken">0</h4></div>
-                                <div class="stat-box"><p>avg. score</p><h4 id="statAvgScore">0%</h4></div>
-                                <div class="stat-box"><p>accuracy</p><h4 id="statAccuracy">0%</h4></div>
-                            </div>
-                        </div>
-                        <div class="mini-card glass">
-                            <div class="quote-box">
-                                <i class="fa-regular fa-quote-left"></i>
-                                <p>“The expert in anything was once a beginner.” <strong>– rainy glass mindset</strong></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Dashboard Grid (Subject progress + Daily challenge) -->
-                <div class="dashboard-grid">
-                    <div class="card glass">
-                        <div class="card-header">
-                            <div>
-                                <h3 class="card-title">📊 subject progress</h3>
-                                <p class="card-subtitle">your mastery over key topics</p>
-                            </div>
-                            <button class="link-btn" data-section="tests">view all <i class="fa-regular fa-arrow-right"></i></button>
-                        </div>
-                        <div class="subject-list" id="subjectProgress">
-                            <!-- dynamically filled by JS -->
-                            <div class="subject-item">
-                                <div class="subject-top">
-                                    <div class="subject-left">
-                                        <div class="subject-icon"><i class="fa-solid fa-atom"></i></div>
-                                        <div>
-                                            <div class="subject-name">Physics</div>
-                                            <div class="subject-meta">12/18 topics</div>
-                                        </div>
-                                    </div>
-                                    <span class="percent">68%</span>
-                                </div>
-                                <div class="progress-track"><div class="progress-fill" style="width:68%"></div></div>
-                            </div>
-                            <div class="subject-item">
-                                <div class="subject-top">
-                                    <div class="subject-left">
-                                        <div class="subject-icon"><i class="fa-solid fa-flask"></i></div>
-                                        <div>
-                                            <div class="subject-name">Chemistry</div>
-                                            <div class="subject-meta">9/14 topics</div>
-                                        </div>
-                                    </div>
-                                    <span class="percent">64%</span>
-                                </div>
-                                <div class="progress-track"><div class="progress-fill" style="width:64%"></div></div>
-                            </div>
-                            <div class="subject-item">
-                                <div class="subject-top">
-                                    <div class="subject-left">
-                                        <div class="subject-icon"><i class="fa-solid fa-leaf"></i></div>
-                                        <div>
-                                            <div class="subject-name">Biology</div>
-                                            <div class="subject-meta">15/22 topics</div>
-                                        </div>
-                                    </div>
-                                    <span class="percent">70%</span>
-                                </div>
-                                <div class="progress-track"><div class="progress-fill" style="width:70%"></div></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card glass">
-                        <div class="card-header">
-                            <div>
-                                <h3 class="card-title">⏳ daily challenge</h3>
-                                <p class="card-subtitle">ends in …</p>
-                            </div>
-                            <button class="link-btn" id="startChallengeBtn">start <i class="fa-regular fa-arrow-right"></i></button>
-                        </div>
-                        <div class="challenge-card">
-                            <div class="challenge-box">
-                                <h4>5 questions · Physics</h4>
-                                <p>Electrostatics & current electricity</p>
-                            </div>
-                            <div class="timer-box">
-                                <h5>time left</h5>
-                                <div class="timer-display" id="dailyCountdown">06:45:22</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Action Cards (Quick actions) -->
-                <div class="action-grid">
-                    <div class="action-card glass" data-section="tests">
-                        <div class="action-icon"><i class="fa-regular fa-pen-to-square"></i></div>
-                        <h3>mock test</h3>
-                        <p>practice with real exam pattern</p>
-                    </div>
-                    <div class="action-card glass" data-section="breath">
-                        <div class="action-icon"><i class="fa-regular fa-heart"></i></div>
-                        <h3>mindful breath</h3>
-                        <p>Viygan Bharav techniques</p>
-                    </div>
-                    <div class="action-card glass" data-section="mentor">
-                        <div class="action-icon"><i class="fa-regular fa-comments"></i></div>
-                        <h3>AI mentor</h3>
-                        <p>ask anything, get instant help</p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- TESTS SECTION -->
-            <section class="page-section" id="tests-section">
-                <div class="page-head">
-                    <h2>🧪 your test library</h2>
-                    <p>create, manage, and practice mock tests</p>
-                </div>
-                <div class="toolbar">
-                    <div class="toolbar-left">
-                        <select class="select-box glass">
-                            <option>all subjects</option>
-                            <option>physics</option>
-                            <option>chemistry</option>
-                            <option>biology</option>
-                        </select>
-                        <input class="input-box glass" placeholder="search tests...">
-                    </div>
-                    <div class="toolbar-right">
-                        <button class="btn btn-primary" id="createTestBtn"><i class="fa-regular fa-plus"></i> new test</button>
-                    </div>
-                </div>
-                <div class="test-grid" id="testsList">
-                    <!-- dynamically inserted -->
-                </div>
-            </section>
-
-            <!-- BREATH SECTION -->
-            <section class="page-section" id="breath-section">
-                <div class="page-head">
-                    <h2>🌬️ Viygan Bharav – breath focus</h2>
-                    <p>three ancient techniques for calm & concentration</p>
-                </div>
-                <div class="action-grid">
-                    <div class="action-card glass breath-card">
-                        <div class="action-icon"><i class="fa-regular fa-wind"></i></div>
-                        <h3>nostril awareness</h3>
-                        <p>feel cool inhale, warm exhale · 2 min</p>
-                        <button class="btn btn-secondary startBreath" data-tech="nostril">start</button>
-                    </div>
-                    <div class="action-card glass breath-card">
-                        <div class="action-icon"><i class="fa-regular fa-sort-numeric-up-alt"></i></div>
-                        <h3>counting breaths</h3>
-                        <p>inhale 1, exhale 2 … up to 10 · 3 min</p>
-                        <button class="btn btn-secondary startBreath" data-tech="count">start</button>
-                    </div>
-                    <div class="action-card glass breath-card">
-                        <div class="action-icon"><i class="fa-regular fa-pause"></i></div>
-                        <h3>pause between</h3>
-                        <p>observe stillness after exhale · 2 min</p>
-                        <button class="btn btn-secondary startBreath" data-tech="pause">start</button>
-                    </div>
-                </div>
-            </section>
-
-            <!-- AI MENTOR SECTION -->
-            <section class="page-section" id="mentor-section">
-                <div class="ai-layout">
-                    <div class="chat-card glass">
-                        <div class="card-header">
-                            <h3 class="card-title"><i class="fa-regular fa-robot"></i> AI mentor</h3>
-                        </div>
-                        <div class="chat-messages" id="chatMessages">
-                            <div class="msg bot"><i class="fa-regular fa-robot"></i> Hi! I'm your cosmic AI. Ask me anything about NEET/JEE.</div>
-                        </div>
-                        <div class="chat-input-wrap">
-                            <input type="text" class="chat-input" id="chatInput" placeholder="ask your doubt..." onkeypress="if(event.key==='Enter') sendMessage()">
-                            <button class="btn btn-primary" onclick="sendMessage()"><i class="fa-regular fa-paper-plane"></i></button>
-                        </div>
-                    </div>
-                    <div class="ai-side-card glass">
-                        <h3 class="card-title">🏆 leaderboard</h3>
-                        <div class="rank-list" id="leaderboardList">
-                            <!-- dynamic -->
-                            <div class="rank-item"><div class="rank-left"><span class="rank-badge">🥇</span><span class="rank-name">MurphxPanda</span></div><span class="rank-score">1245 pts</span></div>
-                            <div class="rank-item"><div class="rank-left"><span class="rank-badge">🥈</span><span class="rank-name">NebulaNinja</span></div><span class="rank-score">1180 pts</span></div>
-                            <div class="rank-item"><div class="rank-left"><span class="rank-badge">🥉</span><span class="rank-name">QuasarQueen</span></div><span class="rank-score">1090 pts</span></div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- DOUBTS SECTION -->
-            <section class="page-section" id="doubts-section">
-                <div class="page-head">
-                    <h2>❓ doubt vault</h2>
-                    <p>post your doubts, get help from community & AI</p>
-                </div>
-                <div class="dashboard-grid">
-                    <div class="card glass">
-                        <h3 class="card-title">new doubt</h3>
-                        <textarea class="chat-input" id="doubtInput" rows="4" placeholder="write your doubt..."></textarea>
-                        <button class="btn btn-primary" id="submitDoubtBtn" style="margin-top:12px;">submit</button>
-                    </div>
-                    <div class="card glass">
-                        <h3 class="card-title">recent doubts</h3>
-                        <div id="doubtsList" class="subject-list"></div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- COMMUNITY SECTION -->
-            <section class="page-section" id="community-section">
-                <div class="page-head">
-                    <h2>👥 community forum</h2>
-                    <p>discuss, share, and learn together</p>
-                </div>
-                <div class="toolbar">
-                    <button class="btn btn-primary" id="newPostBtn"><i class="fa-regular fa-plus"></i> new post</button>
-                </div>
-                <div class="test-grid" id="forumPostsList"></div>
-            </section>
-
-            <!-- PROFILE SECTION -->
-            <section class="page-section" id="profile-section">
-                <div class="profile-grid">
-                    <div class="profile-card-large glass">
-                        <div class="avatar" style="width:80px;height:80px;font-size:1.8rem;">A</div>
-                        <h2 id="profileName">Aditya</h2>
-                        <p id="profileTarget">NEET 2026 · Physics comeback arc</p>
-                        <div class="stat-row">
-                            <div class="stat-box"><p>streak</p><h4 id="profileStreak">7</h4></div>
-                            <div class="stat-box"><p>tests</p><h4 id="profileTestsTaken">0</h4></div>
-                            <div class="stat-box"><p>accuracy</p><h4 id="profileAccuracy">0%</h4></div>
-                        </div>
-                        <button class="btn btn-secondary" id="editProfileBtn"><i class="fa-regular fa-pen"></i> edit name</button>
-                    </div>
-                </div>
-            </section>
-        </main>
-    </div>
-
-    <!-- MODAL for creating test (simple) -->
-    <div class="modal" id="createTestModal">
-        <div class="modal-card glass">
-            <h3>create new test</h3>
-            <input type="text" class="chat-input" id="testTitle" placeholder="test title">
-            <input type="number" class="chat-input" id="testDuration" placeholder="duration (min)" value="30">
-            <div style="display:flex;gap:10px;margin-top:16px;">
-                <button class="btn btn-primary" id="saveTestBtn">create</button>
-                <button class="btn btn-secondary" id="closeModalBtn">cancel</button>
-            </div>
+  <div class="app-shell">
+    <!-- Sidebar -->
+    <aside class="sidebar glass">
+      <div class="brand">
+        <div class="brand-icon"><i class="fas fa-cloud-moon-rain"></i></div>
+        <div>
+          <h2>Murphx Prep</h2>
+          <p>rainy glass focus</p>
         </div>
-    </div>
+      </div>
 
-     <!-- JavaScript (all functionality) -->
-    <script>
-        // ---------- DATA STORES (localStorage) ----------
-        let tests = JSON.parse(localStorage.getItem('murphx_tests')) || [];
-        let forumPosts = JSON.parse(localStorage.getItem('murphx_forum')) || [];
-        let doubts = JSON.parse(localStorage.getItem('murphx_doubts')) || [];
-        let userProfile = JSON.parse(localStorage.getItem('murphx_profile')) || {
-            name: 'Aditya',
-            target: 'NEET 2026',
-            streak: 7,
-            testsTaken: 0,
-            totalScore: 0,
-            totalQuestions: 0,
-            lastActive: new Date().toDateString()
-        };
+      <div class="nav-label">Navigation</div>
 
-        // ---------- HELPER FUNCTIONS ----------
-        function escapeHtml(text) {
-            let div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-        function saveProfile() {
-            localStorage.setItem('murphx_profile', JSON.stringify(userProfile));
-        }
-        function updateStreak() {
-            const today = new Date().toDateString();
-            if (userProfile.lastActive !== today) {
-                const yesterday = new Date();
-                yesterday.setDate(yesterday.getDate() - 1);
-                if (userProfile.lastActive === yesterday.toDateString()) {
-                    userProfile.streak++;
-                } else {
-                    userProfile.streak = 1;
-                }
-                userProfile.lastActive = today;
-                saveProfile();
-            }
-        }
+      <nav class="sidebar-nav">
+        <button class="nav-btn active" data-section="dashboardSection">
+          <i class="fas fa-house"></i><span>Dashboard</span>
+        </button>
+        <button class="nav-btn" data-section="testsSection">
+          <i class="fas fa-vials"></i><span>Tests</span>
+        </button>
+        <button class="nav-btn" data-section="breathSection">
+          <i class="fas fa-wind"></i><span>Breath</span>
+        </button>
+        <button class="nav-btn" data-section="mentorSection">
+          <i class="fas fa-robot"></i><span>AI Mentor</span>
+        </button>
+        <button class="nav-btn" data-section="doubtsSection">
+          <i class="fas fa-circle-question"></i><span>Doubts</span>
+        </button>
+        <button class="nav-btn" data-section="communitySection">
+          <i class="fas fa-users"></i><span>Community</span>
+        </button>
+        <button class="nav-btn" data-section="profileSection">
+          <i class="fas fa-user"></i><span>Profile</span>
+        </button>
+      </nav>
 
-        // ---------- SECTION SWITCHING ----------
-        const sections = document.querySelectorAll('.page-section');
-        const navBtns = document.querySelectorAll('.nav-btn');
-        const pageTitle = document.getElementById('pageTitle');
-        const pageSubtitle = document.getElementById('pageSubtitle');
+      <div class="streak-card glass">
+        <div class="streak-top">
+          <span>🔥 Streak</span>
+          <span id="streakDaysBadge">1 day</span>
+        </div>
+        <div class="progress-track small">
+          <div class="progress-fill" id="streakBar" style="width:14%"></div>
+        </div>
+        <p>You’re on fire! Keep it up.</p>
+      </div>
+    </aside>
 
-        function showSection(sectionId) {
-            sections.forEach(s => s.classList.remove('active'));
-            document.getElementById(sectionId + '-section').classList.add('active');
-            navBtns.forEach(btn => btn.classList.remove('active'));
-            document.querySelector(`.nav-btn[data-section="${sectionId}"]`).classList.add('active');
+    <!-- Main -->
+    <main class="main-area">
+      <!-- Topbar -->
+      <header class="topbar glass">
+        <div class="topbar-title">
+          <h1 id="pageTitle">Dashboard</h1>
+          <p id="pageSubtitle">your study overview</p>
+        </div>
 
-            // update topbar title
-            const titles = {
-                dashboard: ['Dashboard', 'your study overview'],
-                tests: ['Test Library', 'create & practice'],
-                breath: ['Mindful Breath', 'Viygan Bharav techniques'],
-                mentor: ['AI Mentor', 'ask anything'],
-                doubts: ['Doubt Vault', 'get help'],
-                community: ['Community', 'discuss with peers'],
-                profile: ['Profile', 'your stats']
-            };
-            pageTitle.innerText = titles[sectionId][0];
-            pageSubtitle.innerText = titles[sectionId][1];
+        <div class="topbar-search">
+          <i class="fas fa-magnifying-glass"></i>
+          <input type="text" id="globalSearch" placeholder="Search chapters, concepts, tools..." />
+        </div>
 
-            // refresh data when entering a section
-            if (sectionId === 'dashboard') updateDashboard();
-            if (sectionId === 'tests') renderTests();
-            if (sectionId === 'doubts') renderDoubts();
-            if (sectionId === 'community') renderForum();
-            if (sectionId === 'profile') renderProfile();
-        }
+        <div class="topbar-actions">
+          <button class="icon-btn" id="themePulseBtn" title="Pulse">
+            <i class="fas fa-bell"></i>
+          </button>
+          <div class="profile-chip glass">
+            <div class="avatar">A</div>
+            <div>
+              <strong>Aditya</strong>
+              <small>NEET 2026</small>
+            </div>
+          </div>
+        </div>
+      </header>
 
-        navBtns.forEach(btn => {
-            btn.addEventListener('click', () => showSection(btn.dataset.section));
-        });
+      <!-- DASHBOARD -->
+      <section class="content-section active" id="dashboardSection">
+        <div class="dashboard-grid">
+          <div class="hero-card glass">
+            <span class="hero-tag"><i class="far fa-star"></i> daily focus</span>
+            <h2>Study like a storm,<br>stay calm like <span>rain</span></h2>
+            <p>
+              Your rainy glass workspace is ready. Track progress, practice tests,
+              and breathe mindfully.
+            </p>
+            <div class="hero-actions">
+              <button class="primary-btn" id="quickTestBtn">
+                <i class="fas fa-plus"></i> Quick Test
+              </button>
+              <button class="secondary-btn" id="quickBreathBtn">
+                <i class="fas fa-wind"></i> Breath Focus
+              </button>
+            </div>
+          </div>
 
-        // also handle clicks from other buttons with data-section
-        document.querySelectorAll('[data-section]').forEach(el => {
-            el.addEventListener('click', (e) => {
-                if (e.target.closest('[data-section]')) {
-                    showSection(e.target.closest('[data-section]').dataset.section);
-                }
-            });
-        });
+          <div class="stats-card glass">
+            <div class="card-head">
+              <h3><i class="far fa-rectangle-list"></i> Today's stats</h3>
+            </div>
+            <div class="mini-stats">
+              <div class="mini-box glass">
+                <span>tests done</span>
+                <strong id="testsDoneStat">0</strong>
+              </div>
+              <div class="mini-box glass">
+                <span>avg. score</span>
+                <strong id="avgScoreStat">0%</strong>
+              </div>
+              <div class="mini-box glass">
+                <span>accuracy</span>
+                <strong id="accuracyStat">0%</strong>
+              </div>
+            </div>
+          </div>
 
-        // ---------- DASHBOARD ----------
-        function updateDashboard() {
-            document.getElementById('statTestsTaken').innerText = userProfile.testsTaken;
-            let avg = userProfile.testsTaken ? Math.round(userProfile.totalScore / userProfile.testsTaken) : 0;
-            document.getElementById('statAvgScore').innerText = avg + '%';
-            let acc = userProfile.totalQuestions ? Math.round((userProfile.totalScore / userProfile.totalQuestions) * 100) : 0;
-            document.getElementById('statAccuracy').innerText = acc + '%';
-            document.getElementById('streakCount').innerText = userProfile.streak + ' days';
-        }
+          <div class="quote-card glass">
+            <p>“The expert in anything was once a beginner.”</p>
+            <strong>— rainy glass mindset</strong>
+          </div>
 
-        // ---------- DAILY COUNTDOWN ----------
-        function updateDailyCountdown() {
-            let now = new Date();
-            let midnight = new Date(now);
-            midnight.setHours(24,0,0,0);
-            let diff = midnight - now;
-            if (diff <= 0) { document.getElementById('dailyCountdown').innerText = '00:00:00'; return; }
-            let h = Math.floor(diff/3600000);
-            let m = Math.floor((diff%3600000)/60000);
-            let s = Math.floor((diff%60000)/1000);
-            document.getElementById('dailyCountdown').innerText = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-        }
-        setInterval(updateDailyCountdown, 1000);
+          <div class="progress-card glass">
+            <div class="card-head">
+              <div>
+                <h3>📊 subject progress</h3>
+                <p>your mastery over key topics</p>
+              </div>
+              <button class="link-btn" id="viewAllTestsBtn">view all</button>
+            </div>
 
-        document.getElementById('startChallengeBtn').addEventListener('click', () => {
-            let daily = {
-                id: 'daily-' + Date.now(),
-                title: 'Daily Challenge: Physics Mix',
-                subject: 'Physics',
-                duration: 10,
-                questions: [
-                    { text: 'SI unit of force?', options: ['Joule','Newton','Watt','Pascal'], correct: 'B', explanation: 'Newton' },
-                    { text: 'g on Earth?', options: ['9.8','10','8.9','9.1'], correct: 'A', explanation: '9.8 m/s²' }
-                ],
-                date: new Date().toLocaleDateString()
-            };
-            tests.push(daily);
-            localStorage.setItem('murphx_tests', JSON.stringify(tests));
-            alert('Daily challenge added to your tests!');
-            if (document.getElementById('tests-section').classList.contains('active')) renderTests();
-            updateDashboard();
-        });
+            <div class="subject-item">
+              <div class="subject-row">
+                <div class="subject-name"><i class="fas fa-atom"></i> Physics</div>
+                <strong id="physicsProgressText">68%</strong>
+              </div>
+              <small>12/18 topics</small>
+              <div class="progress-track">
+                <div class="progress-fill" id="physicsBar" style="width:68%"></div>
+              </div>
+            </div>
 
-        // ---------- QUICK TEST BUTTON ----------
-        document.getElementById('quickTestBtn').addEventListener('click', () => {
-            document.getElementById('createTestModal').style.display = 'flex';
-        });
+            <div class="subject-item">
+              <div class="subject-row">
+                <div class="subject-name"><i class="fas fa-flask"></i> Chemistry</div>
+                <strong id="chemistryProgressText">64%</strong>
+              </div>
+              <small>9/14 topics</small>
+              <div class="progress-track">
+                <div class="progress-fill" id="chemistryBar" style="width:64%"></div>
+              </div>
+            </div>
 
-        // ---------- CREATE TEST MODAL ----------
-        const modal = document.getElementById('createTestModal');
-        document.getElementById('createTestBtn').addEventListener('click', () => modal.style.display = 'flex');
-        document.getElementById('closeModalBtn').addEventListener('click', () => modal.style.display = 'none');
-        document.getElementById('saveTestBtn').addEventListener('click', () => {
-            let title = document.getElementById('testTitle').value.trim();
-            let duration = parseInt(document.getElementById('testDuration').value) || 30;
-            if (!title) { alert('enter a title'); return; }
-            tests.push({
-                id: 'test-' + Date.now(),
-                title: title,
-                duration: duration,
-                questions: [],
-                date: new Date().toLocaleDateString()
-            });
-            localStorage.setItem('murphx_tests', JSON.stringify(tests));
-            modal.style.display = 'none';
-            document.getElementById('testTitle').value = '';
-            if (document.getElementById('tests-section').classList.contains('active')) renderTests();
-            updateDashboard();
-        });
+            <div class="subject-item">
+              <div class="subject-row">
+                <div class="subject-name"><i class="fas fa-leaf"></i> Biology</div>
+                <strong id="biologyProgressText">70%</strong>
+              </div>
+              <small>15/22 topics</small>
+              <div class="progress-track">
+                <div class="progress-fill" id="biologyBar" style="width:70%"></div>
+              </div>
+            </div>
+          </div>
 
-        // ---------- TESTS RENDERING ----------
-        function renderTests() {
-            let container = document.getElementById('testsList');
-            if (!container) return;
-            if (tests.length === 0) {
-                container.innerHTML = '<p style="grid-column:1/-1; text-align:center;">no tests yet. create one!</p>';
-                return;
-            }
-            let html = '';
-            tests.slice().reverse().forEach(t => {
-                html += `
-                    <div class="test-card glass">
-                        <div class="test-top">
-                            <span class="test-tag">${t.subject || 'general'}</span>
-                            <span class="test-level">${t.duration} min</span>
-                        </div>
-                        <h3>${escapeHtml(t.title)}</h3>
-                        <p>${t.questions?.length || 0} questions · ${t.date || ''}</p>
-                        <div class="test-meta">
-                            <span><i class="fa-regular fa-clock"></i> ${t.duration} min</span>
-                            <span><i class="fa-regular fa-file-lines"></i> ${t.questions?.length || 0} Q</span>
-                        </div>
-                        <div class="test-actions">
-                            <button class="btn btn-primary" onclick="alert('start test: ${escapeHtml(t.title)}')">start</button>
-                            <button class="btn btn-danger" onclick="deleteTest('${t.id}')"><i class="fa-regular fa-trash"></i></button>
-                        </div>
-                    </div>
-                `;
-            });
-            container.innerHTML = html;
-        }
+          <div class="challenge-card glass">
+            <div class="card-head">
+              <div>
+                <h3>🏆 daily challenge</h3>
+                <p>ends in ...</p>
+              </div>
+              <button class="link-btn" id="startChallengeBtn">start</button>
+            </div>
+            <div class="challenge-topic">
+              <strong>5 questions • Physics</strong>
+              <p>Electrostatics & current electricity</p>
+            </div>
+            <div class="timer-box glass">
+              <span>time left</span>
+              <strong id="dailyChallengeTimer">09:30:00</strong>
+            </div>
+          </div>
 
-        window.deleteTest = function(id) {
-            if (confirm('delete this test?')) {
-                tests = tests.filter(t => t.id !== id);
-                localStorage.setItem('murphx_tests', JSON.stringify(tests));
-                renderTests();
-                updateDashboard();
-            }
-        };
+          <div class="action-card glass" id="actionMockTest">
+            <div class="action-icon"><i class="far fa-pen-to-square"></i></div>
+            <h4>mock test</h4>
+            <p>practice with real exam pattern</p>
+          </div>
 
-        // ---------- BREATH TECHNIQUES ----------
-        document.querySelectorAll('.startBreath').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                let tech = e.target.dataset.tech;
-                let msg = {
-                    nostril: 'Nostril Awareness: Focus on cool inhale, warm exhale for 2 minutes.',
-                    count: 'Counting Breaths: Inhale 1, exhale 2 … up to 10. Repeat 3 minutes.',
-                    pause: 'Pause Between Breaths: Observe stillness after each exhale for 2 minutes.'
-                }[tech] || 'start your breath practice.';
-                alert(msg);
-            });
-        });
+          <div class="action-card glass" id="actionBreath">
+            <div class="action-icon"><i class="far fa-heart"></i></div>
+            <h4>mindful breath</h4>
+            <p>Vigyan Bhairav techniques</p>
+          </div>
 
-        // ---------- AI MENTOR ----------
-        window.sendMessage = function() {
-            let input = document.getElementById('chatInput');
-            let msg = input.value.trim();
-            if (!msg) return;
-            let chat = document.getElementById('chatMessages');
-            chat.innerHTML += `<div class="msg user"><i class="fa-regular fa-user"></i> ${escapeHtml(msg)}</div>`;
-            input.value = '';
-            chat.scrollTop = chat.scrollHeight;
-            setTimeout(() => {
-                let reply = getAIReply(msg);
-                chat.innerHTML += `<div class="msg bot"><i class="fa-regular fa-robot"></i> ${reply}</div>`;
-                chat.scrollTop = chat.scrollHeight;
-            }, 1000);
-        };
-        function getAIReply(q) {
-            q = q.toLowerCase();
-            if (q.includes('newton')) return "Newton's second law: F = ma.";
-            if (q.includes('mitochondria')) return "Mitochondria is the powerhouse of the cell.";
-            if (q.includes('photosynthesis')) return "6CO₂ + 6H₂O → C₆H₁₂O₆ + 6O₂";
-            return "Great question! I'll help you soon.";
-        }
+          <div class="action-card glass" id="actionMentor">
+            <div class="action-icon"><i class="far fa-comments"></i></div>
+            <h4>AI mentor</h4>
+            <p>ask anything, get instant help</p>
+          </div>
+        </div>
+      </section>
 
-        // ---------- DOUBTS ----------
-        document.getElementById('submitDoubtBtn').addEventListener('click', () => {
-            let text = document.getElementById('doubtInput').value.trim();
-            if (!text) return;
-            doubts.push({ text, date: new Date().toLocaleDateString() });
-            localStorage.setItem('murphx_doubts', JSON.stringify(doubts));
-            document.getElementById('doubtInput').value = '';
-            renderDoubts();
-        });
-        function renderDoubts() {
-            let container = document.getElementById('doubtsList');
-            if (doubts.length === 0) { container.innerHTML = '<p>no doubts yet.</p>'; return; }
-            let html = '';
-            doubts.slice().reverse().forEach(d => {
-                html += `<div class="subject-item">❓ ${escapeHtml(d.text)} <small>${d.date}</small></div>`;
-            });
-            container.innerHTML = html;
-        }
+      <!-- TESTS -->
+      <section class="content-section" id="testsSection">
+        <div class="section-header glass">
+          <div>
+            <h2>Mock Tests</h2>
+            <p>Create, solve, review, and improve.</p>
+          </div>
+          <button class="primary-btn" id="openCreateTestBtn">
+            <i class="fas fa-plus"></i> Create Test
+          </button>
+        </div>
 
-        // ---------- COMMUNITY FORUM ----------
-        document.getElementById('newPostBtn').addEventListener('click', () => {
-            let title = prompt('enter post title:');
-            if (title) {
-                forumPosts.push({ title, author: userProfile.name, date: new Date().toLocaleDateString() });
-                localStorage.setItem('murphx_forum', JSON.stringify(forumPosts));
-                renderForum();
-            }
-        });
-        function renderForum() {
-            let container = document.getElementById('forumPostsList');
-            if (forumPosts.length === 0) { container.innerHTML = '<p>no posts yet.</p>'; return; }
-            let html = '';
-            forumPosts.slice().reverse().forEach(p => {
-                html += `
-                    <div class="test-card glass">
-                        <h3>${escapeHtml(p.title)}</h3>
-                        <p>by ${escapeHtml(p.author)} · ${p.date}</p>
-                    </div>
-                `;
-            });
-            container.innerHTML = html;
-        }
+        <div class="tests-grid">
+          <div class="test-builder-card glass">
+            <h3>⚡ Quick Builder</h3>
+            <div class="form-grid">
+              <div class="input-group">
+                <label>Subject</label>
+                <select id="subjectSelect">
+                  <option value="Physics">Physics</option>
+                  <option value="Chemistry">Chemistry</option>
+                  <option value="Biology">Biology</option>
+                  <option value="Mixed">Mixed</option>
+                </select>
+              </div>
 
-        // ---------- PROFILE ----------
-        function renderProfile() {
-            document.getElementById('profileName').innerText = userProfile.name;
-            document.getElementById('profileTarget').innerText = userProfile.target;
-            document.getElementById('profileStreak').innerText = userProfile.streak;
-            document.getElementById('profileTestsTaken').innerText = userProfile.testsTaken;
-            let acc = userProfile.totalQuestions ? Math.round((userProfile.totalScore / userProfile.totalQuestions) * 100) : 0;
-            document.getElementById('profileAccuracy').innerText = acc + '%';
-        }
-        document.getElementById('editProfileBtn').addEventListener('click', () => {
-            let newName = prompt('enter your name:', userProfile.name);
-            if (newName) {
-                userProfile.name = newName.trim() || userProfile.name;
-                saveProfile();
-                renderProfile();
-                document.querySelector('.profile-text h4').innerText = userProfile.name;
-            }
-        });
+              <div class="input-group">
+                <label>Difficulty</label>
+                <select id="difficultySelect">
+                  <option value="Easy">Easy</option>
+                  <option value="Medium" selected>Medium</option>
+                  <option value="Hard">Hard</option>
+                </select>
+              </div>
 
-        // ---------- INITIAL LOAD ----------
-        updateStreak();
-        updateDashboard();
-        renderTests();
-        renderDoubts();
-        renderForum();
-        renderProfile();
+              <div class="input-group">
+                <label>Questions</label>
+                <select id="questionCountSelect">
+                  <option value="5">5</option>
+                  <option value="10" selected>10</option>
+                  <option value="15">15</option>
+                </select>
+              </div>
 
-        // hide modal on outside click
-        window.addEventListener('click', (e) => {
-            if (e.target === modal) modal.style.display = 'none';
-        });
-    </script>
+              <div class="input-group">
+                <label>Chapter / Topic</label>
+                <input type="text" id="chapterInput" placeholder="e.g. Current Electricity" />
+              </div>
+            </div>
+
+            <button class="primary-btn full" id="generateTestBtn">
+              <i class="fas fa-bolt"></i> Generate Mock Test
+            </button>
+          </div>
+
+          <div class="test-history-card glass">
+            <div class="card-head">
+              <h3>📚 Test History</h3>
+              <button class="link-btn" id="clearHistoryBtn">clear</button>
+            </div>
+            <div id="testHistoryList" class="history-list"></div>
+          </div>
+        </div>
+
+        <div class="quiz-card glass hidden" id="quizArea">
+          <div class="quiz-topbar">
+            <div>
+              <h3 id="quizTitle">Murphx Mock Test</h3>
+              <p id="quizMeta">Physics • Medium • 10 Questions</p>
+            </div>
+            <div class="quiz-timer glass">
+              <span>Time Left</span>
+              <strong id="quizTimer">10:00</strong>
+            </div>
+          </div>
+
+          <div class="quiz-progress">
+            <div class="progress-track">
+              <div class="progress-fill" id="quizProgressBar" style="width:10%"></div>
+            </div>
+            <small id="quizProgressText">Question 1 / 10</small>
+          </div>
+
+          <div class="question-box">
+            <h4 id="questionText">Question will appear here</h4>
+            <div id="optionsContainer" class="options-list"></div>
+          </div>
+
+          <div class="quiz-actions">
+            <button class="secondary-btn" id="prevQuestionBtn">
+              <i class="fas fa-arrow-left"></i> Prev
+            </button>
+            <button class="secondary-btn" id="nextQuestionBtn">
+              Next <i class="fas fa-arrow-right"></i>
+            </button>
+            <button class="primary-btn hidden" id="submitQuizBtn">
+              <i class="fas fa-check"></i> Submit Test
+            </button>
+          </div>
+        </div>
+
+        <div class="result-card glass hidden" id="resultArea">
+          <h3>🎯 Test Result</h3>
+          <div class="result-grid">
+            <div class="result-box glass">
+              <span>Score</span>
+              <strong id="resultScore">0/0</strong>
+            </div>
+            <div class="result-box glass">
+              <span>Accuracy</span>
+              <strong id="resultAccuracy">0%</strong>
+            </div>
+            <div class="result-box glass">
+              <span>Correct</span>
+              <strong id="resultCorrect">0</strong>
+            </div>
+            <div class="result-box glass">
+              <span>Wrong</span>
+              <strong id="resultWrong">0</strong>
+            </div>
+          </div>
+          <div class="result-actions">
+            <button class="primary-btn" id="retakeBtn">Take Another Test</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- BREATH -->
+      <section class="content-section" id="breathSection">
+        <div class="section-header glass">
+          <div>
+            <h2>Mindful Breath</h2>
+            <p>Reset your nervous system before deep study.</p>
+          </div>
+        </div>
+
+        <div class="breath-grid">
+          <div class="breath-card glass">
+            <h3>🌬️ 4-4-6 Calm Cycle</h3>
+            <p>Inhale 4s • Hold 4s • Exhale 6s</p>
+            <div class="breath-circle" id="breathCircle">
+              <span id="breathPhaseText">Ready</span>
+            </div>
+            <div class="breath-controls">
+              <button class="primary-btn" id="startBreathBtn">Start Breath</button>
+              <button class="secondary-btn" id="stopBreathBtn">Stop</button>
+            </div>
+          </div>
+
+          <div class="breath-card glass">
+            <h3>🧠 Focus Reset</h3>
+            <p>Use this before Physics numericals or mock tests.</p>
+            <ul class="tips-list">
+              <li>Close eyes for 30 seconds</li>
+              <li>Relax jaw and shoulders</li>
+              <li>Slow exhale longer than inhale</li>
+              <li>Start with one clear target</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- AI MENTOR -->
+      <section class="content-section" id="mentorSection">
+        <div class="section-header glass">
+          <div>
+            <h2>AI Mentor</h2>
+            <p>Frontend smart coach (GitHub Pages compatible).</p>
+          </div>
+        </div>
+
+        <div class="chat-card glass">
+          <div class="chat-messages" id="mentorMessages">
+            <div class="chat-bubble ai">
+              Warrior Aditya, I’m here. Ask me about study plans, NEET strategy, motivation, or focus.
+            </div>
+          </div>
+
+          <div class="chat-input-row">
+            <input type="text" id="mentorInput" placeholder="Ask: how do I study Physics better?" />
+            <button class="primary-btn" id="sendMentorBtn">
+              <i class="fas fa-paper-plane"></i>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- DOUBTS -->
+      <section class="content-section" id="doubtsSection">
+        <div class="section-header glass">
+          <div>
+            <h2>Doubt Solver</h2>
+            <p>Smart keyword-based study helper.</p>
+          </div>
+        </div>
+
+        <div class="doubt-grid">
+          <div class="doubt-card glass">
+            <h3>❓ Ask your doubt</h3>
+            <textarea id="doubtInput" placeholder="e.g. Why does electric field inside conductor become zero?"></textarea>
+            <button class="primary-btn full" id="solveDoubtBtn">
+              <i class="fas fa-lightbulb"></i> Solve Doubt
+            </button>
+          </div>
+
+          <div class="doubt-card glass">
+            <h3>💡 Murphx Response</h3>
+            <div id="doubtOutput" class="doubt-output">
+              Your explanation will appear here.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- COMMUNITY -->
+      <section class="content-section" id="communitySection">
+        <div class="section-header glass">
+          <div>
+            <h2>Community</h2>
+            <p>Motivation wall and your focus logs.</p>
+          </div>
+        </div>
+
+        <div class="community-grid">
+          <div class="community-card glass">
+            <h3>🔥 Motivation Feed</h3>
+            <div class="feed-list">
+              <div class="feed-item glass">“One mock test a day keeps fear away.”</div>
+              <div class="feed-item glass">“NCERT + revision + PYQ = Rank pressure broken.”</div>
+              <div class="feed-item glass">“Discipline first. Mood later.”</div>
+            </div>
+          </div>
+
+          <div class="community-card glass">
+            <h3>📝 Add Focus Log</h3>
+            <textarea id="focusLogInput" placeholder="Write your study win for today..."></textarea>
+            <button class="primary-btn full" id="addFocusLogBtn">Add Log</button>
+            <div id="focusLogList" class="focus-log-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PROFILE -->
+      <section class="content-section" id="profileSection">
+        <div class="section-header glass">
+          <div>
+            <h2>Profile</h2>
+            <p>Your current Murphx identity.</p>
+          </div>
+        </div>
+
+        <div class="profile-grid">
+          <div class="profile-card glass">
+            <div class="profile-main">
+              <div class="big-avatar">A</div>
+              <div>
+                <h3>Aditya</h3>
+                <p>NEET 2026 • Warrior Mode</p>
+              </div>
+            </div>
+            <div class="profile-stats">
+              <div class="mini-box glass">
+                <span>Tests Taken</span>
+                <strong id="profileTestsTaken">0</strong>
+              </div>
+              <div class="mini-box glass">
+                <span>Best Score</span>
+                <strong id="profileBestScore">0%</strong>
+              </div>
+              <div class="mini-box glass">
+                <span>Streak</span>
+                <strong id="profileStreak">1 day</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
 </body>
-</html>
+              </html>
