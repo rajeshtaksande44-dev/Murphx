@@ -57,7 +57,74 @@ body {
     from { background-position: 0 0; }
     to { background-position: 10000px 0; }
 }
+/* Gargantua Black Hole Background */
+.gargantua-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 30% 50%, #000000, #0a0a1a 40%, #000000 80%);
+    z-index: -10;
+    overflow: hidden;
+}
 
+.gargantua-bg::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 30%;
+    width: 60vmax;
+    height: 60vmax;
+    background: radial-gradient(circle, #ffaa0040 0%, #ff550020 30%, transparent 70%);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    filter: blur(20px);
+    animation: blackholePulse 8s infinite alternate;
+}
+
+.gargantua-bg::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 30%;
+    width: 30vmax;
+    height: 30vmax;
+    background: conic-gradient(from 0deg, #ffaa00, #ff5500, #aa00ff, #ffaa00);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    filter: blur(40px);
+    opacity: 0.3;
+    animation: blackholeSpin 20s linear infinite;
+}
+
+.accretion-disk {
+    position: absolute;
+    top: 50%;
+    left: 30%;
+    width: 80vmax;
+    height: 20vmax;
+    background: linear-gradient(90deg, transparent, #ffaa0040, #ff550080, #ffaa0040, transparent);
+    transform: translate(-50%, -50%) rotate(15deg);
+    filter: blur(30px);
+    border-radius: 50%;
+    animation: diskGlow 6s infinite alternate;
+}
+
+@keyframes blackholePulse {
+    0% { opacity: 0.3; transform: translate(-50%, -50%) scale(1); }
+    100% { opacity: 0.6; transform: translate(-50%, -50%) scale(1.2); }
+}
+
+@keyframes blackholeSpin {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+@keyframes diskGlow {
+    0% { opacity: 0.2; filter: blur(30px); }
+    100% { opacity: 0.5; filter: blur(50px); }
+}
 /* ===== TYPOGRAPHY ===== */
 h1, h2, h3, h4, h5, h6 {
     font-family: 'Space Grotesk', sans-serif;
