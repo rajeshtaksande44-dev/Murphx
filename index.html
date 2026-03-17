@@ -2,503 +2,763 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+  />
+  <meta
+    name="description"
+    content="Murphx Prep - Rainy glass focus study dashboard for tests, doubts, AI mentor, mindful breathing, and NEET preparation."
+  />
+  <meta name="theme-color" content="#060b1f" />
   <title>Murphx Prep — Rainy Glass Focus</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-  <link rel="stylesheet" href="style.css" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Icons -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkR4jY0X7P3wQevSCWr3W6A6lYVdAyjUar5A=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="style.css?v=final1" />
 </head>
 <body>
-  <div class="rain-layer"></div>
-  <div class="orb orb-1"></div>
-  <div class="orb orb-2"></div>
-  <div class="orb orb-3"></div>
+  <!-- Rain layers -->
+  <div class="rain-overlay rain-1"></div>
+  <div class="rain-overlay rain-2"></div>
+  <div class="ambient-blur ambient-1"></div>
+  <div class="ambient-blur ambient-2"></div>
+  <div class="ambient-blur ambient-3"></div>
 
+  <!-- App Shell -->
   <div class="app-shell">
-    <!-- Sidebar -->
-    <aside class="sidebar glass">
-      <div class="brand">
-        <div class="brand-icon"><i class="fas fa-cloud-moon-rain"></i></div>
-        <div>
-          <h2>Murphx Prep</h2>
-          <p>rainy glass focus</p>
+    <!-- SIDEBAR -->
+    <aside class="sidebar glass-panel" id="sidebar">
+      <div class="sidebar-top">
+        <div class="brand">
+          <div class="brand-logo">
+            <i class="fa-solid fa-cloud-rain"></i>
+          </div>
+          <div class="brand-text">
+            <h1>Murphx Prep</h1>
+            <p>rainy glass focus</p>
+          </div>
         </div>
+
+        <button class="mobile-close-btn" id="mobileCloseBtn" aria-label="Close menu">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
       </div>
 
       <div class="nav-label">Navigation</div>
 
       <nav class="sidebar-nav">
-        <button class="nav-btn active" data-section="dashboardSection">
-          <i class="fas fa-house"></i><span>Dashboard</span>
+        <button class="nav-item active" data-page="dashboard">
+          <i class="fa-solid fa-house"></i>
+          <span>Dashboard</span>
         </button>
-        <button class="nav-btn" data-section="testsSection">
-          <i class="fas fa-vials"></i><span>Tests</span>
+
+        <button class="nav-item" data-page="tests">
+          <i class="fa-solid fa-vial-circle-check"></i>
+          <span>Tests</span>
         </button>
-        <button class="nav-btn" data-section="breathSection">
-          <i class="fas fa-wind"></i><span>Breath</span>
+
+        <button class="nav-item" data-page="breath">
+          <i class="fa-solid fa-wind"></i>
+          <span>Breath</span>
         </button>
-        <button class="nav-btn" data-section="mentorSection">
-          <i class="fas fa-robot"></i><span>AI Mentor</span>
+
+        <button class="nav-item" data-page="mentor">
+          <i class="fa-solid fa-robot"></i>
+          <span>AI Mentor</span>
         </button>
-        <button class="nav-btn" data-section="doubtsSection">
-          <i class="fas fa-circle-question"></i><span>Doubts</span>
+
+        <button class="nav-item" data-page="doubts">
+          <i class="fa-solid fa-circle-question"></i>
+          <span>Doubts</span>
         </button>
-        <button class="nav-btn" data-section="communitySection">
-          <i class="fas fa-users"></i><span>Community</span>
+
+        <button class="nav-item" data-page="community">
+          <i class="fa-solid fa-users"></i>
+          <span>Community</span>
         </button>
-        <button class="nav-btn" data-section="profileSection">
-          <i class="fas fa-user"></i><span>Profile</span>
+
+        <button class="nav-item" data-page="profile">
+          <i class="fa-solid fa-user"></i>
+          <span>Profile</span>
         </button>
       </nav>
 
-      <div class="streak-card glass">
-        <div class="streak-top">
-          <span>🔥 Streak</span>
-          <span id="streakDaysBadge">1 day</span>
+      <div class="sidebar-bottom">
+        <div class="streak-card glass-soft">
+          <div class="streak-top">
+            <span class="streak-fire">🔥 Streak</span>
+            <span class="streak-days" id="streakDaysBadge">7 days</span>
+          </div>
+          <div class="streak-bar">
+            <div class="streak-fill" id="streakFillBar"></div>
+          </div>
+          <p>You’re on fire! Keep it up.</p>
         </div>
-        <div class="progress-track small">
-          <div class="progress-fill" id="streakBar" style="width:14%"></div>
-        </div>
-        <p>You’re on fire! Keep it up.</p>
       </div>
     </aside>
 
-    <!-- Main -->
+    <!-- MAIN -->
     <main class="main-area">
-      <!-- Topbar -->
-      <header class="topbar glass">
-        <div class="topbar-title">
-          <h1 id="pageTitle">Dashboard</h1>
-          <p id="pageSubtitle">your study overview</p>
-        </div>
-
-        <div class="topbar-search">
-          <i class="fas fa-magnifying-glass"></i>
-          <input type="text" id="globalSearch" placeholder="Search chapters, concepts, tools..." />
-        </div>
-
-        <div class="topbar-actions">
-          <button class="icon-btn" id="themePulseBtn" title="Pulse">
-            <i class="fas fa-bell"></i>
+      <!-- TOPBAR -->
+      <header class="topbar glass-panel">
+        <div class="topbar-left">
+          <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu">
+            <i class="fa-solid fa-bars"></i>
           </button>
-          <div class="profile-chip glass">
+
+          <div class="page-heading">
+            <h2 id="pageTitle">Dashboard</h2>
+            <p id="pageSubtitle">your study overview</p>
+          </div>
+        </div>
+
+        <div class="topbar-center">
+          <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input
+              type="text"
+              id="globalSearch"
+              placeholder="Search chapters, concepts, tools..."
+            />
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <button class="icon-btn" id="notifBtn" aria-label="Notifications">
+            <i class="fa-regular fa-bell"></i>
+            <span class="notif-dot"></span>
+          </button>
+
+          <div class="profile-pill glass-soft">
             <div class="avatar">A</div>
-            <div>
+            <div class="profile-text">
               <strong>Aditya</strong>
-              <small>NEET 2026</small>
+              <span>NEET 2026</span>
             </div>
           </div>
         </div>
       </header>
 
-      <!-- DASHBOARD -->
-      <section class="content-section active" id="dashboardSection">
-        <div class="dashboard-grid">
-          <div class="hero-card glass">
-            <span class="hero-tag"><i class="far fa-star"></i> daily focus</span>
-            <h2>Study like a storm,<br>stay calm like <span>rain</span></h2>
-            <p>
-              Your rainy glass workspace is ready. Track progress, practice tests,
-              and breathe mindfully.
-            </p>
-            <div class="hero-actions">
-              <button class="primary-btn" id="quickTestBtn">
-                <i class="fas fa-plus"></i> Quick Test
+      <!-- CONTENT -->
+      <section class="content-area" id="contentArea">
+
+        <!-- ================= DASHBOARD PAGE ================= -->
+        <section class="page active-page" id="page-dashboard">
+          <div class="dashboard-grid">
+            <!-- HERO -->
+            <div class="hero-card glass-panel">
+              <div class="card-chip">
+                <i class="fa-regular fa-star"></i>
+                <span>daily focus</span>
+              </div>
+
+              <h1 class="hero-title">
+                Study like a storm,<br />
+                stay calm like <span>rain</span>
+              </h1>
+
+              <p class="hero-text">
+                Your rainy glass workspace is ready. Track progress, practice tests,
+                solve doubts, and breathe mindfully — all in one focused place.
+              </p>
+
+              <div class="hero-actions">
+                <button class="primary-btn" id="quickTestBtn">
+                  <i class="fa-solid fa-plus"></i>
+                  Quick Test
+                </button>
+
+                <button class="secondary-btn" id="heroBreathBtn">
+                  <i class="fa-regular fa-square-check"></i>
+                  Breath Focus
+                </button>
+              </div>
+            </div>
+
+            <!-- RIGHT STATS -->
+            <div class="stats-stack">
+              <div class="stats-card glass-panel">
+                <div class="section-title-row">
+                  <h3><i class="fa-regular fa-rectangle-list"></i> Today’s stats</h3>
+                </div>
+
+                <div class="stats-mini-grid">
+                  <div class="mini-stat glass-soft">
+                    <span>tests done</span>
+                    <strong id="statTestsDone">0</strong>
+                  </div>
+
+                  <div class="mini-stat glass-soft">
+                    <span>avg. score</span>
+                    <strong id="statAvgScore">0%</strong>
+                  </div>
+
+                  <div class="mini-stat glass-soft">
+                    <span>accuracy</span>
+                    <strong id="statAccuracy">0%</strong>
+                  </div>
+                </div>
+              </div>
+
+              <div class="quote-card glass-panel">
+                <i class="fa-regular fa-bookmark"></i>
+                <p>
+                  “The expert in anything was once a beginner.”
+                  <strong>– rainy glass mindset</strong>
+                </p>
+              </div>
+            </div>
+
+            <!-- SUBJECT PROGRESS -->
+            <div class="progress-card glass-panel">
+              <div class="section-title-row">
+                <div>
+                  <h3>📊 subject progress</h3>
+                  <p>your mastery over key topics</p>
+                </div>
+                <button class="text-link" id="viewAllSubjectsBtn">view all</button>
+              </div>
+
+              <div class="subject-list">
+                <div class="subject-item glass-soft">
+                  <div class="subject-top">
+                    <div class="subject-left">
+                      <div class="subject-icon"><i class="fa-solid fa-atom"></i></div>
+                      <div>
+                        <strong>Physics</strong>
+                        <span>12/18 topics</span>
+                      </div>
+                    </div>
+                    <strong class="subject-percent">68%</strong>
+                  </div>
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width: 68%"></div>
+                  </div>
+                </div>
+
+                <div class="subject-item glass-soft">
+                  <div class="subject-top">
+                    <div class="subject-left">
+                      <div class="subject-icon"><i class="fa-solid fa-flask"></i></div>
+                      <div>
+                        <strong>Chemistry</strong>
+                        <span>9/14 topics</span>
+                      </div>
+                    </div>
+                    <strong class="subject-percent">64%</strong>
+                  </div>
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width: 64%"></div>
+                  </div>
+                </div>
+
+                <div class="subject-item glass-soft">
+                  <div class="subject-top">
+                    <div class="subject-left">
+                      <div class="subject-icon"><i class="fa-solid fa-leaf"></i></div>
+                      <div>
+                        <strong>Biology</strong>
+                        <span>15/22 topics</span>
+                      </div>
+                    </div>
+                    <strong class="subject-percent">70%</strong>
+                  </div>
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width: 70%"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- DAILY CHALLENGE -->
+            <div class="challenge-card glass-panel">
+              <div class="section-title-row">
+                <div>
+                  <h3>🏆 daily challenge</h3>
+                  <p>ends in ...</p>
+                </div>
+                <button class="text-link" id="startChallengeBtn">start</button>
+              </div>
+
+              <div class="challenge-box glass-soft">
+                <strong>5 questions · Physics</strong>
+                <span>Electrostatics & current electricity</span>
+              </div>
+
+              <div class="timer-box glass-soft">
+                <span>time left</span>
+                <strong id="dailyTimer">09:30:00</strong>
+              </div>
+            </div>
+
+            <!-- FEATURE SHORTCUTS -->
+            <div class="feature-cards-row">
+              <button class="feature-card glass-panel" data-page-jump="tests">
+                <div class="feature-icon"><i class="fa-regular fa-pen-to-square"></i></div>
+                <h4>mock test</h4>
+                <p>practice with real exam pattern</p>
               </button>
-              <button class="secondary-btn" id="quickBreathBtn">
-                <i class="fas fa-wind"></i> Breath Focus
+
+              <button class="feature-card glass-panel" data-page-jump="breath">
+                <div class="feature-icon"><i class="fa-regular fa-heart"></i></div>
+                <h4>mindful breath</h4>
+                <p>Vigyan Bhairav techniques</p>
+              </button>
+
+              <button class="feature-card glass-panel" data-page-jump="mentor">
+                <div class="feature-icon"><i class="fa-regular fa-comments"></i></div>
+                <h4>AI mentor</h4>
+                <p>ask anything, get instant help</p>
               </button>
             </div>
           </div>
+        </section>
 
-          <div class="stats-card glass">
-            <div class="card-head">
-              <h3><i class="far fa-rectangle-list"></i> Today's stats</h3>
+        <!-- ================= TESTS PAGE ================= -->
+        <section class="page" id="page-tests">
+          <div class="page-section-head">
+            <div>
+              <h2>Mock Tests</h2>
+              <p>Create, solve, review, and improve.</p>
             </div>
-            <div class="mini-stats">
-              <div class="mini-box glass">
-                <span>tests done</span>
-                <strong id="testsDoneStat">0</strong>
+            <button class="primary-btn" id="openBuilderBtn">
+              <i class="fa-solid fa-plus"></i>
+              Create Test
+            </button>
+          </div>
+
+          <div class="tests-layout">
+            <!-- BUILDER -->
+            <div class="builder-panel glass-panel">
+              <div class="section-title-row">
+                <h3>⚡ Quick Builder</h3>
               </div>
-              <div class="mini-box glass">
-                <span>avg. score</span>
-                <strong id="avgScoreStat">0%</strong>
+
+              <div class="builder-grid">
+                <div class="field-group">
+                  <label for="testSubject">Subject</label>
+                  <select id="testSubject">
+                    <option value="Physics">Physics</option>
+                    <option value="Chemistry">Chemistry</option>
+                    <option value="Biology">Biology</option>
+                    <option value="Mixed">Mixed</option>
+                  </select>
+                </div>
+
+                <div class="field-group">
+                  <label for="testTopic">Topic</label>
+                  <input
+                    type="text"
+                    id="testTopic"
+                    placeholder="e.g. Motion in 1D / Cell / Thermodynamics"
+                  />
+                </div>
+
+                <div class="field-group">
+                  <label for="testQuestions">Questions</label>
+                  <input type="number" id="testQuestions" min="3" max="30" value="5" />
+                </div>
+
+                <div class="field-group">
+                  <label for="testDifficulty">Difficulty</label>
+                  <select id="testDifficulty">
+                    <option value="Easy">Easy</option>
+                    <option value="Medium" selected>Medium</option>
+                    <option value="Hard">Hard</option>
+                  </select>
+                </div>
               </div>
-              <div class="mini-box glass">
-                <span>accuracy</span>
-                <strong id="accuracyStat">0%</strong>
+
+              <div class="builder-actions">
+                <button class="primary-btn" id="generateTestBtn">
+                  <i class="fa-solid fa-bolt"></i>
+                  Generate Test
+                </button>
+
+                <button class="secondary-btn" id="loadSampleTestBtn">
+                  <i class="fa-regular fa-file-lines"></i>
+                  Load Sample
+                </button>
+              </div>
+            </div>
+
+            <!-- ACTIVE TEST -->
+            <div class="test-panel glass-panel">
+              <div class="section-title-row">
+                <div>
+                  <h3>📝 Active Test</h3>
+                  <p id="activeTestMeta">No test generated yet.</p>
+                </div>
+                <div class="test-timer glass-soft">
+                  <i class="fa-regular fa-clock"></i>
+                  <strong id="testTimer">00:00</strong>
+                </div>
+              </div>
+
+              <div id="testContainer" class="test-container empty-state">
+                <div class="empty-box">
+                  <i class="fa-regular fa-file-lines"></i>
+                  <h4>No test yet</h4>
+                  <p>Create or load a test to start practicing.</p>
+                </div>
+              </div>
+
+              <div class="test-actions" id="testActions" style="display: none;">
+                <button class="secondary-btn" id="resetTestBtn">
+                  <i class="fa-solid fa-rotate-left"></i>
+                  Reset
+                </button>
+
+                <button class="primary-btn" id="submitTestBtn">
+                  <i class="fa-solid fa-check"></i>
+                  Submit Test
+                </button>
               </div>
             </div>
           </div>
 
-          <div class="quote-card glass">
-            <p>“The expert in anything was once a beginner.”</p>
-            <strong>— rainy glass mindset</strong>
+          <!-- TEST HISTORY -->
+          <div class="history-panel glass-panel">
+            <div class="section-title-row">
+              <h3>📚 Test History</h3>
+            </div>
+
+            <div id="testHistoryList" class="history-list">
+              <div class="empty-inline">No tests completed yet.</div>
+            </div>
           </div>
+        </section>
 
-          <div class="progress-card glass">
-            <div class="card-head">
-              <div>
-                <h3>📊 subject progress</h3>
-                <p>your mastery over key topics</p>
-              </div>
-              <button class="link-btn" id="viewAllTestsBtn">view all</button>
-            </div>
-
-            <div class="subject-item">
-              <div class="subject-row">
-                <div class="subject-name"><i class="fas fa-atom"></i> Physics</div>
-                <strong id="physicsProgressText">68%</strong>
-              </div>
-              <small>12/18 topics</small>
-              <div class="progress-track">
-                <div class="progress-fill" id="physicsBar" style="width:68%"></div>
-              </div>
-            </div>
-
-            <div class="subject-item">
-              <div class="subject-row">
-                <div class="subject-name"><i class="fas fa-flask"></i> Chemistry</div>
-                <strong id="chemistryProgressText">64%</strong>
-              </div>
-              <small>9/14 topics</small>
-              <div class="progress-track">
-                <div class="progress-fill" id="chemistryBar" style="width:64%"></div>
-              </div>
-            </div>
-
-            <div class="subject-item">
-              <div class="subject-row">
-                <div class="subject-name"><i class="fas fa-leaf"></i> Biology</div>
-                <strong id="biologyProgressText">70%</strong>
-              </div>
-              <small>15/22 topics</small>
-              <div class="progress-track">
-                <div class="progress-fill" id="biologyBar" style="width:70%"></div>
-              </div>
+        <!-- ================= BREATH PAGE ================= -->
+        <section class="page" id="page-breath">
+          <div class="page-section-head">
+            <div>
+              <h2>Mindful Breath</h2>
+              <p>Rainy focus breathing for calm + concentration.</p>
             </div>
           </div>
 
-          <div class="challenge-card glass">
-            <div class="card-head">
-              <div>
-                <h3>🏆 daily challenge</h3>
-                <p>ends in ...</p>
+          <div class="breath-layout">
+            <div class="breath-main glass-panel">
+              <div class="section-title-row">
+                <h3>🌫 Focus Cycle</h3>
               </div>
-              <button class="link-btn" id="startChallengeBtn">start</button>
+
+              <div class="breath-circle-wrap">
+                <div class="breath-circle" id="breathCircle">
+                  <span id="breathPhaseText">Ready</span>
+                </div>
+              </div>
+
+              <div class="breath-meta">
+                <div class="breath-stat glass-soft">
+                  <span>Cycle</span>
+                  <strong id="breathCycleCount">0</strong>
+                </div>
+
+                <div class="breath-stat glass-soft">
+                  <span>Time Left</span>
+                  <strong id="breathTimeLeft">02:00</strong>
+                </div>
+              </div>
+
+              <div class="breath-controls">
+                <button class="primary-btn" id="startBreathBtn">
+                  <i class="fa-solid fa-play"></i>
+                  Start
+                </button>
+
+                <button class="secondary-btn" id="pauseBreathBtn">
+                  <i class="fa-solid fa-pause"></i>
+                  Pause
+                </button>
+
+                <button class="secondary-btn" id="resetBreathBtn">
+                  <i class="fa-solid fa-rotate-left"></i>
+                  Reset
+                </button>
+              </div>
             </div>
-            <div class="challenge-topic">
-              <strong>5 questions • Physics</strong>
-              <p>Electrostatics & current electricity</p>
+
+            <div class="breath-side glass-panel">
+              <div class="section-title-row">
+                <h3>🧘 Technique</h3>
+              </div>
+
+              <div class="breath-steps">
+                <div class="step-item glass-soft">
+                  <strong>Inhale</strong>
+                  <span>4 seconds</span>
+                </div>
+                <div class="step-item glass-soft">
+                  <strong>Hold</strong>
+                  <span>4 seconds</span>
+                </div>
+                <div class="step-item glass-soft">
+                  <strong>Exhale</strong>
+                  <span>6 seconds</span>
+                </div>
+                <div class="step-item glass-soft">
+                  <strong>Hold</strong>
+                  <span>2 seconds</span>
+                </div>
+              </div>
+
+              <p class="soft-note">
+                Use this before deep study, mock tests, or when your mind feels noisy.
+              </p>
             </div>
-            <div class="timer-box glass">
-              <span>time left</span>
-              <strong id="dailyChallengeTimer">09:30:00</strong>
+          </div>
+        </section>
+<!-- ================= MENTOR PAGE ================= -->
+        <section class="page" id="page-mentor">
+          <div class="page-section-head">
+            <div>
+              <h2>AI Mentor</h2>
+              <p>Your built-in study assistant for NEET-style help.</p>
             </div>
           </div>
 
-          <div class="action-card glass" id="actionMockTest">
-            <div class="action-icon"><i class="far fa-pen-to-square"></i></div>
-            <h4>mock test</h4>
-            <p>practice with real exam pattern</p>
+          <div class="mentor-layout">
+            <div class="mentor-chat glass-panel">
+              <div class="section-title-row">
+                <h3>🤖 Murphx AI</h3>
+              </div>
+
+              <div class="chat-window" id="mentorChatWindow">
+                <div class="chat-bubble ai">
+                  <p>
+                    Hey warrior. Ask me about Physics, Chemistry, Biology, strategy,
+                    or motivation. I’ll help you stay sharp.
+                  </p>
+                </div>
+              </div>
+
+              <div class="chat-input-row">
+                <input
+                  type="text"
+                  id="mentorInput"
+                  placeholder="Ask a concept, doubt, or study question..."
+                />
+                <button class="primary-btn icon-only" id="sendMentorBtn" aria-label="Send">
+                  <i class="fa-solid fa-paper-plane"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="mentor-prompts glass-panel">
+              <div class="section-title-row">
+                <h3>⚡ Quick Prompts</h3>
+              </div>
+
+              <div class="prompt-list">
+                <button class="prompt-btn">Explain electrostatics in simple way</button>
+                <button class="prompt-btn">How to revise organic chemistry fast?</button>
+                <button class="prompt-btn">Give me NEET motivation</button>
+                <button class="prompt-btn">What is mitosis vs meiosis?</button>
+                <button class="prompt-btn">How to improve physics numericals?</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= DOUBTS PAGE ================= -->
+        <section class="page" id="page-doubts">
+          <div class="page-section-head">
+            <div>
+              <h2>Doubt Solver</h2>
+              <p>Store doubts, solve later, track confusion points.</p>
+            </div>
           </div>
 
-          <div class="action-card glass" id="actionBreath">
-            <div class="action-icon"><i class="far fa-heart"></i></div>
-            <h4>mindful breath</h4>
-            <p>Vigyan Bhairav techniques</p>
-          </div>
+          <div class="doubt-layout">
+            <div class="doubt-form-panel glass-panel">
+              <div class="section-title-row">
+                <h3>❓ Add a Doubt</h3>
+              </div>
 
-          <div class="action-card glass" id="actionMentor">
-            <div class="action-icon"><i class="far fa-comments"></i></div>
-            <h4>AI mentor</h4>
-            <p>ask anything, get instant help</p>
-          </div>
-        </div>
-      </section>
-
-      <!-- TESTS -->
-      <section class="content-section" id="testsSection">
-        <div class="section-header glass">
-          <div>
-            <h2>Mock Tests</h2>
-            <p>Create, solve, review, and improve.</p>
-          </div>
-          <button class="primary-btn" id="openCreateTestBtn">
-            <i class="fas fa-plus"></i> Create Test
-          </button>
-        </div>
-
-        <div class="tests-grid">
-          <div class="test-builder-card glass">
-            <h3>⚡ Quick Builder</h3>
-            <div class="form-grid">
-              <div class="input-group">
-                <label>Subject</label>
-                <select id="subjectSelect">
+              <div class="field-group">
+                <label for="doubtSubject">Subject</label>
+                <select id="doubtSubject">
                   <option value="Physics">Physics</option>
                   <option value="Chemistry">Chemistry</option>
                   <option value="Biology">Biology</option>
-                  <option value="Mixed">Mixed</option>
                 </select>
               </div>
 
-              <div class="input-group">
-                <label>Difficulty</label>
-                <select id="difficultySelect">
-                  <option value="Easy">Easy</option>
-                  <option value="Medium" selected>Medium</option>
-                  <option value="Hard">Hard</option>
-                </select>
+              <div class="field-group">
+                <label for="doubtTopic">Topic</label>
+                <input type="text" id="doubtTopic" placeholder="e.g. Ray optics / Genetics" />
               </div>
 
-              <div class="input-group">
-                <label>Questions</label>
-                <select id="questionCountSelect">
-                  <option value="5">5</option>
-                  <option value="10" selected>10</option>
-                  <option value="15">15</option>
-                </select>
+              <div class="field-group">
+                <label for="doubtText">Your Doubt</label>
+                <textarea
+                  id="doubtText"
+                  rows="5"
+                  placeholder="Write the concept, question, or confusion here..."
+                ></textarea>
               </div>
 
-              <div class="input-group">
-                <label>Chapter / Topic</label>
-                <input type="text" id="chapterInput" placeholder="e.g. Current Electricity" />
-              </div>
+              <button class="primary-btn" id="saveDoubtBtn">
+                <i class="fa-solid fa-bookmark"></i>
+                Save Doubt
+              </button>
             </div>
 
-            <button class="primary-btn full" id="generateTestBtn">
-              <i class="fas fa-bolt"></i> Generate Mock Test
-            </button>
-          </div>
+            <div class="doubt-list-panel glass-panel">
+              <div class="section-title-row">
+                <h3>📌 Saved Doubts</h3>
+              </div>
 
-          <div class="test-history-card glass">
-            <div class="card-head">
-              <h3>📚 Test History</h3>
-              <button class="link-btn" id="clearHistoryBtn">clear</button>
+              <div id="doubtList" class="doubt-list">
+                <div class="empty-inline">No doubts saved yet.</div>
+              </div>
             </div>
-            <div id="testHistoryList" class="history-list"></div>
           </div>
-        </div>
+        </section>
 
-        <div class="quiz-card glass hidden" id="quizArea">
-          <div class="quiz-topbar">
+        <!-- ================= COMMUNITY PAGE ================= -->
+        <section class="page" id="page-community">
+          <div class="page-section-head">
             <div>
-              <h3 id="quizTitle">Murphx Mock Test</h3>
-              <p id="quizMeta">Physics • Medium • 10 Questions</p>
-            </div>
-            <div class="quiz-timer glass">
-              <span>Time Left</span>
-              <strong id="quizTimer">10:00</strong>
+              <h2>Community</h2>
+              <p>Your self-accountability and progress board.</p>
             </div>
           </div>
 
-          <div class="quiz-progress">
-            <div class="progress-track">
-              <div class="progress-fill" id="quizProgressBar" style="width:10%"></div>
-            </div>
-            <small id="quizProgressText">Question 1 / 10</small>
-          </div>
-
-          <div class="question-box">
-            <h4 id="questionText">Question will appear here</h4>
-            <div id="optionsContainer" class="options-list"></div>
-          </div>
-
-          <div class="quiz-actions">
-            <button class="secondary-btn" id="prevQuestionBtn">
-              <i class="fas fa-arrow-left"></i> Prev
-            </button>
-            <button class="secondary-btn" id="nextQuestionBtn">
-              Next <i class="fas fa-arrow-right"></i>
-            </button>
-            <button class="primary-btn hidden" id="submitQuizBtn">
-              <i class="fas fa-check"></i> Submit Test
-            </button>
-          </div>
-        </div>
-
-        <div class="result-card glass hidden" id="resultArea">
-          <h3>🎯 Test Result</h3>
-          <div class="result-grid">
-            <div class="result-box glass">
-              <span>Score</span>
-              <strong id="resultScore">0/0</strong>
-            </div>
-            <div class="result-box glass">
-              <span>Accuracy</span>
-              <strong id="resultAccuracy">0%</strong>
-            </div>
-            <div class="result-box glass">
-              <span>Correct</span>
-              <strong id="resultCorrect">0</strong>
-            </div>
-            <div class="result-box glass">
-              <span>Wrong</span>
-              <strong id="resultWrong">0</strong>
-            </div>
-          </div>
-          <div class="result-actions">
-            <button class="primary-btn" id="retakeBtn">Take Another Test</button>
-          </div>
-        </div>
-      </section>
-
-      <!-- BREATH -->
-      <section class="content-section" id="breathSection">
-        <div class="section-header glass">
-          <div>
-            <h2>Mindful Breath</h2>
-            <p>Reset your nervous system before deep study.</p>
-          </div>
-        </div>
-
-        <div class="breath-grid">
-          <div class="breath-card glass">
-            <h3>🌬️ 4-4-6 Calm Cycle</h3>
-            <p>Inhale 4s • Hold 4s • Exhale 6s</p>
-            <div class="breath-circle" id="breathCircle">
-              <span id="breathPhaseText">Ready</span>
-            </div>
-            <div class="breath-controls">
-              <button class="primary-btn" id="startBreathBtn">Start Breath</button>
-              <button class="secondary-btn" id="stopBreathBtn">Stop</button>
-            </div>
-          </div>
-
-          <div class="breath-card glass">
-            <h3>🧠 Focus Reset</h3>
-            <p>Use this before Physics numericals or mock tests.</p>
-            <ul class="tips-list">
-              <li>Close eyes for 30 seconds</li>
-              <li>Relax jaw and shoulders</li>
-              <li>Slow exhale longer than inhale</li>
-              <li>Start with one clear target</li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      <!-- AI MENTOR -->
-      <section class="content-section" id="mentorSection">
-        <div class="section-header glass">
-          <div>
-            <h2>AI Mentor</h2>
-            <p>Frontend smart coach (GitHub Pages compatible).</p>
-          </div>
-        </div>
-
-        <div class="chat-card glass">
-          <div class="chat-messages" id="mentorMessages">
-            <div class="chat-bubble ai">
-              Warrior Aditya, I’m here. Ask me about study plans, NEET strategy, motivation, or focus.
-            </div>
-          </div>
-
-          <div class="chat-input-row">
-            <input type="text" id="mentorInput" placeholder="Ask: how do I study Physics better?" />
-            <button class="primary-btn" id="sendMentorBtn">
-              <i class="fas fa-paper-plane"></i>
-            </button>
-          </div>
-        </div>
-      </section>
-
-      <!-- DOUBTS -->
-      <section class="content-section" id="doubtsSection">
-        <div class="section-header glass">
-          <div>
-            <h2>Doubt Solver</h2>
-            <p>Smart keyword-based study helper.</p>
-          </div>
-        </div>
-
-        <div class="doubt-grid">
-          <div class="doubt-card glass">
-            <h3>❓ Ask your doubt</h3>
-            <textarea id="doubtInput" placeholder="e.g. Why does electric field inside conductor become zero?"></textarea>
-            <button class="primary-btn full" id="solveDoubtBtn">
-              <i class="fas fa-lightbulb"></i> Solve Doubt
-            </button>
-          </div>
-
-          <div class="doubt-card glass">
-            <h3>💡 Murphx Response</h3>
-            <div id="doubtOutput" class="doubt-output">
-              Your explanation will appear here.
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- COMMUNITY -->
-      <section class="content-section" id="communitySection">
-        <div class="section-header glass">
-          <div>
-            <h2>Community</h2>
-            <p>Motivation wall and your focus logs.</p>
-          </div>
-        </div>
-
-        <div class="community-grid">
-          <div class="community-card glass">
-            <h3>🔥 Motivation Feed</h3>
-            <div class="feed-list">
-              <div class="feed-item glass">“One mock test a day keeps fear away.”</div>
-              <div class="feed-item glass">“NCERT + revision + PYQ = Rank pressure broken.”</div>
-              <div class="feed-item glass">“Discipline first. Mood later.”</div>
-            </div>
-          </div>
-
-          <div class="community-card glass">
-            <h3>📝 Add Focus Log</h3>
-            <textarea id="focusLogInput" placeholder="Write your study win for today..."></textarea>
-            <button class="primary-btn full" id="addFocusLogBtn">Add Log</button>
-            <div id="focusLogList" class="focus-log-list"></div>
-          </div>
-        </div>
-      </section>
-
-      <!-- PROFILE -->
-      <section class="content-section" id="profileSection">
-        <div class="section-header glass">
-          <div>
-            <h2>Profile</h2>
-            <p>Your current Murphx identity.</p>
-          </div>
-        </div>
-
-        <div class="profile-grid">
-          <div class="profile-card glass">
-            <div class="profile-main">
-              <div class="big-avatar">A</div>
-              <div>
-                <h3>Aditya</h3>
-                <p>NEET 2026 • Warrior Mode</p>
+          <div class="community-grid">
+            <div class="glass-panel">
+              <div class="section-title-row">
+                <h3>🏹 Today’s mission</h3>
+              </div>
+              <div class="mission-box glass-soft">
+                <strong>Complete 2 focused sessions + 1 test review</strong>
+                <p>One day of discipline beats one week of motivation.</p>
               </div>
             </div>
-            <div class="profile-stats">
-              <div class="mini-box glass">
-                <span>Tests Taken</span>
-                <strong id="profileTestsTaken">0</strong>
+
+            <div class="glass-panel">
+              <div class="section-title-row">
+                <h3>🔥 Warrior reminder</h3>
               </div>
-              <div class="mini-box glass">
-                <span>Best Score</span>
-                <strong id="profileBestScore">0%</strong>
-              </div>
-              <div class="mini-box glass">
-                <span>Streak</span>
-                <strong id="profileStreak">1 day</strong>
+              <div class="mission-box glass-soft">
+                <strong>Rank is rented. Rent is due daily.</strong>
+                <p>Protect your hours like a fighter protects guard.</p>
               </div>
             </div>
           </div>
-        </div>
+        </section>
+
+        <!-- ================= PROFILE PAGE ================= -->
+        <section class="page" id="page-profile">
+          <div class="page-section-head">
+            <div>
+              <h2>Profile</h2>
+              <p>Your study identity and performance snapshot.</p>
+            </div>
+          </div>
+
+          <div class="profile-grid">
+            <div class="profile-card glass-panel">
+              <div class="profile-head">
+                <div class="avatar large">A</div>
+                <div>
+                  <h3>Aditya</h3>
+                  <p>NEET 2026 Warrior</p>
+                </div>
+              </div>
+
+              <div class="profile-stats">
+                <div class="mini-stat glass-soft">
+                  <span>Total Tests</span>
+                  <strong id="profileTotalTests">0</strong>
+                </div>
+
+                <div class="mini-stat glass-soft">
+                  <span>Best Score</span>
+                  <strong id="profileBestScore">0%</strong>
+                </div>
+
+                <div class="mini-stat glass-soft">
+                  <span>Saved Doubts</span>
+                  <strong id="profileDoubtCount">0</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
       </section>
     </main>
   </div>
 
-  <script src="script.js"></script>
+  <!-- MOBILE SIDEBAR BACKDROP -->
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <!-- RESULT MODAL -->
+  <div class="modal-overlay" id="resultModal">
+    <div class="modal-box glass-panel">
+      <div class="modal-head">
+        <h3>🎯 Test Result</h3>
+        <button class="icon-btn" id="closeResultModalBtn" aria-label="Close result">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="result-content">
+        <div class="result-score-ring">
+          <div class="ring-inner">
+            <strong id="resultScoreText">0%</strong>
+            <span>Score</span>
+          </div>
+        </div>
+
+        <div class="result-stats-grid">
+          <div class="mini-stat glass-soft">
+            <span>Correct</span>
+            <strong id="resultCorrect">0</strong>
+          </div>
+
+          <div class="mini-stat glass-soft">
+            <span>Wrong</span>
+            <strong id="resultWrong">0</strong>
+          </div>
+
+          <div class="mini-stat glass-soft">
+            <span>Total</span>
+            <strong id="resultTotal">0</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="secondary-btn" id="closeResultBtn">Close</button>
+        <button class="primary-btn" id="reviewResultBtn">Review</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="script.js?v=final1"></script>
 </body>
-              </html>
+      </html>
