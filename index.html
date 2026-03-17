@@ -1,880 +1,663 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Murphx Prep · Rainy Glass</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
-  <style>
-    :root {
-      --bg-1: #040816;
-      --bg-2: #091226;
-      --glass: rgba(255, 255, 255, 0.08);
-      --glass-strong: rgba(255, 255, 255, 0.14);
-      --line: rgba(255, 255, 255, 0.12);
-      --text: #eef6ff;
-      --muted: #a6bdd7;
-      --blue: #8fdcff;
-      --cyan: #7af4ff;
-      --violet: #b58cff;
-      --green: #8fffd1;
-      --danger: #ff8ea6;
-      --shadow: 0 20px 50px rgba(0,0,0,.35);
-      --radius-xl: 28px;
-      --radius-lg: 22px;
-      --radius-md: 18px;
-    }* { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
-body {
-  font-family: 'Inter', sans-serif;
-  color: var(--text);
-  min-height: 100vh;
-  background:
-    radial-gradient(circle at 15% 20%, rgba(122,244,255,0.08), transparent 28%),
-    radial-gradient(circle at 80% 18%, rgba(181,140,255,0.12), transparent 30%),
-    radial-gradient(circle at 65% 70%, rgba(143,220,255,0.08), transparent 28%),
-    linear-gradient(180deg, var(--bg-2), var(--bg-1));
-  overflow-x: hidden;
-  position: relative;
-}
-
-#rain-canvas,
-#orb-canvas {
-  position: fixed;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-}
-#orb-canvas { z-index: -3; }
-#rain-canvas { z-index: -2; }
-
-.noise {
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  opacity: .08;
-  background-image:
-    radial-gradient(circle at 20% 20%, rgba(255,255,255,.15) 0 1px, transparent 1px),
-    radial-gradient(circle at 70% 50%, rgba(255,255,255,.12) 0 1px, transparent 1px),
-    radial-gradient(circle at 50% 80%, rgba(255,255,255,.1) 0 1px, transparent 1px);
-  background-size: 180px 180px;
-  animation: drift 18s linear infinite;
-}
-@keyframes drift {
-  from { transform: translateY(0); }
-  to { transform: translateY(-40px); }
-}
-
-.app-shell {
-  max-width: 1480px;
-  margin: 0 auto;
-  padding: 18px;
-}
-
-.glass {
-  background: linear-gradient(180deg, rgba(255,255,255,0.1), rgba(255,255,255,0.04));
-  border: 1px solid var(--line);
-  backdrop-filter: blur(18px) saturate(160%);
-  -webkit-backdrop-filter: blur(18px) saturate(160%);
-  box-shadow: var(--shadow);
-}
-
-.topbar {
-  position: sticky;
-  top: 12px;
-  z-index: 50;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 14px 18px;
-  border-radius: 26px;
-  margin-bottom: 18px;
-}
-
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  min-width: 0;
-}
-
-.brand-mark {
-  width: 54px;
-  height: 54px;
-  border-radius: 18px;
-  display: grid;
-  place-items: center;
-  background:
-    linear-gradient(145deg, rgba(143,220,255,0.35), rgba(181,140,255,0.2));
-  border: 1px solid rgba(255,255,255,0.18);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.25);
-  position: relative;
-  overflow: hidden;
-}
-
-.brand-mark::after {
-  content: "";
-  position: absolute;
-  inset: 8px;
-  border-radius: 14px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.02));
-  border: 1px solid rgba(255,255,255,0.1);
-}
-
-.brand-mark i {
-  position: relative;
-  z-index: 1;
-  color: var(--blue);
-  font-size: 1.35rem;
-  text-shadow: 0 0 18px rgba(143,220,255,.4);
-}
-
-.brand-text h1 {
-  font-size: clamp(1rem, 2vw, 1.25rem);
-  font-weight: 800;
-  letter-spacing: .02em;
-}
-
-.brand-text p {
-  color: var(--muted);
-  font-size: .84rem;
-}
-
-.nav-scroll {
-  display: flex;
-  gap: 8px;
-  overflow-x: auto;
-  scrollbar-width: none;
-  flex: 1;
-  justify-content: center;
-}
-.nav-scroll::-webkit-scrollbar { display: none; }
-
-.nav-btn {
-  border: 1px solid rgba(255,255,255,0.1);
-  background: rgba(255,255,255,0.04);
-  color: #d9ecff;
-  padding: 10px 14px;
-  border-radius: 999px;
-  font-size: .92rem;
-  font-weight: 600;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: .25s ease;
-}
-.nav-btn:hover,
-.nav-btn.active {
-  background: rgba(143,220,255,0.12);
-  border-color: rgba(143,220,255,0.35);
-  color: #fff;
-  transform: translateY(-1px);
-  box-shadow: 0 0 20px rgba(143,220,255,0.12);
-}
-
-.top-actions {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
-.icon-chip {
-  width: 46px;
-  height: 46px;
-  border-radius: 16px;
-  border: 1px solid rgba(255,255,255,0.12);
-  background: rgba(255,255,255,0.06);
-  display: grid;
-  place-items: center;
-  color: var(--text);
-  cursor: pointer;
-}
-
-.layout {
-  display: grid;
-  grid-template-columns: 280px 1fr;
-  gap: 18px;
-}
-
-.sidebar {
-  border-radius: 28px;
-  padding: 18px;
-  height: calc(100vh - 120px);
-  position: sticky;
-  top: 102px;
-  overflow: hidden;
-}
-
-.profile-card {
-  border-radius: 24px;
-  padding: 18px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.08);
-  margin-bottom: 16px;
-}
-
-.avatar {
-  width: 70px;
-  height: 70px;
-  border-radius: 22px;
-  display: grid;
-  place-items: center;
-  background: linear-gradient(135deg, rgba(143,220,255,.28), rgba(181,140,255,.2));
-  font-weight: 800;
-  font-size: 1.2rem;
-  margin-bottom: 14px;
-  border: 1px solid rgba(255,255,255,.14);
-}
-
-.profile-card h2 { font-size: 1.1rem; margin-bottom: 4px; }
-.profile-card p { color: var(--muted); font-size: .88rem; }
-
-.level-pill {
-  margin-top: 14px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-  font-size: .8rem;
-  color: var(--muted);
-}
-
-.progress {
-  width: 100%;
-  height: 8px;
-  border-radius: 999px;
-  background: rgba(255,255,255,.08);
-  overflow: hidden;
-  margin-top: 8px;
-}
-
-.progress > span {
-  display: block;
-  height: 100%;
-  width: 72%;
-  border-radius: inherit;
-  background: linear-gradient(90deg, var(--blue), var(--violet));
-  box-shadow: 0 0 18px rgba(143,220,255,.3);
-}
-
-.side-group { margin-top: 18px; }
-.side-title {
-  color: var(--muted);
-  font-size: .76rem;
-  text-transform: uppercase;
-  letter-spacing: .14em;
-  margin-bottom: 10px;
-  padding: 0 6px;
-}
-
-.side-link {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 14px;
-  border-radius: 18px;
-  color: #dcecff;
-  cursor: pointer;
-  transition: .22s ease;
-  border: 1px solid transparent;
-  margin-bottom: 8px;
-}
-.side-link:hover,
-.side-link.active {
-  background: rgba(255,255,255,.06);
-  border-color: rgba(255,255,255,.08);
-}
-.side-link i { width: 18px; color: var(--blue); }
-
-.main {
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-
-.hero {
-  border-radius: 34px;
-  padding: 24px;
-  position: relative;
-  overflow: hidden;
-  display: grid;
-  grid-template-columns: 1.35fr .95fr;
-  gap: 18px;
-}
-
-.hero::before {
-  content: "";
-  position: absolute;
-  inset: -20% auto auto -10%;
-  width: 280px;
-  height: 280px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(122,244,255,.18), transparent 60%);
-  filter: blur(10px);
-}
-
-.hero-copy h2 {
-  font-size: clamp(1.7rem, 3vw, 3rem);
-  line-height: 1.08;
-  margin-bottom: 12px;
-  font-weight: 800;
-}
-
-.hero-copy p {
-  color: var(--muted);
-  max-width: 650px;
-  margin-bottom: 18px;
-}
-
-.hero-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 18px;
-}
-
-.btn {
-  border: none;
-  cursor: pointer;
-  border-radius: 999px;
-  padding: 12px 18px;
-  font-weight: 700;
-  font-size: .95rem;
-  color: #f4fbff;
-  background: rgba(255,255,255,.07);
-  border: 1px solid rgba(255,255,255,.12);
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  transition: .25s ease;
-}
-
-.btn:hover { transform: translateY(-2px); }
-
-.btn-primary {
-  background: linear-gradient(135deg, rgba(143,220,255,.18), rgba(122,244,255,.14));
-  border-color: rgba(143,220,255,.35);
-  box-shadow: 0 12px 30px rgba(143,220,255,.08);
-}
-
-.btn-ghost { background: rgba(255,255,255,.04); }
-
-.streak-bar {
-  display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 10px;
-  margin-top: 8px;
-}
-
-.day-pill {
-  padding: 10px 8px;
-  border-radius: 18px;
-  text-align: center;
-  font-size: .82rem;
-  background: rgba(255,255,255,.05);
-  border: 1px solid rgba(255,255,255,.08);
-  color: var(--muted);
-}
-
-.day-pill.done {
-  background: rgba(143,220,255,.1);
-  border-color: rgba(143,220,255,.2);
-  color: #fff;
-}
-
-.hero-side {
-  display: grid;
-  gap: 14px;
-  align-content: start;
-}
-
-.mini-panel {
-  border-radius: 24px;
-  padding: 18px;
-  background: rgba(255,255,255,.05);
-  border: 1px solid rgba(255,255,255,.08);
-}
-
-.mini-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-.badge {
-  font-size: .72rem;
-  padding: 6px 10px;
-  border-radius: 999px;
-  background: rgba(143,220,255,.1);
-  border: 1px solid rgba(143,220,255,.2);
-  color: var(--blue);
-}
-
-.countdown {
-  font-size: 1.7rem;
-  font-weight: 800;
-  letter-spacing: .04em;
-  margin-bottom: 10px;
-  color: var(--blue);
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-}
-
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 14px;
-}
-
-.stat-card {
-  border-radius: 24px;
-  padding: 18px;
-  position: relative;
-  overflow: hidden;
-}
-
-.stat-card::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(255,255,255,.05), transparent);
-  pointer-events: none;
-}
-
-.stat-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 18px;
-}
-
-.stat-icon {
-  width: 46px;
-  height: 46px;
-  border-radius: 16px;
-  display: grid;
-  place-items: center;
-  background: rgba(255,255,255,.07);
-  border: 1px solid rgba(255,255,255,.08);
-  color: var(--blue);
-}
-
-.stat-value {
-  font-size: clamp(1.35rem, 2vw, 2rem);
-  font-weight: 800;
-  margin-bottom: 4px;
-}
-
-.stat-label { color: var(--muted); font-size: .88rem; }
-.stat-foot { margin-top: 12px; font-size: .8rem; color: #cde8ff; }
-
-.panel-grid {
-  display: grid;
-  grid-template-columns: 1.25fr .95fr;
-  gap: 18px;
-}
-
-.card {
-  border-radius: 28px;
-  padding: 20px;
-}
-
-.card-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
-}
-
-.card-head h3 {
-  font-size: 1.08rem;
-  font-weight: 700;
-}
-
-.chip-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.chip {
-  padding: 8px 12px;
-  border-radius: 999px;
-  font-size: .82rem;
-  border: 1px solid rgba(255,255,255,.1);
-  background: rgba(255,255,255,.05);
-  color: #d5e8ff;
-}
-
-.task-list { display: grid; gap: 12px; }
-
-.task-item {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  gap: 12px;
-  align-items: center;
-  padding: 14px;
-  border-radius: 20px;
-  background: rgba(255,255,255,.04);
-  border: 1px solid rgba(255,255,255,.08);
-}
-
-.task-check {
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  border: 2px solid rgba(143,220,255,.45);
-  display: grid;
-  place-items: center;
-  cursor: pointer;
-}
-
-.task-check.done {
-  background: rgba(143,220,255,.16);
-  color: var(--blue);
-}
-
-.task-title { font-weight: 600; }
-.task-meta { color: var(--muted); font-size: .82rem; }
-
-.pill-score {
-  padding: 8px 10px;
-  border-radius: 14px;
-  font-size: .8rem;
-  background: rgba(143,220,255,.08);
-  border: 1px solid rgba(143,220,255,.18);
-}
-
-.breath-wrap {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px;
-}
-
-.breath-card {
-  border-radius: 24px;
-  padding: 18px;
-  background: rgba(255,255,255,.05);
-  border: 1px solid rgba(255,255,255,.08);
-  display: grid;
-  gap: 14px;
-}
-
-.breath-top {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.breath-icon {
-  width: 54px;
-  height: 54px;
-  border-radius: 18px;
-  display: grid;
-  place-items: center;
-  background: rgba(143,220,255,.1);
-  border: 1px solid rgba(143,220,255,.15);
-  color: var(--blue);
-  font-size: 1.2rem;
-}
-
-.breath-pulse {
-  width: 90px;
-  aspect-ratio: 1;
-  margin: 0 auto;
-  border-radius: 50%;
-  border: 2px solid rgba(143,220,255,.4);
-  background: radial-gradient(circle, rgba(143,220,255,.18), rgba(143,220,255,.02));
-  animation: breathe 8s ease-in-out infinite;
-}
-
-@keyframes breathe {
-  0%,100% { transform: scale(.88); box-shadow: 0 0 0 0 rgba(143,220,255,.12); }
-  50% { transform: scale(1.15); box-shadow: 0 0 40px 8px rgba(143,220,255,.12); }
-}
-
-.breath-timer {
-  text-align: center;
-  font-size: 1.35rem;
-  font-weight: 800;
-  color: var(--cyan);
-  font-family: ui-monospace, monospace;
-}
-
-.section { display: none; }
-.section.active { display: block; }
-
-.tests-grid,
-.community-grid,
-.mentor-grid,
-.doubts-grid,
-.profile-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18px;
-}
-
-.test-card,
-.feed-card,
-.mentor-card,
-.doubt-card,
-.profile-card-large {
-  border-radius: 26px;
-  padding: 20px;
-  background: rgba(255,255,255,.05);
-  border: 1px solid rgba(255,255,255,.08);
-}
-
-.test-meta,
-.feed-meta { color: var(--muted); font-size: .86rem; margin-top: 6px; }
-
-.bar {
-  height: 8px;
-  border-radius: 999px;
-  background: rgba(255,255,255,.08);
-  overflow: hidden;
-  margin-top: 12px;
-}
-.bar span {
-  display: block;
-  height: 100%;
-  border-radius: inherit;
-  background: linear-gradient(90deg, var(--blue), var(--green));
-}
-
-.chat-box {
-  min-height: 320px;
-  max-height: 420px;
-  overflow: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding-right: 6px;
-}
-
-.message {
-  max-width: 84%;
-  padding: 14px 16px;
-  border-radius: 20px;
-  line-height: 1.55;
-  font-size: .94rem;
-}
-
-.message.bot {
-  align-self: flex-start;
-  background: rgba(143,220,255,.09);
-  border: 1px solid rgba(143,220,255,.15);
-  border-bottom-left-radius: 8px;
-}
-
-.message.user {
-  align-self: flex-end;
-  background: rgba(255,255,255,.07);
-  border: 1px solid rgba(255,255,255,.1);
-  border-bottom-right-radius: 8px;
-}
-
-.input-row {
-  display: flex;
-  gap: 10px;
-  margin-top: 14px;
-}
-
-.input {
-  width: 100%;
-  border: 1px solid rgba(255,255,255,.12);
-  border-radius: 18px;
-  background: rgba(255,255,255,.04);
-  color: var(--text);
-  padding: 14px 16px;
-  outline: none;
-  font: inherit;
-}
-
-.input:focus { border-color: rgba(143,220,255,.35); }
-
-.fab {
-  position: fixed;
-  right: 22px;
-  bottom: 22px;
-  z-index: 80;
-  width: 64px;
-  height: 64px;
-  border-radius: 22px;
-  display: grid;
-  place-items: center;
-  border: 1px solid rgba(143,220,255,.2);
-  background: linear-gradient(145deg, rgba(143,220,255,.18), rgba(181,140,255,.14));
-  color: white;
-  box-shadow: 0 20px 40px rgba(0,0,0,.35);
-  cursor: pointer;
-  font-size: 1.25rem;
-}
-
-.modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(3, 6, 15, .72);
-  backdrop-filter: blur(8px);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 100;
-  padding: 18px;
-}
-
-.modal.show { display: flex; }
-
-.modal-card {
-  width: min(560px, 100%);
-  border-radius: 30px;
-  padding: 22px;
-}
-
-.modal-grid {
-  display: grid;
-  gap: 12px;
-  margin-top: 14px;
-}
-
-.select {
-  appearance: none;
-  width: 100%;
-  border: 1px solid rgba(255,255,255,.12);
-  border-radius: 18px;
-  background: rgba(255,255,255,.04);
-  color: var(--text);
-  padding: 14px 16px;
-  font: inherit;
-  outline: none;
-}
-
-.muted { color: var(--muted); }
-
-@media (max-width: 1200px) {
-  .layout { grid-template-columns: 1fr; }
-  .sidebar { position: static; height: auto; }
-  .hero { grid-template-columns: 1fr; }
-  .panel-grid { grid-template-columns: 1fr; }
-}
-
-@media (max-width: 900px) {
-  .topbar {
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-  .nav-scroll { order: 3; width: 100%; justify-content: flex-start; }
-  .stats-grid,
-  .breath-wrap,
-  .tests-grid,
-  .community-grid,
-  .mentor-grid,
-  .doubts-grid,
-  .profile-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-@media (max-width: 640px) {
-  .app-shell { padding: 12px; }
-  .topbar { top: 8px; border-radius: 22px; }
-  .brand { width: 100%; justify-content: center; }
-  .top-actions { width: 100%; justify-content: center; }
-  .hero, .card, .sidebar, .topbar { padding: 16px; }
-  .stats-grid,
-  .breath-wrap,
-  .tests-grid,
-  .community-grid,
-  .mentor-grid,
-  .doubts-grid,
-  .profile-grid,
-  .streak-bar {
-    grid-template-columns: 1fr;
-  }
-  .hero-actions,
-  .input-row { flex-direction: column; }
-  .message { max-width: 100%; }
-  .fab { right: 14px; bottom: 14px; width: 58px; height: 58px; }
-}
-
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Murphx Prep · Rainy Glass</title>
+    <!-- Google Fonts & Font Awesome -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <link rel="stylesheet" href="style.css"> <!-- your existing CSS -->
 </head>
 <body>
-  <canvas id="orb-canvas"></canvas>
-  <canvas id="rain-canvas"></canvas>
-  <div class="noise"></div>  <div class="app-shell">
-    <header class="topbar glass">
-      <div class="brand">
-        <div class="brand-mark"><i class="fa-solid fa-cloud-rain"></i></div>
-        <div class="brand-text">
-          <h1>Murphx Prep</h1>
-          <p>Rainy glass focus engine for toppers</p>
+    <!-- Background layers (rain + stars) -->
+    <div class="rain-layer"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <!-- App Shell (sidebar + main) -->
+    <div class="app-shell">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-logo"><i class="fa-solid fa-cloud-rain"></i></div>
+                <div class="brand-text">
+                    <h1>Murphx Prep</h1>
+                    <p>rainy glass focus</p>
+                </div>
+            </div>
+
+            <div class="nav-group">
+                <div class="nav-label">navigation</div>
+                <button class="nav-btn active" data-section="dashboard"><i class="fa-solid fa-house"></i>Dashboard</button>
+                <button class="nav-btn" data-section="tests"><i class="fa-solid fa-flask"></i>Tests</button>
+                <button class="nav-btn" data-section="breath"><i class="fa-solid fa-wind"></i>Breath</button>
+                <button class="nav-btn" data-section="mentor"><i class="fa-solid fa-robot"></i>AI Mentor</button>
+                <button class="nav-btn" data-section="doubts"><i class="fa-solid fa-question"></i>Doubts</button>
+                <button class="nav-btn" data-section="community"><i class="fa-solid fa-users"></i>Community</button>
+                <button class="nav-btn" data-section="profile"><i class="fa-solid fa-user"></i>Profile</button>
+            </div>
+
+            <div class="sidebar-bottom">
+                <div class="streak-card glass">
+                    <div class="streak-top">
+                        <h4>🔥 Streak</h4>
+                        <span class="streak-badge" id="streakCount">7 days</span>
+                    </div>
+                    <div class="progress-track">
+                        <div class="progress-fill" style="width: 65%"></div>
+                    </div>
+                    <p class="streak-text">You're on fire! Keep it up.</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <!-- TOPBAR -->
+            <div class="topbar glass">
+                <div class="topbar-left">
+                    <button class="menu-toggle" id="menuToggle"><i class="fa-solid fa-bars"></i></button>
+                    <div class="page-meta">
+                        <h2 id="pageTitle">Dashboard</h2>
+                        <p id="pageSubtitle">your study overview</p>
+                    </div>
+                </div>
+                <div class="topbar-right">
+                    <div class="search-box glass">
+                        <i class="fa-regular fa-magnifying-glass"></i>
+                        <input type="text" placeholder="Search...">
+                    </div>
+                    <button class="icon-btn"><i class="fa-regular fa-bell"></i><span class="notification-dot"></span></button>
+                    <div class="profile-chip glass">
+                        <div class="avatar">A</div>
+                        <div class="profile-text">
+                            <h4>Aditya</h4>
+                            <p>NEET 2026</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DASHBOARD SECTION -->
+            <section class="page-section active" id="dashboard-section">
+                <!-- Hero Grid -->
+                <div class="hero-grid">
+                    <div class="hero-card glass">
+                        <span class="hero-badge"><i class="fa-regular fa-star"></i> daily focus</span>
+                        <h1 class="hero-title">Study like a storm,<br><span class="gradient-text">stay calm like rain</span></h1>
+                        <p class="hero-subtitle">Your rainy glass workspace is ready. Track progress, practice tests, and breathe mindfully.</p>
+                        <div class="hero-actions">
+                            <button class="btn btn-primary" id="quickTestBtn"><i class="fa-regular fa-plus"></i> Quick Test</button>
+                            <button class="btn btn-secondary" data-section="breath"><i class="fa-regular fa-cloud-rain"></i> Breath Focus</button>
+                        </div>
+                    </div>
+                    <div class="side-stack">
+                        <div class="mini-card glass">
+                            <h3><i class="fa-regular fa-chart-simple"></i> Today's stats</h3>
+                            <div class="stat-row">
+                                <div class="stat-box"><p>tests done</p><h4 id="statTestsTaken">0</h4></div>
+                                <div class="stat-box"><p>avg. score</p><h4 id="statAvgScore">0%</h4></div>
+                                <div class="stat-box"><p>accuracy</p><h4 id="statAccuracy">0%</h4></div>
+                            </div>
+                        </div>
+                        <div class="mini-card glass">
+                            <div class="quote-box">
+                                <i class="fa-regular fa-quote-left"></i>
+                                <p>“The expert in anything was once a beginner.” <strong>– rainy glass mindset</strong></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dashboard Grid (Subject progress + Daily challenge) -->
+                <div class="dashboard-grid">
+                    <div class="card glass">
+                        <div class="card-header">
+                            <div>
+                                <h3 class="card-title">📊 subject progress</h3>
+                                <p class="card-subtitle">your mastery over key topics</p>
+                            </div>
+                            <button class="link-btn" data-section="tests">view all <i class="fa-regular fa-arrow-right"></i></button>
+                        </div>
+                        <div class="subject-list" id="subjectProgress">
+                            <!-- dynamically filled by JS -->
+                            <div class="subject-item">
+                                <div class="subject-top">
+                                    <div class="subject-left">
+                                        <div class="subject-icon"><i class="fa-solid fa-atom"></i></div>
+                                        <div>
+                                            <div class="subject-name">Physics</div>
+                                            <div class="subject-meta">12/18 topics</div>
+                                        </div>
+                                    </div>
+                                    <span class="percent">68%</span>
+                                </div>
+                                <div class="progress-track"><div class="progress-fill" style="width:68%"></div></div>
+                            </div>
+                            <div class="subject-item">
+                                <div class="subject-top">
+                                    <div class="subject-left">
+                                        <div class="subject-icon"><i class="fa-solid fa-flask"></i></div>
+                                        <div>
+                                            <div class="subject-name">Chemistry</div>
+                                            <div class="subject-meta">9/14 topics</div>
+                                        </div>
+                                    </div>
+                                    <span class="percent">64%</span>
+                                </div>
+                                <div class="progress-track"><div class="progress-fill" style="width:64%"></div></div>
+                            </div>
+                            <div class="subject-item">
+                                <div class="subject-top">
+                                    <div class="subject-left">
+                                        <div class="subject-icon"><i class="fa-solid fa-leaf"></i></div>
+                                        <div>
+                                            <div class="subject-name">Biology</div>
+                                            <div class="subject-meta">15/22 topics</div>
+                                        </div>
+                                    </div>
+                                    <span class="percent">70%</span>
+                                </div>
+                                <div class="progress-track"><div class="progress-fill" style="width:70%"></div></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card glass">
+                        <div class="card-header">
+                            <div>
+                                <h3 class="card-title">⏳ daily challenge</h3>
+                                <p class="card-subtitle">ends in …</p>
+                            </div>
+                            <button class="link-btn" id="startChallengeBtn">start <i class="fa-regular fa-arrow-right"></i></button>
+                        </div>
+                        <div class="challenge-card">
+                            <div class="challenge-box">
+                                <h4>5 questions · Physics</h4>
+                                <p>Electrostatics & current electricity</p>
+                            </div>
+                            <div class="timer-box">
+                                <h5>time left</h5>
+                                <div class="timer-display" id="dailyCountdown">06:45:22</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Cards (Quick actions) -->
+                <div class="action-grid">
+                    <div class="action-card glass" data-section="tests">
+                        <div class="action-icon"><i class="fa-regular fa-pen-to-square"></i></div>
+                        <h3>mock test</h3>
+                        <p>practice with real exam pattern</p>
+                    </div>
+                    <div class="action-card glass" data-section="breath">
+                        <div class="action-icon"><i class="fa-regular fa-heart"></i></div>
+                        <h3>mindful breath</h3>
+                        <p>Viygan Bharav techniques</p>
+                    </div>
+                    <div class="action-card glass" data-section="mentor">
+                        <div class="action-icon"><i class="fa-regular fa-comments"></i></div>
+                        <h3>AI mentor</h3>
+                        <p>ask anything, get instant help</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TESTS SECTION -->
+            <section class="page-section" id="tests-section">
+                <div class="page-head">
+                    <h2>🧪 your test library</h2>
+                    <p>create, manage, and practice mock tests</p>
+                </div>
+                <div class="toolbar">
+                    <div class="toolbar-left">
+                        <select class="select-box glass">
+                            <option>all subjects</option>
+                            <option>physics</option>
+                            <option>chemistry</option>
+                            <option>biology</option>
+                        </select>
+                        <input class="input-box glass" placeholder="search tests...">
+                    </div>
+                    <div class="toolbar-right">
+                        <button class="btn btn-primary" id="createTestBtn"><i class="fa-regular fa-plus"></i> new test</button>
+                    </div>
+                </div>
+                <div class="test-grid" id="testsList">
+                    <!-- dynamically inserted -->
+                </div>
+            </section>
+
+            <!-- BREATH SECTION -->
+            <section class="page-section" id="breath-section">
+                <div class="page-head">
+                    <h2>🌬️ Viygan Bharav – breath focus</h2>
+                    <p>three ancient techniques for calm & concentration</p>
+                </div>
+                <div class="action-grid">
+                    <div class="action-card glass breath-card">
+                        <div class="action-icon"><i class="fa-regular fa-wind"></i></div>
+                        <h3>nostril awareness</h3>
+                        <p>feel cool inhale, warm exhale · 2 min</p>
+                        <button class="btn btn-secondary startBreath" data-tech="nostril">start</button>
+                    </div>
+                    <div class="action-card glass breath-card">
+                        <div class="action-icon"><i class="fa-regular fa-sort-numeric-up-alt"></i></div>
+                        <h3>counting breaths</h3>
+                        <p>inhale 1, exhale 2 … up to 10 · 3 min</p>
+                        <button class="btn btn-secondary startBreath" data-tech="count">start</button>
+                    </div>
+                    <div class="action-card glass breath-card">
+                        <div class="action-icon"><i class="fa-regular fa-pause"></i></div>
+                        <h3>pause between</h3>
+                        <p>observe stillness after exhale · 2 min</p>
+                        <button class="btn btn-secondary startBreath" data-tech="pause">start</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- AI MENTOR SECTION -->
+            <section class="page-section" id="mentor-section">
+                <div class="ai-layout">
+                    <div class="chat-card glass">
+                        <div class="card-header">
+                            <h3 class="card-title"><i class="fa-regular fa-robot"></i> AI mentor</h3>
+                        </div>
+                        <div class="chat-messages" id="chatMessages">
+                            <div class="msg bot"><i class="fa-regular fa-robot"></i> Hi! I'm your cosmic AI. Ask me anything about NEET/JEE.</div>
+                        </div>
+                        <div class="chat-input-wrap">
+                            <input type="text" class="chat-input" id="chatInput" placeholder="ask your doubt..." onkeypress="if(event.key==='Enter') sendMessage()">
+                            <button class="btn btn-primary" onclick="sendMessage()"><i class="fa-regular fa-paper-plane"></i></button>
+                        </div>
+                    </div>
+                    <div class="ai-side-card glass">
+                        <h3 class="card-title">🏆 leaderboard</h3>
+                        <div class="rank-list" id="leaderboardList">
+                            <!-- dynamic -->
+                            <div class="rank-item"><div class="rank-left"><span class="rank-badge">🥇</span><span class="rank-name">MurphxPanda</span></div><span class="rank-score">1245 pts</span></div>
+                            <div class="rank-item"><div class="rank-left"><span class="rank-badge">🥈</span><span class="rank-name">NebulaNinja</span></div><span class="rank-score">1180 pts</span></div>
+                            <div class="rank-item"><div class="rank-left"><span class="rank-badge">🥉</span><span class="rank-name">QuasarQueen</span></div><span class="rank-score">1090 pts</span></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- DOUBTS SECTION -->
+            <section class="page-section" id="doubts-section">
+                <div class="page-head">
+                    <h2>❓ doubt vault</h2>
+                    <p>post your doubts, get help from community & AI</p>
+                </div>
+                <div class="dashboard-grid">
+                    <div class="card glass">
+                        <h3 class="card-title">new doubt</h3>
+                        <textarea class="chat-input" id="doubtInput" rows="4" placeholder="write your doubt..."></textarea>
+                        <button class="btn btn-primary" id="submitDoubtBtn" style="margin-top:12px;">submit</button>
+                    </div>
+                    <div class="card glass">
+                        <h3 class="card-title">recent doubts</h3>
+                        <div id="doubtsList" class="subject-list"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- COMMUNITY SECTION -->
+            <section class="page-section" id="community-section">
+                <div class="page-head">
+                    <h2>👥 community forum</h2>
+                    <p>discuss, share, and learn together</p>
+                </div>
+                <div class="toolbar">
+                    <button class="btn btn-primary" id="newPostBtn"><i class="fa-regular fa-plus"></i> new post</button>
+                </div>
+                <div class="test-grid" id="forumPostsList"></div>
+            </section>
+
+            <!-- PROFILE SECTION -->
+            <section class="page-section" id="profile-section">
+                <div class="profile-grid">
+                    <div class="profile-card-large glass">
+                        <div class="avatar" style="width:80px;height:80px;font-size:1.8rem;">A</div>
+                        <h2 id="profileName">Aditya</h2>
+                        <p id="profileTarget">NEET 2026 · Physics comeback arc</p>
+                        <div class="stat-row">
+                            <div class="stat-box"><p>streak</p><h4 id="profileStreak">7</h4></div>
+                            <div class="stat-box"><p>tests</p><h4 id="profileTestsTaken">0</h4></div>
+                            <div class="stat-box"><p>accuracy</p><h4 id="profileAccuracy">0%</h4></div>
+                        </div>
+                        <button class="btn btn-secondary" id="editProfileBtn"><i class="fa-regular fa-pen"></i> edit name</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- MODAL for creating test (simple) -->
+    <div class="modal" id="createTestModal">
+        <div class="modal-card glass">
+            <h3>create new test</h3>
+            <input type="text" class="chat-input" id="testTitle" placeholder="test title">
+            <input type="number" class="chat-input" id="testDuration" placeholder="duration (min)" value="30">
+            <div style="display:flex;gap:10px;margin-top:16px;">
+                <button class="btn btn-primary" id="saveTestBtn">create</button>
+                <button class="btn btn-secondary" id="closeModalBtn">cancel</button>
+            </div>
         </div>
-      </div><nav class="nav-scroll" id="topNav">
-    <button class="nav-btn active" data-section="dashboard">Dashboard</button>
-    <button class="nav-btn" data-section="tests">Tests</button>
-    <button class="nav-btn" data-section="breath">Breath</button>
-    <button class="nav-btn" data-section="mentor">AI Mentor</button>
-    <button class="nav-btn" data-section="doubts">Doubts</button>
-    <button class="nav-btn" data-section="community">Community</button>
-    <button class="nav-btn" data-section="profile">Profile</button>
-  </nav>
-
-  <div class="top-actions">
-    <button class="icon-chip" title="Notifications"><i class="fa-regular fa-bell"></i></button>
-    <button class="icon-chip" title="Theme"><i class="fa-solid fa-droplet"></i></button>
-  </div>
-</header>
-
-<div class="layout">
-  <aside class="sidebar glass">
-    <div class="profile-card">
-      <div class="avatar">A</div>
-      <h2>Aditya · Rank Mode</h2>
-      <p>NEET 2026 · Physics comeback arc</p>
-      <div class="level-pill">
-        <span>Focus Level 9</span>
-        <span>72%</span>
-      </div>
-      <div class="progress"><span></span></div>
     </div>
 
-    <div class="side-group">
-      <div class="side-title">Quick Access</div>
-      <div class="side-link active" data-section="dashboard"><i class="fa-solid fa-house"></i><span>Rain Dashboard</span></div>
-      <div class="side-link" data-section="tests"><i class="fa-solid fa-flask"></i><span>Mock Test Forge</span></div>
-      <div class="side-link" data-section="breath"><i class="fa-solid fa-wind"></i><span>Mindful Breath</span></div>
-      <div class="side-link" data-section="mentor"><i class="fa-solid fa-sparkles"></i><span>AI Mentor</span></div>
-      <div class="side-link" data-section="doubts"><i class="fa-solid fa-circle-question"></i><span>Doubt Vault</span></div>
-      <div class="side-link" data-section="community"><i class="fa-solid fa-users"></i><span>Community</span></div>
-      <div class="side-link" data-section="profile"><i class="fa-solid fa-user"></i><span>Profile</span></div>
-    </div>
+     <!-- JavaScript (all functionality) -->
+    <script>
+        // ---------- DATA STORES (localStorage) ----------
+        let tests = JSON.parse(localStorage.getItem('murphx_tests')) || [];
+        let forumPosts = JSON.parse(localStorage.getItem('murphx_forum')) || [];
+        let doubts = JSON.parse(localStorage.getItem('murphx_doubts')) || [];
+        let userProfile = JSON.parse(localStorage.getItem('murphx_profile')) || {
+            name: 'Aditya',
+            target: 'NEET 2026',
+            streak: 7,
+            testsTaken: 0,
+            totalScore: 0,
+            totalQuestions: 0,
+            lastActive: new Date().toDateString()
+        };
 
-    <div class="side-group">
-      <div class="side-title">Today</div>
-      <div class="mini-panel">
-        <div class="mini-head">
-          <strong>Daily Target</strong>
-          <span class="badge">11 hrs</span>
-        </div>
-        <p class="muted">3 lectures · 2 revision blocks · 1 test</p>
-        <div class="progress"><span style="width:58%"></span></div>
-      </div>
-    </div>
-  </aside>
+        // ---------- HELPER FUNCTIONS ----------
+        function escapeHtml(text) {
+            let div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        function saveProfile() {
+            localStorage.setItem('murphx_profile', JSON.stringify(userProfile));
+        }
+        function updateStreak() {
+            const today = new Date().toDateString();
+            if (userProfile.lastActive !== today) {
+                const yesterday = new Date();
+                yesterday.setDate(yesterday.getDate() - 1);
+                if (userProfile.lastActive === yesterday.toDateString()) {
+                    userProfile.streak++;
+                } else {
+                    userProfile.streak = 1;
+                }
+                userProfile.lastActive = today;
+                saveProfile();
+            }
+        }
 
-  <main class="main">
-    <section class="section active" id="dashboard-section">
-      <div class="hero glass">
-        <div class="hero-copy">
-          <h2>Study like a storm. <br>Stay calm like rain.</h2>
-          <p>Murphx is now upgraded into a Gen Z rainy-glass experience with a topper-friendly layout, better visual hierarchy, and smoother interactions for long study sessions.</p>
-          <div class="hero-actions">
-            <button class="btn btn-primary" id="openCreateTest"><i class="fa-solid fa-plus"></i>Create Smart Test</button>
-            <button class="btn btn-ghost" data-section="breath"><i class="fa-solid fa-cloud-rain"></i>Enter Focus Breath
+        // ---------- SECTION SWITCHING ----------
+        const sections = document.querySelectorAll('.page-section');
+        const navBtns = document.querySelectorAll('.nav-btn');
+        const pageTitle = document.getElementById('pageTitle');
+        const pageSubtitle = document.getElementById('pageSubtitle');
+
+        function showSection(sectionId) {
+            sections.forEach(s => s.classList.remove('active'));
+            document.getElementById(sectionId + '-section').classList.add('active');
+            navBtns.forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`.nav-btn[data-section="${sectionId}"]`).classList.add('active');
+
+            // update topbar title
+            const titles = {
+                dashboard: ['Dashboard', 'your study overview'],
+                tests: ['Test Library', 'create & practice'],
+                breath: ['Mindful Breath', 'Viygan Bharav techniques'],
+                mentor: ['AI Mentor', 'ask anything'],
+                doubts: ['Doubt Vault', 'get help'],
+                community: ['Community', 'discuss with peers'],
+                profile: ['Profile', 'your stats']
+            };
+            pageTitle.innerText = titles[sectionId][0];
+            pageSubtitle.innerText = titles[sectionId][1];
+
+            // refresh data when entering a section
+            if (sectionId === 'dashboard') updateDashboard();
+            if (sectionId === 'tests') renderTests();
+            if (sectionId === 'doubts') renderDoubts();
+            if (sectionId === 'community') renderForum();
+            if (sectionId === 'profile') renderProfile();
+        }
+
+        navBtns.forEach(btn => {
+            btn.addEventListener('click', () => showSection(btn.dataset.section));
+        });
+
+        // also handle clicks from other buttons with data-section
+        document.querySelectorAll('[data-section]').forEach(el => {
+            el.addEventListener('click', (e) => {
+                if (e.target.closest('[data-section]')) {
+                    showSection(e.target.closest('[data-section]').dataset.section);
+                }
+            });
+        });
+
+        // ---------- DASHBOARD ----------
+        function updateDashboard() {
+            document.getElementById('statTestsTaken').innerText = userProfile.testsTaken;
+            let avg = userProfile.testsTaken ? Math.round(userProfile.totalScore / userProfile.testsTaken) : 0;
+            document.getElementById('statAvgScore').innerText = avg + '%';
+            let acc = userProfile.totalQuestions ? Math.round((userProfile.totalScore / userProfile.totalQuestions) * 100) : 0;
+            document.getElementById('statAccuracy').innerText = acc + '%';
+            document.getElementById('streakCount').innerText = userProfile.streak + ' days';
+        }
+
+        // ---------- DAILY COUNTDOWN ----------
+        function updateDailyCountdown() {
+            let now = new Date();
+            let midnight = new Date(now);
+            midnight.setHours(24,0,0,0);
+            let diff = midnight - now;
+            if (diff <= 0) { document.getElementById('dailyCountdown').innerText = '00:00:00'; return; }
+            let h = Math.floor(diff/3600000);
+            let m = Math.floor((diff%3600000)/60000);
+            let s = Math.floor((diff%60000)/1000);
+            document.getElementById('dailyCountdown').innerText = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+        }
+        setInterval(updateDailyCountdown, 1000);
+
+        document.getElementById('startChallengeBtn').addEventListener('click', () => {
+            let daily = {
+                id: 'daily-' + Date.now(),
+                title: 'Daily Challenge: Physics Mix',
+                subject: 'Physics',
+                duration: 10,
+                questions: [
+                    { text: 'SI unit of force?', options: ['Joule','Newton','Watt','Pascal'], correct: 'B', explanation: 'Newton' },
+                    { text: 'g on Earth?', options: ['9.8','10','8.9','9.1'], correct: 'A', explanation: '9.8 m/s²' }
+                ],
+                date: new Date().toLocaleDateString()
+            };
+            tests.push(daily);
+            localStorage.setItem('murphx_tests', JSON.stringify(tests));
+            alert('Daily challenge added to your tests!');
+            if (document.getElementById('tests-section').classList.contains('active')) renderTests();
+            updateDashboard();
+        });
+
+        // ---------- QUICK TEST BUTTON ----------
+        document.getElementById('quickTestBtn').addEventListener('click', () => {
+            document.getElementById('createTestModal').style.display = 'flex';
+        });
+
+        // ---------- CREATE TEST MODAL ----------
+        const modal = document.getElementById('createTestModal');
+        document.getElementById('createTestBtn').addEventListener('click', () => modal.style.display = 'flex');
+        document.getElementById('closeModalBtn').addEventListener('click', () => modal.style.display = 'none');
+        document.getElementById('saveTestBtn').addEventListener('click', () => {
+            let title = document.getElementById('testTitle').value.trim();
+            let duration = parseInt(document.getElementById('testDuration').value) || 30;
+            if (!title) { alert('enter a title'); return; }
+            tests.push({
+                id: 'test-' + Date.now(),
+                title: title,
+                duration: duration,
+                questions: [],
+                date: new Date().toLocaleDateString()
+            });
+            localStorage.setItem('murphx_tests', JSON.stringify(tests));
+            modal.style.display = 'none';
+            document.getElementById('testTitle').value = '';
+            if (document.getElementById('tests-section').classList.contains('active')) renderTests();
+            updateDashboard();
+        });
+
+        // ---------- TESTS RENDERING ----------
+        function renderTests() {
+            let container = document.getElementById('testsList');
+            if (!container) return;
+            if (tests.length === 0) {
+                container.innerHTML = '<p style="grid-column:1/-1; text-align:center;">no tests yet. create one!</p>';
+                return;
+            }
+            let html = '';
+            tests.slice().reverse().forEach(t => {
+                html += `
+                    <div class="test-card glass">
+                        <div class="test-top">
+                            <span class="test-tag">${t.subject || 'general'}</span>
+                            <span class="test-level">${t.duration} min</span>
+                        </div>
+                        <h3>${escapeHtml(t.title)}</h3>
+                        <p>${t.questions?.length || 0} questions · ${t.date || ''}</p>
+                        <div class="test-meta">
+                            <span><i class="fa-regular fa-clock"></i> ${t.duration} min</span>
+                            <span><i class="fa-regular fa-file-lines"></i> ${t.questions?.length || 0} Q</span>
+                        </div>
+                        <div class="test-actions">
+                            <button class="btn btn-primary" onclick="alert('start test: ${escapeHtml(t.title)}')">start</button>
+                            <button class="btn btn-danger" onclick="deleteTest('${t.id}')"><i class="fa-regular fa-trash"></i></button>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        window.deleteTest = function(id) {
+            if (confirm('delete this test?')) {
+                tests = tests.filter(t => t.id !== id);
+                localStorage.setItem('murphx_tests', JSON.stringify(tests));
+                renderTests();
+                updateDashboard();
+            }
+        };
+
+        // ---------- BREATH TECHNIQUES ----------
+        document.querySelectorAll('.startBreath').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                let tech = e.target.dataset.tech;
+                let msg = {
+                    nostril: 'Nostril Awareness: Focus on cool inhale, warm exhale for 2 minutes.',
+                    count: 'Counting Breaths: Inhale 1, exhale 2 … up to 10. Repeat 3 minutes.',
+                    pause: 'Pause Between Breaths: Observe stillness after each exhale for 2 minutes.'
+                }[tech] || 'start your breath practice.';
+                alert(msg);
+            });
+        });
+
+        // ---------- AI MENTOR ----------
+        window.sendMessage = function() {
+            let input = document.getElementById('chatInput');
+            let msg = input.value.trim();
+            if (!msg) return;
+            let chat = document.getElementById('chatMessages');
+            chat.innerHTML += `<div class="msg user"><i class="fa-regular fa-user"></i> ${escapeHtml(msg)}</div>`;
+            input.value = '';
+            chat.scrollTop = chat.scrollHeight;
+            setTimeout(() => {
+                let reply = getAIReply(msg);
+                chat.innerHTML += `<div class="msg bot"><i class="fa-regular fa-robot"></i> ${reply}</div>`;
+                chat.scrollTop = chat.scrollHeight;
+            }, 1000);
+        };
+        function getAIReply(q) {
+            q = q.toLowerCase();
+            if (q.includes('newton')) return "Newton's second law: F = ma.";
+            if (q.includes('mitochondria')) return "Mitochondria is the powerhouse of the cell.";
+            if (q.includes('photosynthesis')) return "6CO₂ + 6H₂O → C₆H₁₂O₆ + 6O₂";
+            return "Great question! I'll help you soon.";
+        }
+
+        // ---------- DOUBTS ----------
+        document.getElementById('submitDoubtBtn').addEventListener('click', () => {
+            let text = document.getElementById('doubtInput').value.trim();
+            if (!text) return;
+            doubts.push({ text, date: new Date().toLocaleDateString() });
+            localStorage.setItem('murphx_doubts', JSON.stringify(doubts));
+            document.getElementById('doubtInput').value = '';
+            renderDoubts();
+        });
+        function renderDoubts() {
+            let container = document.getElementById('doubtsList');
+            if (doubts.length === 0) { container.innerHTML = '<p>no doubts yet.</p>'; return; }
+            let html = '';
+            doubts.slice().reverse().forEach(d => {
+                html += `<div class="subject-item">❓ ${escapeHtml(d.text)} <small>${d.date}</small></div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        // ---------- COMMUNITY FORUM ----------
+        document.getElementById('newPostBtn').addEventListener('click', () => {
+            let title = prompt('enter post title:');
+            if (title) {
+                forumPosts.push({ title, author: userProfile.name, date: new Date().toLocaleDateString() });
+                localStorage.setItem('murphx_forum', JSON.stringify(forumPosts));
+                renderForum();
+            }
+        });
+        function renderForum() {
+            let container = document.getElementById('forumPostsList');
+            if (forumPosts.length === 0) { container.innerHTML = '<p>no posts yet.</p>'; return; }
+            let html = '';
+            forumPosts.slice().reverse().forEach(p => {
+                html += `
+                    <div class="test-card glass">
+                        <h3>${escapeHtml(p.title)}</h3>
+                        <p>by ${escapeHtml(p.author)} · ${p.date}</p>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        // ---------- PROFILE ----------
+        function renderProfile() {
+            document.getElementById('profileName').innerText = userProfile.name;
+            document.getElementById('profileTarget').innerText = userProfile.target;
+            document.getElementById('profileStreak').innerText = userProfile.streak;
+            document.getElementById('profileTestsTaken').innerText = userProfile.testsTaken;
+            let acc = userProfile.totalQuestions ? Math.round((userProfile.totalScore / userProfile.totalQuestions) * 100) : 0;
+            document.getElementById('profileAccuracy').innerText = acc + '%';
+        }
+        document.getElementById('editProfileBtn').addEventListener('click', () => {
+            let newName = prompt('enter your name:', userProfile.name);
+            if (newName) {
+                userProfile.name = newName.trim() || userProfile.name;
+                saveProfile();
+                renderProfile();
+                document.querySelector('.profile-text h4').innerText = userProfile.name;
+            }
+        });
+
+        // ---------- INITIAL LOAD ----------
+        updateStreak();
+        updateDashboard();
+        renderTests();
+        renderDoubts();
+        renderForum();
+        renderProfile();
+
+        // hide modal on outside click
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) modal.style.display = 'none';
+        });
+    </script>
+</body>
+</html>
