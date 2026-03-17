@@ -1,353 +1,659 @@
-// ========== MURPHX – RAINY GLASS STUDY (FULL SCRIPT) ==========
-// All data is stored in localStorage for persistence across sessions.
+/* =========================
+   MURPHXPREP - PREMIUM RAINY GLASS JS
+   Fully interactive app logic
+   ========================= */
 
-// ---------- GLOBAL DATA STORES ----------
-let tests = JSON.parse(localStorage.getItem('murphx_tests')) || [];
-let forumPosts = JSON.parse(localStorage.getItem('murphx_forum')) || [];
-let doubts = JSON.parse(localStorage.getItem('murphx_doubts')) || [];
-let userProfile = JSON.parse(localStorage.getItem('murphx_profile')) || {
-    name: 'Cosmic',
-    target: 'JEE Advanced 2026',
-    streak: 7,
-    testsTaken: 0,
-    totalScore: 0,
-    totalQuestions: 0,
-    lastActive: new Date().toDateString()
-};
+(() => {
+  "use strict";
 
-// ---------- UTILITY FUNCTIONS ----------
-function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-}
+  /* =========================
+     APP STATE
+     ========================= */
+  const STORAGE_KEYS = {
+    customTests: "murphxprep_custom_tests",
+    streak: "murphxprep_streak",
+    dailyChallenge: "murphxprep_daily_challenge",
+    mindfulStats: "murphxprep_mindful_stats",
+    profile: "murphxprep_profile"
+  };
 
-// Update streak based on last active date (simple version)
-function updateStreak() {
-    const today = new Date().toDateString();
-    if (userProfile.lastActive !== today) {
-        const yesterday = new Date();
-        yesterday.setDate(yesterday.getDate() - 1);
-        if (userProfile.lastActive === yesterday.toDateString()) {
-            userProfile.streak++;
-        } else {
-            userProfile.streak = 1; // reset
-        }
-        userProfile.lastActive = today;
-        saveProfile();
+  const appState = {
+    activeSection: "dashboard",
+    timerInterval: null,
+    timerSeconds: 25 * 60,
+    timerRunning: false,
+    customTests: [],
+    sidebarOpen: false,
+    dailyChallenges: [
+      {
+        title: "45-Minute Rank Push",
+        description: "Solve 30 Physics questions in 45 minutes with no distractions. Focus on speed + accuracy.",
+        duration: 45,
+        type: "physics"
+      },
+      {
+        title: "NCERT Sniper Drill",
+        description: "Read 12 Biology NCERT pages and note 10 hidden facts that can become direct NEET MCQs.",
+        duration: 35,
+        type: "biology"
+      },
+      {
+        title: "Chemistry Precision Set",
+        description: "Attempt 25 mixed Chemistry MCQs and keep accuracy above 85%.",
+        duration: 40,
+        type: "chemistry"
+      },
+      {
+        title: "Mindful Revision Sprint",
+        description: "Revise one weak chapter with deep focus for 30 minutes. No phone. No breaks.",
+        duration: 30,
+        type: "focus"
+      }
+    ],
+    aiResponses: [
+      "Good. Stay sharp. Your next move should be 45 minutes of focused problem-solving on your weakest chapter.",
+      "If your accuracy is below 80%, stop chasing speed. First fix conceptual leaks, then push pace.",
+      "NEET toppers don’t just study more. They repeat high-yield concepts until mistakes disappear.",
+      "Your best next action: solve 20 Physics numericals from one chapter and track error patterns.",
+      "You don’t need motivation right now. You need execution. Open the next test and start.",
+      "For Rank 1 mindset: reduce emotional friction. Sit, start, finish. Repeat daily.",
+      "Biology gains come from NCERT repetition. Chemistry gains come from precision. Physics gains come from battle.",
+      "If you feel overwhelmed, simplify: one chapter, one timer, one mission."
+    ]
+  };
+
+  const starterTests = [
+    {
+      id: "t1",
+      title: "NEET Physics Shockwave Test",
+      subject: "Physics",
+      difficulty: "Hard",
+      questions: 45,
+      duration: 45,
+      description: "High-concept numericals, traps, and mixed conceptual questions built for top-rankers."
+    },
+    {
+      id: "t2",
+      title: "NCERT Bio Sniper Mock",
+      subject: "Biology",
+      difficulty: "Medium",
+      questions: 90,
+      duration: 50,
+      description: "Direct + twisted NCERT line-based questions with diagram traps and PYQ-style framing."
+    },
+    {
+      id: "t3",
+      title: "Organic Reaction Master Drill",
+      subject: "Chemistry",
+      difficulty: "Hard",
+      questions: 35,
+      duration: 40,
+      description: "Reaction mechanism, named reactions, conversion logic, and elimination traps."
     }
-}
+  ];
 
-function saveProfile() {
-    localStorage.setItem('murphx_profile', JSON.stringify(userProfile));
-}
+  /* =========================
+     DOM HELPERS
+     ========================= */
+  const $ = (selector, parent = document) => parent.querySelector(selector);
+  const $$ = (selector, parent = document) => [...parent.querySelectorAll(selector)];
 
-// ---------- SECTION SWITCHING ----------
-window.showSection = function(sectionId) {
-    document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
-    const section = document.getElementById(sectionId + '-section');
-    if (section) section.style.display = 'block';
-    
-    // Update active nav link
-    document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
-    const activeLink = document.querySelector(`.nav-link[onclick*="'${sectionId}'"]`);
-    if (activeLink) activeLink.classList.add('active');
-
-    // Refresh data when section becomes visible
-    if (sectionId === 'dashboard') updateDashboard();
-    if (sectionId === 'tests') renderTests();
-    if (sectionId === 'doubts') renderDoubts();
-    if (sectionId === 'community') renderForum();
-    if (sectionId === 'profile') renderProfile();
-};
-
-// ---------- DASHBOARD ----------
-function updateDashboard() {
-    document.getElementById('statsCreated').innerText = tests.length;
-    document.getElementById('statsTaken').innerText = userProfile.testsTaken;
-    const avg = userProfile.testsTaken ? Math.round(userProfile.totalScore / userProfile.testsTaken) : 0;
-    document.getElementById('statsAvgScore').innerText = avg + '%';
-    const acc = userProfile.totalQuestions ? Math.round((userProfile.totalScore / userProfile.totalQuestions) * 100) : 0;
-    document.getElementById('statsAccuracy').innerText = acc + '%';
-    document.getElementById('streakCount').innerText = userProfile.streak;
-    document.getElementById('userNameDisplay').innerText = userProfile.name;
-
-    // Recent activity (last 3 tests)
-    const recentTests = tests.slice(-3).reverse();
-    let recentHtml = '';
-    if (recentTests.length) {
-        recentTests.forEach(t => {
-            recentHtml += `<div class="activity-item"><span>${escapeHtml(t.title)}</span><span>${t.questions?.length || 0} Q · ${t.date || 'recent'}</span></div>`;
-        });
-    } else {
-        recentHtml = '<div class="activity-item">No tests yet</div>';
+  const safeParse = (value, fallback) => {
+    try {
+      return JSON.parse(value) ?? fallback;
+    } catch {
+      return fallback;
     }
-    document.getElementById('recentActivityList').innerHTML = recentHtml;
+  };
 
-    // Leaderboard (mock – could be extended)
-    const leaderboard = [
-        { name: 'MurphxPanda', points: 1245 },
-        { name: 'NebulaNinja', points: 1180 },
-        { name: 'QuasarQueen', points: 1090 },
-        { name: 'you', points: 980 }
-    ];
-    let leaderHtml = '';
-    leaderboard.forEach((item, idx) => {
-        const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `${idx+1}️⃣`;
-        leaderHtml += `<div class="activity-item"><span>${medal} ${item.name}</span><span>${item.points} pts</span></div>`;
-    });
-    document.getElementById('leaderboardList').innerHTML = leaderHtml;
-}
+  const saveToStorage = (key, value) => {
+    localStorage.setItem(key, JSON.stringify(value));
+  };
 
-// ---------- DAILY CHALLENGE ----------
-window.startDailyChallenge = function() {
-    const daily = {
-        id: 'daily-' + Date.now(),
-        title: 'Daily Challenge: Physics Mix',
-        subject: 'Physics',
-        duration: 10,
-        questions: [
-            { text: 'SI unit of force?', options: ['Joule','Newton','Watt','Pascal'], correct: 'B', explanation: 'Newton' },
-            { text: 'Acceleration due to gravity near Earth?', options: ['9.8','10','8.9','9.1'], correct: 'A', explanation: '9.8 m/s²' }
-        ],
-        date: new Date().toLocaleDateString()
-    };
-    tests.push(daily);
-    localStorage.setItem('murphx_tests', JSON.stringify(tests));
-    alert('✅ Daily challenge added to your tests!');
-    if (document.getElementById('tests-section').style.display === 'block') renderTests();
-    updateDashboard();
-};
+  const loadFromStorage = (key, fallback) => {
+    return safeParse(localStorage.getItem(key), fallback);
+  };
 
-// ---------- MINDFUL MODE ----------
-window.startMindfulMode = function() {
-    alert('🧘 Take 3 deep breaths. A mindful test will be added.');
-    const mindful = {
-        id: 'mindful-' + Date.now(),
-        title: 'Mindful Practice: Biology',
-        subject: 'Biology',
-        duration: 5,
-        questions: [
-            { text: 'Powerhouse of the cell?', options: ['Nucleus','Mitochondria','Ribosome','Golgi'], correct: 'B', explanation: 'Mitochondria' }
-        ],
-        date: new Date().toLocaleDateString()
-    };
-    tests.push(mindful);
-    localStorage.setItem('murphx_tests', JSON.stringify(tests));
-    updateDashboard();
-};
+  const formatDateKey = (date = new Date()) => {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, "0");
+    const d = String(date.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+  };
 
-// ---------- BREATH TECHNIQUES (timer simulation) ----------
-window.startBreath = function(technique) {
-    let message = '';
-    switch(technique) {
-        case 'nostril': message = 'Nostril Awareness: Focus on the coolness of inhale and warmth of exhale. 2 minutes.'; break;
-        case 'count': message = 'Counting Breaths: Inhale 1, exhale 2 … up to 10. Repeat for 3 minutes.'; break;
-        case 'pause': message = 'Pause Between Breaths: After each exhale, observe the stillness. 2 minutes.'; break;
-        default: message = 'Start your breath practice.';
-    }
-    alert(message + '\n\n(Timer would start in a full implementation.)');
-};
+  const randomFrom = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
-// ---------- TESTS MANAGEMENT ----------
-function renderTests() {
-    const container = document.getElementById('testsList');
-    if (!container) return;
-    if (tests.length === 0) {
-        container.innerHTML = '<p>No tests yet. Create one!</p>';
-        return;
-    }
-    let html = '';
-    tests.forEach(t => {
-        html += `
-            <div class="activity-item">
-                <span><strong>${escapeHtml(t.title)}</strong> (${t.questions?.length || 0} Q) · ${t.date || ''}</span>
-                <div>
-                    <button class="btn btn-sm btn-primary" onclick="alert('Start test: ${escapeHtml(t.title)}')">Start</button>
-                    <button class="btn btn-sm" onclick="deleteTest('${t.id}')"><i class="fas fa-trash"></i></button>
-                </div>
-            </div>
-        `;
-    });
-    container.innerHTML = html;
-}
+  const createEl = (tag, className = "", html = "") => {
+    const el = document.createElement(tag);
+    if (className) el.className = className;
+    if (html) el.innerHTML = html;
+    return el;
+  };
 
-window.deleteTest = function(id) {
-    if (confirm('Delete this test?')) {
-        tests = tests.filter(t => t.id !== id);
-        localStorage.setItem('murphx_tests', JSON.stringify(tests));
-        renderTests();
-        updateDashboard();
-    }
-};
+  /* =========================
+     INIT
+     ========================= */
+  document.addEventListener("DOMContentLoaded", initApp);
 
-// ---------- CREATE TEST MODAL ----------
-window.showCreateModal = function() {
-    document.getElementById('createModal').style.display = 'flex';
-};
-window.closeModal = function() {
-    document.getElementById('createModal').style.display = 'none';
-    document.getElementById('newTestTitle').value = '';
-    document.getElementById('newTestDuration').value = '30';
-};
-window.createTest = function() {
-    const title = document.getElementById('newTestTitle').value.trim();
-    const duration = parseInt(document.getElementById('newTestDuration').value) || 30;
-    if (!title) {
-        alert('Please enter a test title.');
-        return;
-    }
-    tests.push({
-        id: 'test-' + Date.now(),
-        title: title,
-        duration: duration,
-        questions: [],
-        date: new Date().toLocaleDateString()
-    });
-    localStorage.setItem('murphx_tests', JSON.stringify(tests));
-    closeModal();
+  function initApp() {
+    loadAppData();
+    bindGlobalFunctions();
+    bindNavigation();
+    bindTopbar();
+    bindModal();
+    bindTimer();
+    bindAIChat();
+    renderDailyChallenge();
     renderTests();
-    updateDashboard();
-};
+    renderStreak();
+    renderTodayMeta();
+    hydrateProfile();
+    setActiveSection("dashboard");
+    injectWelcomeMessage();
+    updatePageTitle("Dashboard");
+  }
 
-// ---------- AI MENTOR CHAT ----------
-window.sendMessage = function() {
-    const input = document.getElementById('chatInput');
-    const msg = input.value.trim();
-    if (!msg) return;
-    const chat = document.getElementById('chatMessages');
-    chat.innerHTML += `<div class="message user"><i class="fas fa-user-astronaut me-2"></i>${escapeHtml(msg)}</div>`;
-    input.value = '';
-    chat.scrollTop = chat.scrollHeight;
+  /* =========================
+     LOAD DATA
+     ========================= */
+  function loadAppData() {
+    const storedCustomTests = loadFromStorage(STORAGE_KEYS.customTests, []);
+    appState.customTests = Array.isArray(storedCustomTests) ? storedCustomTests : [];
 
-    // Simulate AI thinking
-    setTimeout(() => {
-        const reply = getAIReply(msg);
-        chat.innerHTML += `<div class="message bot"><i class="fas fa-robot me-2"></i>${reply}</div>`;
-        chat.scrollTop = chat.scrollHeight;
-    }, 1000);
-};
-
-function getAIReply(question) {
-    const q = question.toLowerCase();
-    if (q.includes('newton')) return "**Newton's Laws:**\n- First: Inertia\n- Second: F = ma\n- Third: Action‑reaction";
-    if (q.includes('mitochondria')) return "**Mitochondria** is the powerhouse of the cell. It produces ATP through cellular respiration.";
-    if (q.includes('photosynthesis')) return "**Photosynthesis:** 6CO₂ + 6H₂O → C₆H₁₂O₆ + 6O₂. Occurs in chloroplasts.";
-    if (q.includes('mole')) return "**Mole Concept:** 1 mole = 6.022×10²³ particles. Molar mass = mass of 1 mole.";
-    if (q.includes('periodic')) return "**Periodic Table:** Elements arranged by atomic number. Groups have similar properties.";
-    return "I'm your cosmic AI. That's a great question! Could you be more specific?";
-}
-
-// ---------- DOUBTS ----------
-window.submitDoubt = function() {
-    const text = document.getElementById('doubtInput').value.trim();
-    if (!text) return;
-    doubts.push({
-        text: text,
-        date: new Date().toLocaleDateString(),
-        answered: false
+    const storedStreak = loadFromStorage(STORAGE_KEYS.streak, {
+      count: 1,
+      lastActiveDate: formatDateKey(),
+      totalSessions: 0
     });
-    localStorage.setItem('murphx_doubts', JSON.stringify(doubts));
-    document.getElementById('doubtInput').value = '';
-    renderDoubts();
-};
 
-function renderDoubts() {
-    const container = document.getElementById('doubtsList');
-    if (!container) return;
-    if (doubts.length === 0) {
-        container.innerHTML = '<p>No doubts yet.</p>';
-        return;
+    const today = formatDateKey();
+    if (!storedStreak.lastActiveDate) {
+      storedStreak.lastActiveDate = today;
     }
-    let html = '';
-    doubts.slice().reverse().forEach(d => {
-        html += `<div class="activity-item">❓ ${escapeHtml(d.text)} <small>${d.date}</small></div>`;
-    });
-    container.innerHTML = html;
-}
 
-// ---------- COMMUNITY FORUM ----------
-window.newForumPost = function() {
-    const title = prompt('Enter post title:');
-    if (!title) return;
-    forumPosts.push({
-        title: title,
-        author: userProfile.name,
-        date: new Date().toLocaleDateString(),
-        replies: 0
-    });
-    localStorage.setItem('murphx_forum', JSON.stringify(forumPosts));
-    renderForum();
-};
+    appState.streak = storedStreak;
 
-function renderForum() {
-    const container = document.getElementById('forumPostsList');
-    if (!container) return;
-    if (forumPosts.length === 0) {
-        container.innerHTML = '<p>No posts yet. Be the first to post!</p>';
-        return;
+    const storedMindfulStats = loadFromStorage(STORAGE_KEYS.mindfulStats, {
+      sessions: 0,
+      totalMinutes: 0
+    });
+    appState.mindfulStats = storedMindfulStats;
+
+    const storedProfile = loadFromStorage(STORAGE_KEYS.profile, {
+      name: "Aditya",
+      target: "NEET 2026 Rank Mission",
+      initials: "A"
+    });
+    appState.profile = storedProfile;
+  }
+
+  /* =========================
+     EXPOSE GLOBALS FOR INLINE HTML
+     ========================= */
+  function bindGlobalFunctions() {
+    window.showSection = setActiveSection;
+    window.showCreateModal = openCreateTestModal;
+    window.closeCreateModal = closeCreateTestModal;
+    window.startDailyChallenge = startDailyChallenge;
+    window.startMindfulMode = startMindfulMode;
+    window.toggleSidebar = toggleSidebar;
+    window.sendAIMessage = sendAIMessage;
+    window.createCustomTest = handleCreateTestSubmit;
+    window.startPomodoro = startPomodoro;
+    window.pausePomodoro = pausePomodoro;
+    window.resetPomodoro = resetPomodoro;
+  }
+
+  /* =========================
+     NAVIGATION
+     ========================= */
+  function bindNavigation() {
+    const navButtons = $$(".nav-btn[data-section]");
+    navButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const section = btn.dataset.section;
+        setActiveSection(section);
+      });
+    });
+  }
+
+  function setActiveSection(sectionId = "dashboard") {
+    appState.activeSection = sectionId;
+
+    $$(".page-section").forEach((section) => {
+      section.classList.remove("active");
+      if (section.id === sectionId) section.classList.add("active");
+    });
+
+    $$(".nav-btn[data-section]").forEach((btn) => {
+      btn.classList.toggle("active", btn.dataset.section === sectionId);
+    });
+
+    const sectionNames = {
+      dashboard: "Dashboard",
+      tests: "Mock Tests",
+      mentor: "AI Mentor",
+      leaderboard: "Leaderboard",
+      profile: "Profile"
+    };
+
+    updatePageTitle(sectionNames[sectionId] || "MurphxPrep");
+
+    if (window.innerWidth <= 992) {
+      closeSidebar();
     }
-    let html = '';
-    forumPosts.slice().reverse().forEach(p => {
-        html += `<div class="activity-item">📢 <strong>${escapeHtml(p.title)}</strong> <small>by ${escapeHtml(p.author)} on ${p.date}</small></div>`;
-    });
-    container.innerHTML = html;
-}
+  }
 
-// ---------- PROFILE ----------
-function renderProfile() {
-    document.getElementById('profileName').innerText = userProfile.name;
-    document.getElementById('profileTarget').innerText = userProfile.target;
-    document.getElementById('profileStreak').innerText = userProfile.streak;
-    document.getElementById('profileTestsTaken').innerText = userProfile.testsTaken;
-}
+  function updatePageTitle(title) {
+    const pageTitle = $("#pageTitle");
+    const pageSubtitle = $("#pageSubtitle");
 
-window.editProfile = function() {
-    const newName = prompt('Enter your name:', userProfile.name);
-    if (newName) {
-        userProfile.name = newName.trim() || userProfile.name;
-        saveProfile();
-        renderProfile();
-        document.getElementById('userNameDisplay').innerText = userProfile.name;
+    if (pageTitle) pageTitle.textContent = title;
+
+    if (pageSubtitle) {
+      const subtitleMap = {
+        Dashboard: "Rainy focus mode. Build your rank in silence.",
+        "Mock Tests": "Create, filter, and attack tests like a topper.",
+        "AI Mentor": "Ask, refine, and execute with precision.",
+        Leaderboard: "Compete with your highest self.",
+        Profile: "Tune your mission, focus, and study identity."
+      };
+      pageSubtitle.textContent = subtitleMap[title] || "Study sharper. Stay calmer.";
     }
-};
+  }
 
-// ---------- DAILY COUNTDOWN (in dashboard) ----------
-function updateDailyCountdown() {
+  /* =========================
+     TOPBAR / SIDEBAR
+     ========================= */
+  function bindTopbar() {
+    const menuBtn = $("#menuToggle");
+    if (menuBtn) {
+      menuBtn.addEventListener("click", toggleSidebar);
+    }
+
+    document.addEventListener("click", (e) => {
+      const sidebar = $("#sidebar");
+      const menuToggle = $("#menuToggle");
+
+      if (
+        window.innerWidth <= 992 &&
+        sidebar &&
+        appState.sidebarOpen &&
+        !sidebar.contains(e.target) &&
+        menuToggle &&
+        !menuToggle.contains(e.target)
+      ) {
+        closeSidebar();
+      }
+    });
+
+    window.addEventListener("resize", () => {
+      if (window.innerWidth > 992) {
+        const sidebar = $("#sidebar");
+        if (sidebar) sidebar.classList.remove("open");
+        appState.sidebarOpen = false;
+      }
+    });
+  }
+
+  function toggleSidebar() {
+    const sidebar = $("#sidebar");
+    if (!sidebar) return;
+
+    appState.sidebarOpen = !appState.sidebarOpen;
+    sidebar.classList.toggle("open", appState.sidebarOpen);
+  }
+
+  function closeSidebar() {
+    const sidebar = $("#sidebar");
+    if (!sidebar) return;
+    appState.sidebarOpen = false;
+    sidebar.classList.remove("open");
+  }
+
+  /* =========================
+     DAILY META
+     ========================= */
+  function renderTodayMeta() {
+    const dateEl = $("#todayDate");
+    if (!dateEl) return;
+
     const now = new Date();
-    const midnight = new Date(now);
-    midnight.setHours(24, 0, 0, 0);
-    const diff = midnight - now;
-    if (diff <= 0) {
-        document.getElementById('dailyCountdown').innerText = '00:00:00';
-        return;
+    const formatted = now.toLocaleDateString(undefined, {
+      weekday: "long",
+      day: "numeric",
+      month: "long"
+    });
+
+    dateEl.textContent = formatted;
+  }
+
+  /* =========================
+     STREAK SYSTEM
+     ========================= */
+  function renderStreak() {
+    const streakCountEl = $("#streakCount");
+    const streakProgressEl = $("#streakProgress");
+    const streakTextEl = $("#streakText");
+
+    const today = formatDateKey();
+    const last = appState.streak.lastActiveDate;
+
+    if (last !== today) {
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      const yesterdayKey = formatDateKey(yesterday);
+
+      if (last === yesterdayKey) {
+        appState.streak.count += 1;
+      } else {
+        appState.streak.count = 1;
+      }
+
+      appState.streak.lastActiveDate = today;
+      saveToStorage(STORAGE_KEYS.streak, appState.streak);
     }
-    const h = Math.floor(diff / 3600000);
-    const m = Math.floor((diff % 3600000) / 60000);
-    const s = Math.floor((diff % 60000) / 1000);
-    document.getElementById('dailyCountdown').innerText = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-}
-setInterval(updateDailyCountdown, 1000);
 
-// ---------- INITIAL SETUP ----------
-document.addEventListener('DOMContentLoaded', function() {
-    updateStreak();
-    updateDashboard();
+    const progress = Math.min((appState.streak.count / 7) * 100, 100);
+
+    if (streakCountEl) streakCountEl.textContent = `${appState.streak.count} Day Streak`;
+    if (streakProgressEl) streakProgressEl.style.width = `${progress}%`;
+    if (streakTextEl) {
+      streakTextEl.textContent = `You are ${Math.max(0, 7 - appState.streak.count)} days away from a 7-day focus streak.`;
+    }
+  }
+
+  function incrementStudySession(minutes = 25) {
+    appState.streak.totalSessions = (appState.streak.totalSessions || 0) + 1;
+    appState.streak.lastActiveDate = formatDateKey();
+    saveToStorage(STORAGE_KEYS.streak, appState.streak);
+
+    appState.mindfulStats.sessions += 1;
+    appState.mindfulStats.totalMinutes += minutes;
+    saveToStorage(STORAGE_KEYS.mindfulStats, appState.mindfulStats);
+
+    renderStreak();
+    updateMindfulStatsUI();
+  }
+
+  /* =========================
+     DAILY CHALLENGE
+     ========================= */
+  function renderDailyChallenge() {
+    const titleEl = $("#challengeTitle");
+    const descEl = $("#challengeDescription");
+    const badgeEl = $("#challengeBadge");
+
+    if (!titleEl || !descEl) return;
+
+    const todayKey = formatDateKey();
+    let stored = loadFromStorage(STORAGE_KEYS.dailyChallenge, null);
+
+    if (!stored || stored.date !== todayKey) {
+      stored = {
+        date: todayKey,
+        challenge: randomFrom(appState.dailyChallenges)
+      };
+      saveToStorage(STORAGE_KEYS.dailyChallenge, stored);
+    }
+
+    appState.currentChallenge = stored.challenge;
+
+    titleEl.textContent = stored.challenge.title;
+    descEl.textContent = stored.challenge.description;
+
+    if (badgeEl) {
+      badgeEl.textContent = `${stored.challenge.duration} min`;
+    }
+  }
+
+  function startDailyChallenge() {
+    if (!appState.currentChallenge) {
+      showToast("No challenge loaded yet.");
+      return;
+    }
+
+    appState.timerSeconds = appState.currentChallenge.duration * 60;
+    updateTimerUI();
+    startPomodoro();
+    showToast(`Challenge started: ${appState.currentChallenge.title}`);
+  }
+
+  /* =========================
+     POMODORO / FOCUS TIMER
+     ========================= */
+  function bindTimer() {
+    updateTimerUI();
+    updateMindfulStatsUI();
+  }
+
+  function startPomodoro() {
+    if (appState.timerRunning) return;
+
+    appState.timerRunning = true;
+
+    appState.timerInterval = setInterval(() => {
+      if (appState.timerSeconds > 0) {
+        appState.timerSeconds -= 1;
+        updateTimerUI();
+      } else {
+        pausePomodoro();
+        incrementStudySession(25);
+        showToast("Focus session complete. Warrior mode unlocked.");
+        pulseFocusComplete();
+      }
+    }, 1000);
+
+    updateTimerButtons();
+  }
+
+  function pausePomodoro() {
+    appState.timerRunning = false;
+    clearInterval(appState.timerInterval);
+    appState.timerInterval = null;
+    updateTimerButtons();
+  }
+
+  function resetPomodoro() {
+    pausePomodoro();
+    appState.timerSeconds = 25 * 60;
+    updateTimerUI();
+    showToast("Timer reset to 25:00");
+  }
+
+  function updateTimerUI() {
+    const timerEl = $("#timerDisplay");
+    if (!timerEl) return;
+
+    const mins = Math.floor(appState.timerSeconds / 60);
+    const secs = appState.timerSeconds % 60;
+    timerEl.textContent = `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+  }
+
+  function updateTimerButtons() {
+    const startBtn = $("#startTimerBtn");
+    const pauseBtn = $("#pauseTimerBtn");
+
+    if (startBtn) startBtn.disabled = appState.timerRunning;
+    if (pauseBtn) pauseBtn.disabled = !appState.timerRunning;
+  }
+
+  function pulseFocusComplete() {
+    const timerCard = $("#timerCard");
+    if (!timerCard) return;
+
+    timerCard.style.transform = "scale(1.02)";
+    timerCard.style.boxShadow = "0 0 0 1px rgba(34,197,94,0.25), 0 12px 40px rgba(34,197,94,0.18)";
+    setTimeout(() => {
+      timerCard.style.transform = "";
+      timerCard.style.boxShadow = "";
+    }, 1200);
+  }
+
+  function startMindfulMode() {
+    appState.timerSeconds = 15 * 60;
+    updateTimerUI();
+    startPomodoro();
+    showToast("Mindful Mode started. 15 minutes of silent deep focus.");
+  }
+
+  function updateMindfulStatsUI() {
+    const mindfulSessions = $("#mindfulSessions");
+    const mindfulMinutes = $("#mindfulMinutes");
+
+    if (mindfulSessions) mindfulSessions.textContent = appState.mindfulStats.sessions;
+    if (mindfulMinutes) mindfulMinutes.textContent = appState.mindfulStats.totalMinutes;
+  }
+
+  /* =========================
+     TESTS RENDERING
+     ========================= */
+  function renderTests() {
+    const testGrid = $("#testsGrid");
+    if (!testGrid) return;
+
+    const allTests = [...starterTests, ...appState.customTests];
+    testGrid.innerHTML = "";
+
+    if (!allTests.length) {
+      testGrid.innerHTML = `
+        <div class="empty-state glass" style="grid-column:1/-1;">
+          <i class="fas fa-flask"></i>
+          <h3>No tests found</h3>
+          <p>Create your first custom Murphx test and start building your rank engine.</p>
+        </div>
+      `;
+      return;
+    }
+
+    allTests.forEach((test) => {
+      const card = createEl("div", "test-card glass");
+      card.innerHTML = `
+        <div class="test-top">
+          <span class="test-tag">${escapeHtml(test.subject)}</span>
+          <span class="test-level">${escapeHtml(test.difficulty)}</span>
+        </div>
+        <h3>${escapeHtml(test.title)}</h3>
+        <p>${escapeHtml(test.description)}</p>
+        <div class="test-meta">
+          <span><i class="fas fa-list-check"></i> ${test.questions} Qs</span>
+          <span><i class="fas fa-clock"></i> ${test.duration} min</span>
+        </div>
+        <div class="test-actions">
+          <button class="btn btn-primary start-test-btn" data-id="${test.id}">
+            <i class="fas fa-bolt"></i> Start Test
+          </button>
+          ${
+            isCustomTest(test.id)
+              ? `<button class="btn btn-danger delete-test-btn" data-id="${test.id}">
+                  <i class="fas fa-trash"></i> Delete
+                 </button>`
+              : `<button class="btn btn-secondary review-test-btn" data-id="${test.id}">
+                  <i class="fas fa-eye"></i> Preview
+                 </button>`
+          }
+        </div>
+      `;
+      testGrid.appendChild(card);
+    });
+
+    bindTestCardActions();
+  }
+
+  function bindTestCardActions() {
+    $$(".start-test-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const testId = btn.dataset.id;
+        const test = findTestById(testId);
+        if (!test) return;
+
+        appState.timerSeconds = test.duration * 60;
+        updateTimerUI();
+        setActiveSection("dashboard");
+        showToast(`Loaded "${test.title}" into focus timer. Attack it.`);
+      });
+    });
+
+    $$(".review-test-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const testId = btn.dataset.id;
+        const test = findTestById(testId);
+        if (!test) return;
+        showToast(`Preview: ${test.title} • ${test.questions} questions • ${test.duration} mins`);
+      });
+    });
+
+    $$(".delete-test-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const testId = btn.dataset.id;
+        deleteCustomTest(testId);
+      });
+    });
+  }
+
+  function findTestById(id) {
+    return [...starterTests, ...appState.customTests].find((t) => t.id === id);
+  }
+
+  function isCustomTest(id) {
+    return appState.customTests.some((t) => t.id === id);
+  }
+
+  function deleteCustomTest(id) {
+    appState.customTests = appState.customTests.filter((t) => t.id !== id);
+    saveToStorage(STORAGE_KEYS.customTests, appState.customTests);
     renderTests();
-    renderDoubts();
-    renderForum();
-    renderProfile();
-});
+    showToast("Custom test deleted.");
+  }
 
-// Make all functions globally available (for onclick attributes)
-window.deleteTest = deleteTest;
-window.sendMessage = sendMessage;
-window.submitDoubt = submitDoubt;
-window.newForumPost = newForumPost;
-window.editProfile = editProfile;
-window.showCreateModal = showCreateModal;
-window.closeModal = closeModal;
-window.createTest = createTest;
-window.startDailyChallenge = startDailyChallenge;
-window.startMindfulMode = startMindfulMode;
-window.startBreath = startBreath;
+  /* =========================
+     TEST FILTERS
+     ========================= */
+  window.filterTests = function () {
+    const subjectFilter = $("#subjectFilter");
+    const difficultyFilter = $("#difficultyFilter");
+    const searchInput = $("#testSearch");
+    const testGrid = $("#testsGrid");
+
+    if (!testGrid) return;
+
+    const subjectValue = subjectFilter ? subjectFilter.value.toLowerCase() : "all";
+    const difficultyValue = difficultyFilter ? difficultyFilter.value.toLowerCase() : "all";
+    const searchValue = searchInput ? searchInput.value.toLowerCase().trim() : "";
+
+    const cards = $$(".test-card", testGrid);
+
+    cards.forEach((card) => {
+      const subject = $(".test-tag", card)?.textContent.toLowerCase() || "";
+      const difficulty = $(".test-level", card)?.textContent.toLowerCase() || "";
+      const title = $("h3", card)?.textContent.toLowerCase() || "";
+      const desc = $("p", card)?.textContent.toLowerCase() || "";
+
+      const subjectMatch = subjectValue === "all" || subject === subjectValue;
+      const difficultyMatch = difficultyValue === "all" || difficulty === difficultyValue;
+      const searchMatch =
+        !searchValue || title.includes(searchValue) || desc.includes(searchValue);
+
+      card.style.display = subjectMatch && difficultyMatch && searchMatch ? "" : "none";
+    });
+  };
+
+  /* =========================
+     CREATE TEST MODAL
+     ========================= */
+  function bindModal() {
+    const overlay = $("#createTestModal");
+    const form = $("#createTestForm");
+
+    if (overlay) {
+      overlay.addEventListener("click", (e) => {
+        if (e.target === overlay) closeCreateTestModal();
+      });
+    }
+
+    if (form) {
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        handleCreateTestSubmit();
+      });
+          }
