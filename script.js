@@ -1,659 +1,636 @@
-/* =========================
-   MURPHXPREP - PREMIUM RAINY GLASS JS
-   Fully interactive app logic
-   ========================= */
+/* ===============================
+   MURPHX V2 - FUNCTIONAL STATIC APP
+   Premium NEET Prep Frontend Engine
+   =============================== */
 
-(() => {
-  "use strict";
-
-  /* =========================
-     APP STATE
-     ========================= */
-  const STORAGE_KEYS = {
-    customTests: "murphxprep_custom_tests",
-    streak: "murphxprep_streak",
-    dailyChallenge: "murphxprep_daily_challenge",
-    mindfulStats: "murphxprep_mindful_stats",
-    profile: "murphxprep_profile"
-  };
-
-  const appState = {
-    activeSection: "dashboard",
-    timerInterval: null,
-    timerSeconds: 25 * 60,
-    timerRunning: false,
-    customTests: [],
-    sidebarOpen: false,
-    dailyChallenges: [
-      {
-        title: "45-Minute Rank Push",
-        description: "Solve 30 Physics questions in 45 minutes with no distractions. Focus on speed + accuracy.",
-        duration: 45,
-        type: "physics"
-      },
-      {
-        title: "NCERT Sniper Drill",
-        description: "Read 12 Biology NCERT pages and note 10 hidden facts that can become direct NEET MCQs.",
-        duration: 35,
-        type: "biology"
-      },
-      {
-        title: "Chemistry Precision Set",
-        description: "Attempt 25 mixed Chemistry MCQs and keep accuracy above 85%.",
-        duration: 40,
-        type: "chemistry"
-      },
-      {
-        title: "Mindful Revision Sprint",
-        description: "Revise one weak chapter with deep focus for 30 minutes. No phone. No breaks.",
-        duration: 30,
-        type: "focus"
-      }
-    ],
-    aiResponses: [
-      "Good. Stay sharp. Your next move should be 45 minutes of focused problem-solving on your weakest chapter.",
-      "If your accuracy is below 80%, stop chasing speed. First fix conceptual leaks, then push pace.",
-      "NEET toppers don’t just study more. They repeat high-yield concepts until mistakes disappear.",
-      "Your best next action: solve 20 Physics numericals from one chapter and track error patterns.",
-      "You don’t need motivation right now. You need execution. Open the next test and start.",
-      "For Rank 1 mindset: reduce emotional friction. Sit, start, finish. Repeat daily.",
-      "Biology gains come from NCERT repetition. Chemistry gains come from precision. Physics gains come from battle.",
-      "If you feel overwhelmed, simplify: one chapter, one timer, one mission."
-    ]
-  };
-
-  const starterTests = [
-    {
-      id: "t1",
-      title: "NEET Physics Shockwave Test",
-      subject: "Physics",
-      difficulty: "Hard",
-      questions: 45,
-      duration: 45,
-      description: "High-concept numericals, traps, and mixed conceptual questions built for top-rankers."
-    },
-    {
-      id: "t2",
-      title: "NCERT Bio Sniper Mock",
-      subject: "Biology",
-      difficulty: "Medium",
-      questions: 90,
-      duration: 50,
-      description: "Direct + twisted NCERT line-based questions with diagram traps and PYQ-style framing."
-    },
-    {
-      id: "t3",
-      title: "Organic Reaction Master Drill",
-      subject: "Chemistry",
-      difficulty: "Hard",
-      questions: 35,
-      duration: 40,
-      description: "Reaction mechanism, named reactions, conversion logic, and elimination traps."
-    }
-  ];
-
-  /* =========================
+document.addEventListener("DOMContentLoaded", () => {
+  /* ===============================
      DOM HELPERS
-     ========================= */
-  const $ = (selector, parent = document) => parent.querySelector(selector);
-  const $$ = (selector, parent = document) => [...parent.querySelectorAll(selector)];
+     =============================== */
+  const $ = (selector, scope = document) => scope.querySelector(selector);
+  const $$ = (selector, scope = document) => Array.from(scope.querySelectorAll(selector));
 
-  const safeParse = (value, fallback) => {
+  /* ===============================
+     STORAGE KEYS
+     =============================== */
+  const STORAGE_KEYS = {
+    stats: "murphx_stats_v2",
+    history: "murphx_history_v2",
+    settings: "murphx_settings_v2",
+    streak: "murphx_streak_v2",
+    chat: "murphx_chat_v2",
+  };
+
+  /* ===============================
+     APP STATE
+     =============================== */
+  const state = {
+    currentSection: "dashboard",
+    currentTest: null,
+    currentQuestionIndex: 0,
+    userAnswers: [],
+    timerInterval: null,
+    remainingSeconds: 0,
+    breathInterval: null,
+    breathPhase: "inhale",
+    breathRunning: false,
+    stats: {
+      testsTaken: 0,
+      questionsSolved: 0,
+      avgAccuracy: 0,
+      studyStreak: 1,
+      totalStudyMinutes: 0,
+      bestScore: 0,
+    },
+    history: [],
+    chatMessages: [],
+  };
+
+  /* ===============================
+     DEFAULT DATA
+     =============================== */
+  const subjectProgress = {
+    Physics: 42,
+    Chemistry: 57,
+    Botany: 61,
+    Zoology: 54,
+  };
+
+  const chapterBank = {
+    Physics: [
+      "Units & Dimensions",
+      "Motion in 1D",
+      "Laws of Motion",
+      "Work Energy Power",
+      "Gravitation",
+      "Thermodynamics",
+      "Electrostatics",
+      "Current Electricity",
+      "Magnetism",
+      "Ray Optics",
+      "Modern Physics",
+    ],
+    Chemistry: [
+      "Mole Concept",
+      "Atomic Structure",
+      "Chemical Bonding",
+      "Thermodynamics",
+      "Equilibrium",
+      "Redox Reactions",
+      "Electrochemistry",
+      "Organic Basics",
+      "Hydrocarbons",
+      "Biomolecules",
+    ],
+    Botany: [
+      "Cell: The Unit of Life",
+      "Biological Classification",
+      "Plant Kingdom",
+      "Morphology of Flowering Plants",
+      "Anatomy of Flowering Plants",
+      "Photosynthesis",
+      "Respiration in Plants",
+      "Plant Growth & Development",
+      "Genetics",
+    ],
+    Zoology: [
+      "Animal Kingdom",
+      "Structural Organisation in Animals",
+      "Biomolecules",
+      "Digestion & Absorption",
+      "Breathing & Exchange of Gases",
+      "Body Fluids & Circulation",
+      "Neural Control",
+      "Chemical Coordination",
+      "Human Reproduction",
+      "Evolution",
+    ],
+  };
+
+  /* ===============================
+     QUESTION BANK
+     =============================== */
+  const questionBank = {
+    Physics: [
+      {
+        question: "The dimensional formula of pressure is:",
+        options: ["[MLT⁻²]", "[ML⁻¹T⁻²]", "[ML²T⁻²]", "[M⁰LT⁻²]"],
+        answer: 1,
+        explanation: "Pressure = Force / Area = [MLT⁻²] / [L²] = [ML⁻¹T⁻²]",
+        difficulty: "Easy",
+      },
+      {
+        question: "A body moving with uniform acceleration has velocity-time graph:",
+        options: ["Parabola", "Straight line", "Hyperbola", "Circle"],
+        answer: 1,
+        explanation: "For uniform acceleration, v = u + at, so velocity changes linearly with time.",
+        difficulty: "Easy",
+      },
+      {
+        question: "The work done in uniform circular motion is:",
+        options: ["Maximum", "Minimum", "Zero", "Infinite"],
+        answer: 2,
+        explanation: "Force is centripetal and perpendicular to displacement, so work done is zero.",
+        difficulty: "Medium",
+      },
+      {
+        question: "Escape velocity from Earth is approximately:",
+        options: ["7.9 km/s", "11.2 km/s", "9.8 km/s", "15 km/s"],
+        answer: 1,
+        explanation: "Standard escape velocity of Earth ≈ 11.2 km/s.",
+        difficulty: "Medium",
+      },
+      {
+        question: "Equivalent resistance in series combination is:",
+        options: ["Product of resistances", "Reciprocal sum", "Sum of resistances", "Always zero"],
+        answer: 2,
+        explanation: "For series: Req = R1 + R2 + R3 ...",
+        difficulty: "Easy",
+      },
+      {
+        question: "Power of a lens is measured in:",
+        options: ["Watt", "Tesla", "Dioptre", "Henry"],
+        answer: 2,
+        explanation: "Lens power = 1/f (in meters), unit = Dioptre.",
+        difficulty: "Easy",
+      },
+    ],
+    Chemistry: [
+      {
+        question: "1 mole of any gas at STP occupies:",
+        options: ["11.2 L", "22.4 L", "44.8 L", "1 L"],
+        answer: 1,
+        explanation: "At STP, 1 mole gas occupies 22.4 L.",
+        difficulty: "Easy",
+      },
+      {
+        question: "Hybridization of carbon in methane is:",
+        options: ["sp", "sp²", "sp³", "dsp²"],
+        answer: 2,
+        explanation: "Methane has tetrahedral geometry, so carbon is sp³ hybridized.",
+        difficulty: "Easy",
+      },
+      {
+        question: "Oxidation number of Mn in KMnO₄ is:",
+        options: ["+4", "+6", "+7", "+2"],
+        answer: 2,
+        explanation: "K = +1, O = -2 × 4 = -8, so Mn = +7.",
+        difficulty: "Medium",
+      },
+      {
+        question: "pH of a neutral solution at 25°C is:",
+        options: ["0", "14", "7", "1"],
+        answer: 2,
+        explanation: "At 25°C, neutral solution has pH = 7.",
+        difficulty: "Easy",
+      },
+      {
+        question: "Anode is the site of:",
+        options: ["Reduction", "Oxidation", "Neutralization", "Hydrolysis"],
+        answer: 1,
+        explanation: "Oxidation always occurs at anode.",
+        difficulty: "Medium",
+      },
+      {
+        question: "Benzene undergoes mainly:",
+        options: ["Addition", "Substitution", "Elimination", "Oxidation only"],
+        answer: 1,
+        explanation: "Benzene prefers electrophilic substitution to preserve aromaticity.",
+        difficulty: "Medium",
+      },
+    ],
+    Botany: [
+      {
+        question: "The powerhouse of the cell is:",
+        options: ["Golgi body", "Lysosome", "Mitochondria", "Ribosome"],
+        answer: 2,
+        explanation: "Mitochondria produce ATP, hence called powerhouse of the cell.",
+        difficulty: "Easy",
+      },
+      {
+        question: "Middle lamella is mainly made of:",
+        options: ["Cellulose", "Pectin", "Lignin", "Suberin"],
+        answer: 1,
+        explanation: "Middle lamella is rich in calcium pectate/pectin.",
+        difficulty: "Medium",
+      },
+      {
+        question: "Grana are present in:",
+        options: ["Mitochondria", "Golgi apparatus", "Chloroplast", "Nucleus"],
+        answer: 2,
+        explanation: "Grana are stacks of thylakoids in chloroplast.",
+        difficulty: "Easy",
+      },
+      {
+        question: "The site of protein synthesis is:",
+        options: ["Ribosome", "Vacuole", "Centrosome", "Peroxisome"],
+        answer: 0,
+        explanation: "Ribosomes are the site of protein synthesis.",
+        difficulty: "Easy",
+      },
+      {
+        question: "NCERT states that prokaryotic cells generally lack:",
+        options: ["Cell wall", "Ribosomes", "Membrane-bound organelles", "Plasma membrane"],
+        answer: 2,
+        explanation: "Prokaryotes lack membrane-bound organelles like mitochondria, ER, Golgi.",
+        difficulty: "Medium",
+      },
+      {
+        question: "The fluid mosaic model was proposed by:",
+        options: ["Watson and Crick", "Singer and Nicolson", "Darwin and Wallace", "Mendel and Morgan"],
+        answer: 1,
+        explanation: "Fluid mosaic model was proposed by Singer and Nicolson (1972).",
+        difficulty: "Medium",
+      },
+    ],
+    Zoology: [
+      {
+        question: "The functional unit of kidney is:",
+        options: ["Neuron", "Nephron", "Alveolus", "Sarcomere"],
+        answer: 1,
+        explanation: "Nephron is the structural and functional unit of kidney.",
+        difficulty: "Easy",
+      },
+      {
+        question: "Bile is produced by:",
+        options: ["Pancreas", "Liver", "Gall bladder", "Duodenum"],
+        answer: 1,
+        explanation: "Bile is produced by liver and stored in gall bladder.",
+        difficulty: "Easy",
+      },
+      {
+        question: "The pacemaker of human heart is:",
+        options: ["AV node", "SA node", "Bundle of His", "Purkinje fibers"],
+        answer: 1,
+        explanation: "SA node initiates heartbeat and acts as pacemaker.",
+        difficulty: "Easy",
+      },
+      {
+        question: "The hormone insulin is secreted by:",
+        options: ["Alpha cells", "Beta cells", "Delta cells", "Acinar cells"],
+        answer: 1,
+        explanation: "Insulin is secreted by beta cells of islets of Langerhans.",
+        difficulty: "Easy",
+      },
+      {
+        question: "The site of fertilization in human female is usually:",
+        options: ["Ovary", "Uterus", "Ampullary-isthmic junction", "Cervix"],
+        answer: 2,
+        explanation: "NCERT: fertilization usually occurs at ampullary-isthmic junction.",
+        difficulty: "Medium",
+      },
+      {
+        question: "Myelinated nerve fibres are found mainly in:",
+        options: ["Grey matter of brain", "White matter of brain", "Liver", "Blood plasma"],
+        answer: 1,
+        explanation: "White matter mainly contains myelinated fibres.",
+        difficulty: "Medium",
+      },
+    ],
+  };
+
+  /* ===============================
+     DOM REFERENCES
+     =============================== */
+  const sections = $$(".section");
+  const navButtons = $$(".nav-btn");
+  const quickNavButtons = $$("[data-go-section]");
+  const modal = $("#testModal");
+  const openTestModalBtns = $$("[data-open-test-modal]");
+  const closeModalBtns = $$("[data-close-modal]");
+
+  // Dashboard stats
+  const testsTakenEls = $$("[data-stat='testsTaken']");
+  const questionsSolvedEls = $$("[data-stat='questionsSolved']");
+  const avgAccuracyEls = $$("[data-stat='avgAccuracy']");
+  const streakEls = $$("[data-stat='studyStreak']");
+  const bestScoreEls = $$("[data-stat='bestScore']");
+
+  // Lists
+  const progressList = $("#progressList");
+  const historyList = $("#historyList");
+  const profileHistoryList = $("#profileHistoryList");
+
+  // Test Builder
+  const subjectSelect = $("#testSubject");
+  const chapterSelect = $("#testChapter");
+  const difficultyChips = $$(".difficulty-chip");
+  const questionCountChips = $$(".question-count-chip");
+  const testTimeChips = $$(".test-time-chip");
+  const generateTestBtn = $("#generateTestBtn");
+
+  // Quiz
+  const quizShell = $("#quizShell");
+  const resultCard = $("#resultCard");
+  const quizTitle = $("#quizTitle");
+  const quizTimer = $("#quizTimer");
+  const quizProgressText = $("#quizProgressText");
+  const quizProgressFill = $("#quizProgressFill");
+  const questionText = $("#questionText");
+  const questionDifficulty = $("#questionDifficulty");
+  const optionsList = $("#optionsList");
+  const prevQuestionBtn = $("#prevQuestionBtn");
+  const nextQuestionBtn = $("#nextQuestionBtn");
+  const submitTestBtn = $("#submitTestBtn");
+
+  // Result
+  const resultScore = $("#resultScore");
+  const resultCorrect = $("#resultCorrect");
+  const resultWrong = $("#resultWrong");
+  const resultAccuracy = $("#resultAccuracy");
+  const resultTime = $("#resultTime");
+  const reviewAnswersBtn = $("#reviewAnswersBtn");
+  const retakeTestBtn = $("#retakeTestBtn");
+
+  // Doubt Solver
+  const doubtInput = $("#doubtInput");
+  const solveDoubtBtn = $("#solveDoubtBtn");
+  const doubtResponse = $("#doubtResponse");
+  const doubtResponseBody = $("#doubtResponseBody");
+
+  // AI Mentor
+  const chatWindow = $("#chatWindow");
+  const chatInput = $("#chatInput");
+  const sendChatBtn = $("#sendChatBtn");
+
+  // Breath
+  const breathOrb = $("#breathOrb");
+  const breathLabel = $("#breathLabel");
+  const breathSub = $("#breathSub");
+  const startBreathBtn = $("#startBreathBtn");
+  const stopBreathBtn = $("#stopBreathBtn");
+
+  // Toast
+  const toastWrap = $("#toastWrap");
+
+  /* ===============================
+     UTILITIES
+     =============================== */
+  function safeJSONParse(value, fallback) {
     try {
       return JSON.parse(value) ?? fallback;
     } catch {
       return fallback;
     }
-  };
-
-  const saveToStorage = (key, value) => {
-    localStorage.setItem(key, JSON.stringify(value));
-  };
-
-  const loadFromStorage = (key, fallback) => {
-    return safeParse(localStorage.getItem(key), fallback);
-  };
-
-  const formatDateKey = (date = new Date()) => {
-    const y = date.getFullYear();
-    const m = String(date.getMonth() + 1).padStart(2, "0");
-    const d = String(date.getDate()).padStart(2, "0");
-    return `${y}-${m}-${d}`;
-  };
-
-  const randomFrom = (arr) => arr[Math.floor(Math.random() * arr.length)];
-
-  const createEl = (tag, className = "", html = "") => {
-    const el = document.createElement(tag);
-    if (className) el.className = className;
-    if (html) el.innerHTML = html;
-    return el;
-  };
-
-  /* =========================
-     INIT
-     ========================= */
-  document.addEventListener("DOMContentLoaded", initApp);
-
-  function initApp() {
-    loadAppData();
-    bindGlobalFunctions();
-    bindNavigation();
-    bindTopbar();
-    bindModal();
-    bindTimer();
-    bindAIChat();
-    renderDailyChallenge();
-    renderTests();
-    renderStreak();
-    renderTodayMeta();
-    hydrateProfile();
-    setActiveSection("dashboard");
-    injectWelcomeMessage();
-    updatePageTitle("Dashboard");
   }
 
-  /* =========================
-     LOAD DATA
-     ========================= */
-  function loadAppData() {
-    const storedCustomTests = loadFromStorage(STORAGE_KEYS.customTests, []);
-    appState.customTests = Array.isArray(storedCustomTests) ? storedCustomTests : [];
+  function saveToStorage() {
+    localStorage.setItem(STORAGE_KEYS.stats, JSON.stringify(state.stats));
+    localStorage.setItem(STORAGE_KEYS.history, JSON.stringify(state.history));
+    localStorage.setItem(STORAGE_KEYS.chat, JSON.stringify(state.chatMessages));
+  }
 
-    const storedStreak = loadFromStorage(STORAGE_KEYS.streak, {
-      count: 1,
-      lastActiveDate: formatDateKey(),
-      totalSessions: 0
-    });
+  function loadFromStorage() {
+    state.stats = safeJSONParse(localStorage.getItem(STORAGE_KEYS.stats), state.stats);
+    state.history = safeJSONParse(localStorage.getItem(STORAGE_KEYS.history), []);
+    state.chatMessages = safeJSONParse(localStorage.getItem(STORAGE_KEYS.chat), []);
+  }
 
-    const today = formatDateKey();
-    if (!storedStreak.lastActiveDate) {
-      storedStreak.lastActiveDate = today;
+  function showToast(message) {
+    if (!toastWrap) return;
+    const toast = document.createElement("div");
+    toast.className = "toast";
+    toast.textContent = message;
+    toastWrap.appendChild(toast);
+
+    setTimeout(() => {
+      toast.style.opacity = "0";
+      toast.style.transform = "translateY(-8px)";
+      toast.style.transition = "all 0.25s ease";
+      setTimeout(() => toast.remove(), 250);
+    }, 2200);
+  }
+
+  function formatTime(seconds) {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+  }
+
+  function shuffleArray(arr) {
+    const copy = [...arr];
+    for (let i = copy.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [copy[i], copy[j]] = [copy[j], copy[i]];
     }
-
-    appState.streak = storedStreak;
-
-    const storedMindfulStats = loadFromStorage(STORAGE_KEYS.mindfulStats, {
-      sessions: 0,
-      totalMinutes: 0
-    });
-    appState.mindfulStats = storedMindfulStats;
-
-    const storedProfile = loadFromStorage(STORAGE_KEYS.profile, {
-      name: "Aditya",
-      target: "NEET 2026 Rank Mission",
-      initials: "A"
-    });
-    appState.profile = storedProfile;
+    return copy;
   }
 
-  /* =========================
-     EXPOSE GLOBALS FOR INLINE HTML
-     ========================= */
-  function bindGlobalFunctions() {
-    window.showSection = setActiveSection;
-    window.showCreateModal = openCreateTestModal;
-    window.closeCreateModal = closeCreateTestModal;
-    window.startDailyChallenge = startDailyChallenge;
-    window.startMindfulMode = startMindfulMode;
-    window.toggleSidebar = toggleSidebar;
-    window.sendAIMessage = sendAIMessage;
-    window.createCustomTest = handleCreateTestSubmit;
-    window.startPomodoro = startPomodoro;
-    window.pausePomodoro = pausePomodoro;
-    window.resetPomodoro = resetPomodoro;
+  function getSelectedChipValue(chips) {
+    const active = chips.find((chip) => chip.classList.contains("active"));
+    return active ? active.dataset.value : null;
   }
 
-  /* =========================
+  function setChipGroup(chips, clickedChip) {
+    chips.forEach((chip) => chip.classList.remove("active"));
+    clickedChip.classList.add("active");
+  }
+
+  /* ===============================
      NAVIGATION
-     ========================= */
-  function bindNavigation() {
-    const navButtons = $$(".nav-btn[data-section]");
+     =============================== */
+  function switchSection(sectionId) {
+    state.currentSection = sectionId;
+
+    sections.forEach((section) => {
+      section.classList.toggle("active", section.id === sectionId);
+    });
+
     navButtons.forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const section = btn.dataset.section;
-        setActiveSection(section);
-      });
-    });
-  }
-
-  function setActiveSection(sectionId = "dashboard") {
-    appState.activeSection = sectionId;
-
-    $$(".page-section").forEach((section) => {
-      section.classList.remove("active");
-      if (section.id === sectionId) section.classList.add("active");
-    });
-
-    $$(".nav-btn[data-section]").forEach((btn) => {
       btn.classList.toggle("active", btn.dataset.section === sectionId);
     });
 
-    const sectionNames = {
-      dashboard: "Dashboard",
-      tests: "Mock Tests",
-      mentor: "AI Mentor",
-      leaderboard: "Leaderboard",
-      profile: "Profile"
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  navButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      switchSection(btn.dataset.section);
+    });
+  });
+
+  quickNavButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const target = btn.dataset.goSection;
+      if (target) switchSection(target);
+    });
+  });
+
+  /* ===============================
+     MODAL
+     =============================== */
+  function openModal() {
+    if (modal) modal.classList.add("active");
+  }
+
+  function closeModal() {
+    if (modal) modal.classList.remove("active");
+  }
+
+  openTestModalBtns.forEach((btn) => btn.addEventListener("click", openModal));
+  closeModalBtns.forEach((btn) => btn.addEventListener("click", closeModal));
+
+  if (modal) {
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) closeModal();
+    });
+  }
+
+  /* ===============================
+     SUBJECT + CHAPTER
+     =============================== */
+  function populateSubjects() {
+    if (!subjectSelect) return;
+
+    subjectSelect.innerHTML = `
+      <option value="">Choose Subject</option>
+      <option value="Physics">Physics</option>
+      <option value="Chemistry">Chemistry</option>
+      <option value="Botany">Botany</option>
+      <option value="Zoology">Zoology</option>
+    `;
+  }
+
+  function populateChapters(subject) {
+    if (!chapterSelect) return;
+
+    if (!subject || !chapterBank[subject]) {
+      chapterSelect.innerHTML = `<option value="">Choose Chapter</option>`;
+      return;
+    }
+
+    chapterSelect.innerHTML = `<option value="">Choose Chapter</option>`;
+    chapterBank[subject].forEach((chapter) => {
+      const option = document.createElement("option");
+      option.value = chapter;
+      option.textContent = chapter;
+      chapterSelect.appendChild(option);
+    });
+  }
+
+  if (subjectSelect) {
+    subjectSelect.addEventListener("change", (e) => {
+      populateChapters(e.target.value);
+    });
+  }
+
+  difficultyChips.forEach((chip) => {
+    chip.addEventListener("click", () => setChipGroup(difficultyChips, chip));
+  });
+
+  questionCountChips.forEach((chip) => {
+    chip.addEventListener("click", () => setChipGroup(questionCountChips, chip));
+  });
+
+  testTimeChips.forEach((chip) => {
+    chip.addEventListener("click", () => setChipGroup(testTimeChips, chip));
+  });
+
+  /* ===============================
+     TEST GENERATION
+     =============================== */
+  function generateTest() {
+    const subject = subjectSelect?.value;
+    const chapter = chapterSelect?.value || "Mixed Concepts";
+    const difficulty = getSelectedChipValue(difficultyChips) || "Mixed";
+    const questionCount = Number(getSelectedChipValue(questionCountChips) || 5);
+    const timeMinutes = Number(getSelectedChipValue(testTimeChips) || 10);
+
+    if (!subject) {
+      showToast("Please select a subject first.");
+      return;
+    }
+
+    const baseQuestions = questionBank[subject] || [];
+    if (baseQuestions.length === 0) {
+      showToast("No questions available for this subject yet.");
+      return;
+    }
+
+    let filtered = [...baseQuestions];
+    if (difficulty !== "Mixed") {
+      filtered = baseQuestions.filter((q) => q.difficulty.toLowerCase() === difficulty.toLowerCase());
+      if (filtered.length === 0) filtered = [...baseQuestions];
+    }
+
+    const expandedPool = [];
+    while (expandedPool.length < questionCount) {
+      expandedPool.push(...shuffleArray(filtered));
+    }
+
+    const selectedQuestions = shuffleArray(expandedPool).slice(0, questionCount);
+
+    state.currentTest = {
+      subject,
+      chapter,
+      difficulty,
+      questionCount,
+      timeMinutes,
+      questions: selectedQuestions,
+      startedAt: Date.now(),
     };
 
-    updatePageTitle(sectionNames[sectionId] || "MurphxPrep");
+    state.currentQuestionIndex = 0;
+    state.userAnswers = new Array(questionCount).fill(null);
+    state.remainingSeconds = timeMinutes * 60;
 
-    if (window.innerWidth <= 992) {
-      closeSidebar();
-    }
+    closeModal();
+    switchSection("tests");
+    startQuiz();
+    showToast(`${subject} test generated successfully.`);
   }
 
-  function updatePageTitle(title) {
-    const pageTitle = $("#pageTitle");
-    const pageSubtitle = $("#pageSubtitle");
-
-    if (pageTitle) pageTitle.textContent = title;
-
-    if (pageSubtitle) {
-      const subtitleMap = {
-        Dashboard: "Rainy focus mode. Build your rank in silence.",
-        "Mock Tests": "Create, filter, and attack tests like a topper.",
-        "AI Mentor": "Ask, refine, and execute with precision.",
-        Leaderboard: "Compete with your highest self.",
-        Profile: "Tune your mission, focus, and study identity."
-      };
-      pageSubtitle.textContent = subtitleMap[title] || "Study sharper. Stay calmer.";
-    }
+  if (generateTestBtn) {
+    generateTestBtn.addEventListener("click", generateTest);
   }
 
-  /* =========================
-     TOPBAR / SIDEBAR
-     ========================= */
-  function bindTopbar() {
-    const menuBtn = $("#menuToggle");
-    if (menuBtn) {
-      menuBtn.addEventListener("click", toggleSidebar);
+  /* ===============================
+     QUIZ ENGINE
+     =============================== */
+  function startQuiz() {
+    if (!state.currentTest || !quizShell) return;
+
+    quizShell.classList.add("active");
+    resultCard?.classList.remove("active");
+
+    if (quizTitle) {
+      quizTitle.textContent = `${state.currentTest.subject} • ${state.currentTest.chapter}`;
     }
 
-    document.addEventListener("click", (e) => {
-      const sidebar = $("#sidebar");
-      const menuToggle = $("#menuToggle");
-
-      if (
-        window.innerWidth <= 992 &&
-        sidebar &&
-        appState.sidebarOpen &&
-        !sidebar.contains(e.target) &&
-        menuToggle &&
-        !menuToggle.contains(e.target)
-      ) {
-        closeSidebar();
-      }
-    });
-
-    window.addEventListener("resize", () => {
-      if (window.innerWidth > 992) {
-        const sidebar = $("#sidebar");
-        if (sidebar) sidebar.classList.remove("open");
-        appState.sidebarOpen = false;
-      }
-    });
+    startTimer();
+    renderQuestion();
   }
 
-  function toggleSidebar() {
-    const sidebar = $("#sidebar");
-    if (!sidebar) return;
+  function startTimer() {
+    clearInterval(state.timerInterval);
 
-    appState.sidebarOpen = !appState.sidebarOpen;
-    sidebar.classList.toggle("open", appState.sidebarOpen);
-  }
+    if (quizTimer) quizTimer.textContent = formatTime(state.remainingSeconds);
 
-  function closeSidebar() {
-    const sidebar = $("#sidebar");
-    if (!sidebar) return;
-    appState.sidebarOpen = false;
-    sidebar.classList.remove("open");
-  }
+    state.timerInterval = setInterval(() => {
+      state.remainingSeconds--;
+      if (quizTimer) quizTimer.textContent = formatTime(Math.max(0, state.remainingSeconds));
 
-  /* =========================
-     DAILY META
-     ========================= */
-  function renderTodayMeta() {
-    const dateEl = $("#todayDate");
-    if (!dateEl) return;
-
-    const now = new Date();
-    const formatted = now.toLocaleDateString(undefined, {
-      weekday: "long",
-      day: "numeric",
-      month: "long"
-    });
-
-    dateEl.textContent = formatted;
-  }
-
-  /* =========================
-     STREAK SYSTEM
-     ========================= */
-  function renderStreak() {
-    const streakCountEl = $("#streakCount");
-    const streakProgressEl = $("#streakProgress");
-    const streakTextEl = $("#streakText");
-
-    const today = formatDateKey();
-    const last = appState.streak.lastActiveDate;
-
-    if (last !== today) {
-      const yesterday = new Date();
-      yesterday.setDate(yesterday.getDate() - 1);
-      const yesterdayKey = formatDateKey(yesterday);
-
-      if (last === yesterdayKey) {
-        appState.streak.count += 1;
-      } else {
-        appState.streak.count = 1;
-      }
-
-      appState.streak.lastActiveDate = today;
-      saveToStorage(STORAGE_KEYS.streak, appState.streak);
-    }
-
-    const progress = Math.min((appState.streak.count / 7) * 100, 100);
-
-    if (streakCountEl) streakCountEl.textContent = `${appState.streak.count} Day Streak`;
-    if (streakProgressEl) streakProgressEl.style.width = `${progress}%`;
-    if (streakTextEl) {
-      streakTextEl.textContent = `You are ${Math.max(0, 7 - appState.streak.count)} days away from a 7-day focus streak.`;
-    }
-  }
-
-  function incrementStudySession(minutes = 25) {
-    appState.streak.totalSessions = (appState.streak.totalSessions || 0) + 1;
-    appState.streak.lastActiveDate = formatDateKey();
-    saveToStorage(STORAGE_KEYS.streak, appState.streak);
-
-    appState.mindfulStats.sessions += 1;
-    appState.mindfulStats.totalMinutes += minutes;
-    saveToStorage(STORAGE_KEYS.mindfulStats, appState.mindfulStats);
-
-    renderStreak();
-    updateMindfulStatsUI();
-  }
-
-  /* =========================
-     DAILY CHALLENGE
-     ========================= */
-  function renderDailyChallenge() {
-    const titleEl = $("#challengeTitle");
-    const descEl = $("#challengeDescription");
-    const badgeEl = $("#challengeBadge");
-
-    if (!titleEl || !descEl) return;
-
-    const todayKey = formatDateKey();
-    let stored = loadFromStorage(STORAGE_KEYS.dailyChallenge, null);
-
-    if (!stored || stored.date !== todayKey) {
-      stored = {
-        date: todayKey,
-        challenge: randomFrom(appState.dailyChallenges)
-      };
-      saveToStorage(STORAGE_KEYS.dailyChallenge, stored);
-    }
-
-    appState.currentChallenge = stored.challenge;
-
-    titleEl.textContent = stored.challenge.title;
-    descEl.textContent = stored.challenge.description;
-
-    if (badgeEl) {
-      badgeEl.textContent = `${stored.challenge.duration} min`;
-    }
-  }
-
-  function startDailyChallenge() {
-    if (!appState.currentChallenge) {
-      showToast("No challenge loaded yet.");
-      return;
-    }
-
-    appState.timerSeconds = appState.currentChallenge.duration * 60;
-    updateTimerUI();
-    startPomodoro();
-    showToast(`Challenge started: ${appState.currentChallenge.title}`);
-  }
-
-  /* =========================
-     POMODORO / FOCUS TIMER
-     ========================= */
-  function bindTimer() {
-    updateTimerUI();
-    updateMindfulStatsUI();
-  }
-
-  function startPomodoro() {
-    if (appState.timerRunning) return;
-
-    appState.timerRunning = true;
-
-    appState.timerInterval = setInterval(() => {
-      if (appState.timerSeconds > 0) {
-        appState.timerSeconds -= 1;
-        updateTimerUI();
-      } else {
-        pausePomodoro();
-        incrementStudySession(25);
-        showToast("Focus session complete. Warrior mode unlocked.");
-        pulseFocusComplete();
+      if (state.remainingSeconds <= 0) {
+        clearInterval(state.timerInterval);
+        showToast("Time's up! Submitting test...");
+        submitTest();
       }
     }, 1000);
-
-    updateTimerButtons();
   }
 
-  function pausePomodoro() {
-    appState.timerRunning = false;
-    clearInterval(appState.timerInterval);
-    appState.timerInterval = null;
-    updateTimerButtons();
-  }
+  function renderQuestion() {
+    if (!state.currentTest) return;
 
-  function resetPomodoro() {
-    pausePomodoro();
-    appState.timerSeconds = 25 * 60;
-    updateTimerUI();
-    showToast("Timer reset to 25:00");
-  }
+    const q = state.currentTest.questions[state.currentQuestionIndex];
+    if (!q) return;
 
-  function updateTimerUI() {
-    const timerEl = $("#timerDisplay");
-    if (!timerEl) return;
-
-    const mins = Math.floor(appState.timerSeconds / 60);
-    const secs = appState.timerSeconds % 60;
-    timerEl.textContent = `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
-  }
-
-  function updateTimerButtons() {
-    const startBtn = $("#startTimerBtn");
-    const pauseBtn = $("#pauseTimerBtn");
-
-    if (startBtn) startBtn.disabled = appState.timerRunning;
-    if (pauseBtn) pauseBtn.disabled = !appState.timerRunning;
-  }
-
-  function pulseFocusComplete() {
-    const timerCard = $("#timerCard");
-    if (!timerCard) return;
-
-    timerCard.style.transform = "scale(1.02)";
-    timerCard.style.boxShadow = "0 0 0 1px rgba(34,197,94,0.25), 0 12px 40px rgba(34,197,94,0.18)";
-    setTimeout(() => {
-      timerCard.style.transform = "";
-      timerCard.style.boxShadow = "";
-    }, 1200);
-  }
-
-  function startMindfulMode() {
-    appState.timerSeconds = 15 * 60;
-    updateTimerUI();
-    startPomodoro();
-    showToast("Mindful Mode started. 15 minutes of silent deep focus.");
-  }
-
-  function updateMindfulStatsUI() {
-    const mindfulSessions = $("#mindfulSessions");
-    const mindfulMinutes = $("#mindfulMinutes");
-
-    if (mindfulSessions) mindfulSessions.textContent = appState.mindfulStats.sessions;
-    if (mindfulMinutes) mindfulMinutes.textContent = appState.mindfulStats.totalMinutes;
-  }
-
-  /* =========================
-     TESTS RENDERING
-     ========================= */
-  function renderTests() {
-    const testGrid = $("#testsGrid");
-    if (!testGrid) return;
-
-    const allTests = [...starterTests, ...appState.customTests];
-    testGrid.innerHTML = "";
-
-    if (!allTests.length) {
-      testGrid.innerHTML = `
-        <div class="empty-state glass" style="grid-column:1/-1;">
-          <i class="fas fa-flask"></i>
-          <h3>No tests found</h3>
-          <p>Create your first custom Murphx test and start building your rank engine.</p>
-        </div>
-      `;
-      return;
+    if (quizProgressText) {
+      quizProgressText.textContent = `Question ${state.currentQuestionIndex + 1} / ${state.currentTest.questions.length}`;
     }
 
-    allTests.forEach((test) => {
-      const card = createEl("div", "test-card glass");
-      card.innerHTML = `
-        <div class="test-top">
-          <span class="test-tag">${escapeHtml(test.subject)}</span>
-          <span class="test-level">${escapeHtml(test.difficulty)}</span>
-        </div>
-        <h3>${escapeHtml(test.title)}</h3>
-        <p>${escapeHtml(test.description)}</p>
-        <div class="test-meta">
-          <span><i class="fas fa-list-check"></i> ${test.questions} Qs</span>
-          <span><i class="fas fa-clock"></i> ${test.duration} min</span>
-        </div>
-        <div class="test-actions">
-          <button class="btn btn-primary start-test-btn" data-id="${test.id}">
-            <i class="fas fa-bolt"></i> Start Test
-          </button>
-          ${
-            isCustomTest(test.id)
-              ? `<button class="btn btn-danger delete-test-btn" data-id="${test.id}">
-                  <i class="fas fa-trash"></i> Delete
-                 </button>`
-              : `<button class="btn btn-secondary review-test-btn" data-id="${test.id}">
-                  <i class="fas fa-eye"></i> Preview
-                 </button>`
-          }
-        </div>
-      `;
-      testGrid.appendChild(card);
-    });
-
-    bindTestCardActions();
-  }
-
-  function bindTestCardActions() {
-    $$(".start-test-btn").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const testId = btn.dataset.id;
-        const test = findTestById(testId);
-        if (!test) return;
-
-        appState.timerSeconds = test.duration * 60;
-        updateTimerUI();
-        setActiveSection("dashboard");
-        showToast(`Loaded "${test.title}" into focus timer. Attack it.`);
-      });
-    });
-
-    $$(".review-test-btn").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const testId = btn.dataset.id;
-        const test = findTestById(testId);
-        if (!test) return;
-        showToast(`Preview: ${test.title} • ${test.questions} questions • ${test.duration} mins`);
-      });
-    });
-
-    $$(".delete-test-btn").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const testId = btn.dataset.id;
-        deleteCustomTest(testId);
-      });
-    });
-  }
-
-  function findTestById(id) {
-    return [...starterTests, ...appState.customTests].find((t) => t.id === id);
-  }
-
-  function isCustomTest(id) {
-    return appState.customTests.some((t) => t.id === id);
-  }
-
-  function deleteCustomTest(id) {
-    appState.customTests = appState.customTests.filter((t) => t.id !== id);
-    saveToStorage(STORAGE_KEYS.customTests, appState.customTests);
-    renderTests();
-    showToast("Custom test deleted.");
-  }
-
-  /* =========================
-     TEST FILTERS
-     ========================= */
-  window.filterTests = function () {
-    const subjectFilter = $("#subjectFilter");
-    const difficultyFilter = $("#difficultyFilter");
-    const searchInput = $("#testSearch");
-    const testGrid = $("#testsGrid");
-
-    if (!testGrid) return;
-
-    const subjectValue = subjectFilter ? subjectFilter.value.toLowerCase() : "all";
-    const difficultyValue = difficultyFilter ? difficultyFilter.value.toLowerCase() : "all";
-    const searchValue = searchInput ? searchInput.value.toLowerCase().trim() : "";
-
-    const cards = $$(".test-card", testGrid);
-
-    cards.forEach((card) => {
-      const subject = $(".test-tag", card)?.textContent.toLowerCase() || "";
-      const difficulty = $(".test-level", card)?.textContent.toLowerCase() || "";
-      const title = $("h3", card)?.textContent.toLowerCase() || "";
-      const desc = $("p", card)?.textContent.toLowerCase() || "";
-
-      const subjectMatch = subjectValue === "all" || subject === subjectValue;
-      const difficultyMatch = difficultyValue === "all" || difficulty === difficultyValue;
-      const searchMatch =
-        !searchValue || title.includes(searchValue) || desc.includes(searchValue);
-
-      card.style.display = subjectMatch && difficultyMatch && searchMatch ? "" : "none";
-    });
-  };
-
-  /* =========================
-     CREATE TEST MODAL
-     ========================= */
-  function bindModal() {
-    const overlay = $("#createTestModal");
-    const form = $("#createTestForm");
-
-    if (overlay) {
-      overlay.addEventListener("click", (e) => {
-        if (e.target === overlay) closeCreateTestModal();
-      });
+    if (quizProgressFill) {
+      const percent = ((state.currentQuestionIndex + 1) / state.currentTest.questions.length) * 100;
+      quizProgressFill.style.width = `${percent}%`;
     }
 
-    if (form) {
-      form.addEventListener("submit", (e) => {
-        e.preventDefault();
-        handleCreateTestSubmit();
-      });
-          }
+    if (questionText) questionText.textContent = 
