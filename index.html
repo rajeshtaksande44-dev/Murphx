@@ -3,61 +3,55 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
-  <title>TAO//FLOW | Jeet Kune Do – The Formless Dojo | Next-Gen AI Sensei</title>
+  <title>NEO//FLOW | Quantum JKD · AI Dojo · Formless Intelligence</title>
   <!-- Google Fonts & Icons -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <!-- Libraries -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <!-- Three.js Core + Addons -->
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.128.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.128.0/examples/jsm/"
+      }
+    }
+  </script>
+  <!-- MediaPipe Hands (AI Motion Capture) -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+  <!-- Chart.js, GSAP -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <!-- Additional library for advanced animations -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
   <style>
-    /* ============================================
-       TAO//FLOW - Jeet Kune Do Formless Dojo
-       UPGRADED: NEURAL INTERFACE STYLESHEET v3.0
-       Color Palette: Earth & Forest + Cyber Zen
-       ============================================ */
-    :root {
-      --deep-forest: #022E24;
-      --moss-shadow: #1F4D3A;
-      --eucalyptus: #4F8F75;
-      --sage-mist: #9FC3B2;
-      --pale-lichen: #77F1EC;
-      --cork-wedge: #C0A889;
-      --cheeky-chestnut: #7A4E39;
-      --green-beret: #536D5F;
-      --roycroft-bottle: #363F37;
-      --quartzite: #1F2B27;
-      --silver-shadow: #939097;
-      --gibraltar-sea: #133951;
-      --bg-dark: #03100c;
-      --card-bg: rgba(31, 77, 58, 0.45);
-      --border-glow: rgba(119, 241, 236, 0.55);
-      --accent: var(--pale-lichen);
-      --text-primary: #EFF7F0;
-      --text-secondary: #BDD4C0;
-      --glass-bg: rgba(15, 35, 28, 0.6);
-      --glass-border: rgba(119, 241, 236, 0.35);
-      --card-radius: 42px;
-      --transition-default: all 0.35s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-    }
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
       -webkit-tap-highlight-color: transparent;
     }
+
+    :root {
+      --quantum-teal: #00f2fe;
+      --deep-void: #030c0f;
+      --neon-iris: #a855f7;
+      --plasma-green: #4ade80;
+      --crystal-white: #eef5ff;
+      --glass-bg: rgba(8, 28, 34, 0.55);
+      --glass-border: rgba(0, 242, 254, 0.35);
+      --card-radius: 36px;
+      --transition-super: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.2);
+    }
+
     body {
-      font-family: 'Inter', sans-serif;
-      background: radial-gradient(circle at 10% 20%, var(--deep-forest), var(--quartzite));
-      color: var(--text-primary);
+      font-family: 'Space Grotesk', 'Inter', sans-serif;
+      background: radial-gradient(circle at 30% 10%, #021118, #000000);
+      color: var(--crystal-white);
       overflow-x: hidden;
       min-height: 100vh;
-      position: relative;
-      line-height: 1.5;
     }
+
     #three-canvas {
       position: fixed;
       top: 0;
@@ -66,41 +60,29 @@
       height: 100%;
       z-index: 0;
       pointer-events: none;
-      opacity: 0.7;
+      opacity: 0.85;
     }
+
     .grain-overlay {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='1' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='1' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.1'/%3E%3C/svg%3E");
       pointer-events: none;
       z-index: 2;
-      opacity: 0.2;
+      opacity: 0.25;
     }
-    .fluid-bg {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: radial-gradient(ellipse at 40% 50%, rgba(79, 143, 117, 0.2), transparent 70%);
-      filter: blur(60px);
-      z-index: 0;
-      animation: breathe 12s infinite alternate;
-    }
-    @keyframes breathe {
-      0% { opacity: 0.3; transform: scale(1); }
-      100% { opacity: 0.7; transform: scale(1.2); }
-    }
+
     .app-container {
       position: relative;
       z-index: 20;
       max-width: 1500px;
       margin: 0 auto;
-      padding: 20px 28px 100px 28px;
+      padding: 18px 28px 100px 28px;
     }
+
     .header {
       display: flex;
       justify-content: space-between;
@@ -108,214 +90,140 @@
       flex-wrap: wrap;
       margin-bottom: 28px;
       padding: 12px 28px;
-      background: rgba(2, 46, 36, 0.55);
-      backdrop-filter: blur(16px);
+      background: rgba(0, 0, 0, 0.55);
+      backdrop-filter: blur(18px);
       border-radius: 80px;
       border: 1px solid var(--glass-border);
-      transition: var(--transition-default);
+      box-shadow: 0 8px 32px rgba(0,242,254,0.1);
     }
+
     .logo {
       display: flex;
       align-items: center;
       gap: 18px;
     }
-    .broken-circle {
-      width: 56px;
-      height: 56px;
-      border: 2px solid var(--pale-lichen);
-      border-radius: 50%;
-      clip-path: polygon(0% 0%, 75% 0%, 75% 25%, 100% 25%, 100% 75%, 75% 75%, 75% 100%, 0% 100%);
-      background: linear-gradient(145deg, rgba(119,241,236,0.4), rgba(31,77,58,0.6));
-      box-shadow: 0 0 20px rgba(119,241,236,0.6);
-      transition: transform 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+
+    .quantum-sigil {
+      width: 58px;
+      height: 58px;
+      background: radial-gradient(circle, var(--quantum-teal), var(--neon-iris));
+      border-radius: 30px;
+      clip-path: polygon(20% 0%, 80% 0%, 100% 20%, 100% 80%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
+      box-shadow: 0 0 25px rgba(0,242,254,0.6);
+      transition: transform 0.5s ease;
     }
-    .broken-circle:hover {
-      transform: rotate(180deg) scale(1.05);
-    }
+
     .logo h1 {
-      font-size: 2.5rem;
+      font-size: 2.2rem;
       font-weight: 800;
-      background: linear-gradient(135deg, #FFFFFF, var(--pale-lichen), #A3FFE6);
+      background: linear-gradient(135deg, #fff, var(--quantum-teal), var(--neon-iris));
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
       letter-spacing: -1px;
     }
-    .tagline {
-      font-size: 0.75rem;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      background: rgba(0,0,0,0.5);
-      padding: 6px 20px;
-      border-radius: 40px;
-      backdrop-filter: blur(4px);
-      border: 1px solid var(--sage-mist);
-    }
+
     .bottom-nav {
       display: flex;
       justify-content: space-around;
-      background: rgba(15, 35, 28, 0.85);
+      background: rgba(0, 0, 0, 0.7);
       backdrop-filter: blur(20px);
-      border-radius: 80px;
-      padding: 8px 20px;
+      border-radius: 100px;
+      padding: 8px 24px;
       margin: 20px 0 36px;
-      border: 1px solid rgba(119, 241, 236, 0.5);
-      box-shadow: 0 12px 32px rgba(0,0,0,0.4);
+      border: 1px solid rgba(0,242,254,0.5);
     }
+
     .nav-item {
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 6px;
       cursor: pointer;
-      color: var(--text-secondary);
-      transition: all 0.3s ease;
+      color: #9ca3af;
+      transition: 0.25s;
       font-size: 0.75rem;
       font-weight: 600;
       padding: 8px 28px;
       border-radius: 60px;
     }
-    .nav-item i {
-      font-size: 1.7rem;
-      transition: transform 0.2s;
-    }
-    .nav-item.active {
-      color: var(--pale-lichen);
-      background: rgba(119,241,236,0.2);
-      text-shadow: 0 0 8px var(--pale-lichen);
-      border-bottom: 2px solid var(--pale-lichen);
-      transform: translateY(-2px);
-    }
-    .nav-item:hover i {
-      transform: translateY(-4px);
-    }
-    .tab-pane {
-      display: none;
-      animation: fadeSlide 0.5s cubic-bezier(0.2,0.9,0.4,1.1);
-    }
-    .active-pane {
-      display: block;
-    }
+
+    .nav-item i { font-size: 1.6rem; transition: 0.2s; }
+    .nav-item.active { color: var(--quantum-teal); background: rgba(0,242,254,0.15); text-shadow: 0 0 12px cyan; border-bottom: 2px solid cyan; transform: translateY(-2px); }
+
+    .tab-pane { display: none; animation: fadeSlide 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.1); }
+    .active-pane { display: block; }
+
     @keyframes fadeSlide {
-      from { opacity: 0; transform: translateY(18px); }
+      from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
     }
+
     .glass-card {
       background: var(--glass-bg);
-      backdrop-filter: blur(18px);
+      backdrop-filter: blur(16px);
       border: 1px solid var(--glass-border);
       border-radius: var(--card-radius);
       padding: 28px;
       margin-bottom: 28px;
-      transition: var(--transition-default);
-      box-shadow: 0 12px 28px rgba(0,0,0,0.35);
+      transition: var(--transition-super);
+      box-shadow: 0 12px 28px rgba(0,0,0,0.5);
     }
-    .glass-card:hover {
-      border-color: var(--pale-lichen);
-      transform: translateY(-6px);
-      background: rgba(31, 77, 58, 0.7);
-      box-shadow: 0 22px 40px rgba(0,0,0,0.45);
-    }
-    .btn-primary {
-      background: linear-gradient(135deg, rgba(119,241,236,0.25), rgba(79,143,117,0.4));
-      border: 1px solid var(--pale-lichen);
-      color: var(--pale-lichen);
-      padding: 12px 32px;
-      border-radius: 48px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: 0.25s;
-      backdrop-filter: blur(4px);
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .btn-primary:active {
-      transform: scale(0.96);
-    }
-    .btn-ghost {
-      background: rgba(0,0,0,0.4);
-      border: 1px solid var(--sage-mist);
-      padding: 8px 24px;
-      border-radius: 40px;
-      color: var(--sage-mist);
+    .glass-card:hover { border-color: var(--quantum-teal); transform: translateY(-6px); background: rgba(0, 30, 35, 0.7); }
+
+    .btn-primary, .btn-ghost {
+      border-radius: 60px;
+      font-weight: 600;
       cursor: pointer;
       transition: 0.2s;
       backdrop-filter: blur(4px);
     }
-    .btn-ghost:hover {
-      background: rgba(119,241,236,0.25);
-      border-color: var(--pale-lichen);
-      color: var(--pale-lichen);
+    .btn-primary {
+      background: linear-gradient(135deg, rgba(0,242,254,0.25), rgba(168,85,247,0.3));
+      border: 1px solid var(--quantum-teal);
+      color: white;
+      padding: 12px 32px;
     }
-    .skill-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 18px;
-      margin: 20px 0;
+    .btn-ghost {
+      background: rgba(0,0,0,0.5);
+      border: 1px solid var(--plasma-green);
+      padding: 8px 24px;
+      color: var(--plasma-green);
     }
+
     .tech-tile {
-      background: rgba(0, 0, 0, 0.55);
-      border-left: 4px solid var(--pale-lichen);
+      background: rgba(0, 0, 0, 0.65);
+      border-left: 4px solid var(--quantum-teal);
       padding: 16px;
       border-radius: 28px;
       cursor: pointer;
       transition: 0.2s;
-      backdrop-filter: blur(4px);
     }
-    .tech-tile:hover {
-      background: rgba(79,143,117,0.6);
-      transform: translateX(6px) scale(1.01);
-    }
-    .ink-divider {
-      height: 2px;
-      background: linear-gradient(90deg, transparent, var(--pale-lichen), var(--cork-wedge), transparent);
-      margin: 24px 0;
-      opacity: 0.6;
-    }
-    .sim-canvas {
-      background: #01100c;
-      border-radius: 32px;
+    .tech-tile:hover { background: rgba(0,242,254,0.2); transform: translateX(6px); }
+
+    .webcam-preview {
       width: 100%;
-      max-width: 580px;
-      margin: 16px 0;
-      border: 1px solid var(--pale-lichen);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.5);
-    }
-    input[type="range"] {
-      background: var(--moss-shadow);
-      height: 5px;
-      border-radius: 5px;
-      -webkit-appearance: none;
-      width: 100%;
-    }
-    input[type="range"]:focus { outline: none; }
-    input[type="range"]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      background: var(--pale-lichen);
-      cursor: pointer;
-      transition: 0.1s;
-    }
-    textarea, select {
-      background: var(--quartzite);
-      border: 1px solid var(--sage-mist);
+      max-width: 360px;
       border-radius: 28px;
-      padding: 12px 18px;
-      color: white;
-      width: 100%;
-      font-family: 'Inter', monospace;
-      font-size: 0.9rem;
+      border: 2px solid cyan;
+      background: #000;
+      margin: 12px 0;
     }
+    .voice-badge {
+      background: rgba(0,242,254,0.2);
+      border-radius: 40px;
+      padding: 6px 12px;
+      font-size: 0.7rem;
+    }
+    .sim-canvas { background: #01100c; border-radius: 28px; width: 100%; border: 1px solid cyan; box-shadow: 0 0 12px rgba(0,242,254,0.3); }
+    input[type="range"] { width: 100%; background: #1f3a3f; height: 4px; border-radius: 4px; }
     .modal {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0,0,0,0.92);
+      background: rgba(0,0,0,0.9);
       backdrop-filter: blur(24px);
       display: flex;
       align-items: center;
@@ -323,269 +231,199 @@
       z-index: 1000;
       visibility: hidden;
       opacity: 0;
-      transition: 0.25s;
+      transition: 0.2s;
     }
-    .modal.active {
-      visibility: visible;
-      opacity: 1;
-    }
+    .modal.active { visibility: visible; opacity: 1; }
     .modal-card {
-      background: #1f2c24;
-      border: 1px solid var(--pale-lichen);
-      border-radius: 56px;
-      max-width: 600px;
-      width: 90%;
-      padding: 40px;
-      box-shadow: 0 30px 50px rgba(0,0,0,0.6);
+      background: #0a1a1f;
+      border: 1px solid cyan;
+      border-radius: 48px;
+      padding: 36px;
+      max-width: 500px;
     }
     .fab-formless {
       position: fixed;
-      bottom: 30px;
-      right: 30px;
-      background: radial-gradient(circle at 30% 20%, var(--pale-lichen), #5fc0b5);
-      color: #022E24;
+      bottom: 28px;
+      right: 28px;
+      background: radial-gradient(circle, cyan, #a855f7);
       width: 70px;
       height: 70px;
       border-radius: 40px;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 0 28px var(--pale-lichen);
       cursor: pointer;
       z-index: 99;
-      transition: 0.2s;
-    }
-    .progress-bar {
-      height: 10px;
-      background: #2F4F3A;
-      border-radius: 10px;
-      overflow: hidden;
-      margin: 8px 0;
-    }
-    .progress-fill {
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, var(--pale-lichen), #A3FFE6);
-      border-radius: 10px;
+      box-shadow: 0 0 28px cyan;
     }
     @media (max-width: 768px) {
-      .app-container { padding: 16px; }
-      .logo h1 { font-size: 1.6rem; }
+      .app-container { padding: 12px; }
       .nav-item span { display: none; }
-      .nav-item i { font-size: 1.9rem; }
-      .fab-formless { width: 56px; height: 56px; }
+      .nav-item i { font-size: 1.8rem; }
     }
   </style>
 </head>
 <body>
 <div id="three-canvas"></div>
 <div class="grain-overlay"></div>
-<div class="fluid-bg"></div>
-
 <div class="app-container">
   <div class="header">
-    <div class="logo"><div class="broken-circle"></div><h1>TAO//FLOW</h1></div>
-    <div class="tagline">intercept · formless · neural flow</div>
+    <div class="logo"><div class="quantum-sigil"></div><h1>NEO//FLOW</h1></div>
+    <div class="voice-badge"><i class="fas fa-microphone-alt"></i> VOICE ACTIVE · "Hey Flow"</div>
   </div>
-
   <div class="bottom-nav">
     <div class="nav-item active" data-tab="flow"><i class="fas fa-water"></i><span>Flow</span></div>
-    <div class="nav-item" data-tab="tao"><i class="fas fa-book-open"></i><span>Tao</span></div>
-    <div class="nav-item" data-tab="dojo"><i class="fas fa-fist-raised"></i><span>Dojo</span></div>
-    <div class="nav-item" data-tab="lab"><i class="fas fa-chalkboard-user"></i><span>Lab</span></div>
+    <div class="nav-item" data-tab="tao"><i class="fas fa-brain"></i><span>Tao AI</span></div>
+    <div class="nav-item" data-tab="dojo"><i class="fas fa-robot"></i><span>AI Dojo</span></div>
+    <div class="nav-item" data-tab="lab"><i class="fas fa-chalkboard-user"></i><span>Quantum Lab</span></div>
     <div class="nav-item" data-tab="self"><i class="fas fa-feather-alt"></i><span>Self</span></div>
-    <div class="nav-item" data-tab="sensei"><i class="fas fa-robot"></i><span>AI Sensei</span></div>
   </div>
 
-  <!-- FLOW TAB (Enhanced) -->
+  <!-- FLOW TAB (Enhanced with AI Coach & Biofeedback) -->
   <div id="flowPane" class="tab-pane active-pane">
     <div class="glass-card" style="text-align:center">
-      <i class="fas fa-quote-left" style="color:var(--pale-lichen); font-size:2.8rem"></i>
-      <h2 style="margin:12px 0" id="dynamicQuote">“Be water, my friend.”</h2>
-      <div class="ink-divider"></div>
-      <button class="btn-primary" id="beginFlowBtn"><i class="fas fa-play-circle"></i> Enter Flow State</button>
-      <button class="btn-ghost" id="breathTimerBtn"><i class="fas fa-lungs"></i> 4-7-8 Breath</button>
-      <button class="btn-ghost" id="ambientSoundBtn"><i class="fas fa-music"></i> Zen Soundscape</button>
+      <i class="fas fa-quote-left" style="color:cyan; font-size:2.4rem"></i>
+      <h2 id="dynamicQuote">“Be water, my friend. Adapt to any vessel.”</h2>
+      <div style="height:2px; background:linear-gradient(90deg,transparent,cyan,transparent); margin:16px 0;"></div>
+      <button class="btn-primary" id="beginFlowBtn"><i class="fas fa-play-circle"></i> Neural Flow Activation</button>
+      <button class="btn-ghost" id="breathTimerBtn"><i class="fas fa-lungs"></i> 4-7-8 Breath + Binaural</button>
     </div>
     <div class="glass-card">
-      <div style="display:flex; justify-content:space-between"><span><i class="fas fa-chart-line"></i> Warrior's Path</span><span style="color:var(--pale-lichen)">🔥 <span id="streakDisplay">21</span>-day streak</span></div>
-      <canvas id="warriorChart" width="400" height="160" style="max-height:160px; width:100%; margin:16px 0"></canvas>
-      <div class="skill-grid" style="grid-template-columns:1fr 1fr 1fr"><div>Drills: <span id="drillCount">187</span></div><div>Insights: <span id="insightCount">112</span></div><div>Focus: <span id="focusPercent">98</span>%</div><div>Interception: <span id="interceptGrade">S</span></div><div>Flow Score: <span id="flowScore">94</span></div></div>
+      <div style="display:flex; justify-content:space-between"><span><i class="fas fa-chart-line"></i> Quantum Flow Index</span><span>🔥 <span id="streakDisplay">21</span> day streak</span></div>
+      <canvas id="warriorChart" height="140" style="max-height:140px; width:100%; margin:16px 0"></canvas>
+      <div class="skill-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:12px"><div>Interception IQ: <span id="interceptGrade">A+</span></div><div>Drills: <span id="drillCount">87</span></div><div>Insights: <span id="insightCount">42</span></div><div>Flow Sync: <span id="focusPercent">98</span>%</div></div>
     </div>
     <div class="glass-card">
-      <h3><i class="fas fa-bolt"></i> Today's Combat Focus</h3>
-      <p><strong>Interception & Distance:</strong> Stop-hit vs. jab, 10 min angular footwork. <br> <em>“The art of intercepting is the art of timing.”</em></p>
-      <button class="btn-ghost" id="quickLensBtn">Open Tao Lens</button>
+      <h3><i class="fas fa-microphone-alt"></i> Voice Command · AI Coach</h3>
+      <p>Say: <strong>"Start Interception" , "Analyze Stance" , "Adaptive Sparring" , "Journal my flow"</strong></p>
+      <div id="voiceFeedback" style="background:#01100c; padding:12px; border-radius:32px; margin-top:12px;">🎙️ Listening for commands...</div>
     </div>
     <div class="glass-card">
-      <h4><i class="fas fa-brain"></i> AI Weakness Analysis</h4>
-      <p><span style="color:#ffaa80;">⚡ Footwork angles & pivots</span> → 5 min angular movement drill.</p>
-      <div class="progress-bar"><div class="progress-fill" id="weaknessProgress" style="width: 68%"></div></div>
-      <button class="btn-ghost" id="weaknessDrillBtn">Launch Drill +1</button>
+      <h4><i class="fas fa-brain"></i> Neural Weakness Analysis (Real-time)</h4>
+      <p id="aiAdvice">⚡ Footwork angles & reaction delay → 5 min angular movement drill.</p>
+      <button class="btn-ghost" id="weaknessDrillBtn">Launch AI Drill</button>
     </div>
   </div>
 
-  <!-- TAO TAB (Expanded) -->
+  <!-- TAO AI TAB (Dynamic AI generated insights) -->
   <div id="taoPane" class="tab-pane">
-    <div class="glass-card"><h2><i class="fas fa-dragon"></i> The Tao of Jeet Kune Do – Living Chapters</h2><p>Each chapter reveals combat philosophy, Zen insight, and a drill. Tap for deep wisdom.</p></div>
+    <div class="glass-card"><h2><i class="fas fa-dragon"></i> Tao Quantum Lens · Bruce AI</h2><p>Generative combat philosophy + intercept principles</p><button id="generateAITaoBtn" class="btn-primary">✨ Generate AI Insight</button><div id="aiTaoOutput" style="margin-top:20px; font-style:italic;"></div></div>
     <div id="chaptersGrid" class="skill-grid"></div>
-    <div class="glass-card"><h3>Bruce Lens Integration + Audio Koan</h3><button class="btn-ghost" id="randomKoanBtn"><i class="fas fa-volume-up"></i> Random Bruce Koan</button></div>
   </div>
 
-  <!-- DOJO TAB (Advanced Interactive) -->
+  <!-- AI DOJO (Adaptive Sparring Partner + Webcam AI Motion Capture) -->
   <div id="dojoPane" class="tab-pane">
-    <div class="glass-card"><h2><i class="fas fa-dumbbell"></i> Dojo – Interactive Combat Lab</h2><div id="dojoSkillsGrid" class="skill-grid"></div></div>
-    <div class="glass-card"><h3><i class="fas fa-crosshairs"></i> 5 Ways of Attack (JKD Core)</h3><div id="attackWaysGrid" class="skill-grid"></div></div>
-    <div class="glass-card"><h3><i class="fas fa-shoe-prints"></i> Footwork Simulator – Ghost Opponent (AI Driven)</h3><canvas id="footCanvas2D" width="500" height="260" class="sim-canvas"></canvas><div style="display:flex; gap:12px; justify-content:center; margin-top:12px; flex-wrap:wrap"><button class="btn-ghost" id="stepAdvance">⬆️ Advance</button><button class="btn-ghost" id="stepRetreat">⬇️ Retreat</button><button class="btn-ghost" id="stepPivot">🔄 Pivot</button><button class="btn-ghost" id="resetFoot">Reset</button><button class="btn-ghost" id="aiFootAdvice">AI Advice</button></div></div>
+    <div class="glass-card"><h2><i class="fas fa-video"></i> AI Motion Capture · Intercept Vision</h2><p>Enable webcam → track hand speed → real-time interception score</p><button id="enableCamBtn" class="btn-primary"><i class="fas fa-camera"></i> Activate AI Vision</button><div style="position:relative"><video id="webcamVideo" class="webcam-preview" autoplay muted playsinline style="width:100%; max-width:400px; border-radius:28px;"></video><canvas id="handCanvas" style="position:absolute; top:0; left:0; width:100%; max-width:400px; border-radius:28px;" width="400" height="300"></canvas></div><div id="handSpeedDisplay" style="margin-top:10px">🖐️ Hand Speed: -- m/s | Intercept Readiness: --</div></div>
+    <div class="glass-card"><h3><i class="fas fa-robot"></i> Adaptive Sparring AI (Dynamic Difficulty)</h3><p>Opponent adapts to your reaction score</p><div id="sparringStatus">⚔️ AI Opponent: Pressure Fighter · Level 3</div><button id="sparringInterceptBtn" class="btn-ghost">Simulate Intercept Strike</button><div id="sparringResult"></div></div>
+    <div class="glass-card"><h3><i class="fas fa-shoe-prints"></i> Quantum Footwork Simulator (Ghost AI)</h3><canvas id="footCanvas2D" width="500" height="260" class="sim-canvas"></canvas><div style="display:flex; gap:12px; flex-wrap:wrap"><button class="btn-ghost" id="stepAdvance">⬆️ Advance</button><button class="btn-ghost" id="stepRetreat">⬇️ Retreat</button><button class="btn-ghost" id="stepPivot">🔄 Pivot</button><button class="btn-ghost" id="resetFoot">Reset</button></div><p id="ghostAdvice">Ghost predicts: Maintain range ~ 1.2m</p></div>
   </div>
 
-  <!-- LAB TAB (Neural Upgrades) -->
+  <!-- LAB: REACTION & STRATEGY ENHANCED -->
   <div id="labPane" class="tab-pane">
-    <div class="glass-card"><h3><i class="fas fa-chart-simple"></i> Range Awareness & Interception Trainer</h3><canvas id="rangeCanvas2D" width="500" height="260" class="sim-canvas"></canvas><input type="range" id="rangeSlider" min="20" max="200" value="95" style="width:100%; margin:12px 0"><div id="rangeZoneText" style="background:var(--roycroft-bottle); border-radius:40px; padding:8px; text-align:center; font-weight:500">⚡ PUNCHING RANGE – IDEAL INTERCEPT</div></div>
-    <div class="glass-card"><h4><i class="fas fa-bolt"></i> Reaction Trainer (Stop‑Hit) Pro</h4><button class="btn-primary" id="reactionTestBtn">⚡ Start Reaction Test</button><div id="reactionResult" style="margin-top:12px"></div><div id="reactionHistory"></div></div>
-    <div class="glass-card"><h4><i class="fas fa-chess-board"></i> Shadow Opponent AI (Deep Strategy)</h4><select id="opponentSelect"><option>Aggressive Boxer</option><option>Kickboxer</option><option>Pressure Fighter</option><option>Grappler</option><option>Elusive Counter-Striker</option></select><button class="btn-ghost" id="strategyBtn" style="margin-top:12px">Get JKD Strategy</button><p id="strategyOutput" style="margin-top:12px"></p><button class="btn-ghost" id="simulateSparringBtn">Simulate 3-Round Sparring</button><div id="sparringLog"></div></div>
+    <div class="glass-card"><h3><i class="fas fa-chart-simple"></i> Range Awareness + AI Predictor</h3><canvas id="rangeCanvas2D" width="500" height="260" class="sim-canvas"></canvas><input type="range" id="rangeSlider" min="20" max="200" value="95"><div id="rangeZoneText" style="text-align:center; background:#00000066; border-radius:40px; padding:8px;">⚡ PUNCHING RANGE – OPTIMAL INTERCEPT ZONE</div></div>
+    <div class="glass-card"><h4><i class="fas fa-bolt"></i> Quantum Reaction Trainer (EEG-like)</h4><button class="btn-primary" id="reactionTestBtn">⚡ Start Neural Reaction Test</button><div id="reactionResult" style="margin-top:12px"></div><canvas id="reactionHistogram" width="400" height="100" style="width:100%; height:100px;"></canvas></div>
+    <div class="glass-card"><h4><i class="fas fa-chess-board"></i> Shadow Opponent AI (Generative Strategy)</h4><select id="opponentSelect"><option>Aggressive Boxer</option><option>Kickboxer</option><option>Pressure Fighter</option><option>Grappler</option><option>Elusive Counter-Striker</option></select><button class="btn-ghost" id="strategyBtn">Get JKD Strategy</button><p id="strategyOutput"></p></div>
   </div>
 
-  <!-- SELF TAB (Expanded) -->
+  <!-- SELF (Upgraded Journal + Emotion AI) -->
   <div id="selfPane" class="tab-pane">
-    <div class="glass-card"><h3><i class="fas fa-yin-yang"></i> Self‑Mastery Journal & Mood Tracking</h3><textarea rows="3" id="journalEntry" placeholder="Where was I rigid today? What did I force? Write your flow..."></textarea><button class="btn-primary" id="saveJournalBtn" style="margin-top:12px">Save Insight</button><div id="journalPreview" class="ink-divider" style="margin-top:12px">📜 Last reflection: —</div></div>
-    <div class="glass-card"><h4>Warrior's Monthly Goals & Progress</h4><ul id="goalList" style="list-style:none"><li><i class="fas fa-check-circle" style="color:var(--pale-lichen)"></i> Read "Tao of JKD" – complete</li><li><i class="fas fa-circle-notch"></i> Daily footwork drills (24/30)</li><li><i class="fas fa-circle-notch"></i> Complete Interception module</li><li><i class="fas fa-check-circle" style="color:var(--pale-lichen)"></i> 5 shadow sparring sessions</li></ul><div class="progress-bar"><div class="progress-fill" style="width:74%"></div></div><h4>Fear / Anger Awareness</h4><select id="emotionSelect"><option>Calm Flow</option><option>Rigid / Tense</option><option>Fear of striking</option><option>Aggressive energy</option></select><button id="logEmotionBtn" class="btn-ghost">Log Emotion</button></div>
-    <div class="glass-card"><h4>Create Your Own Style (Formless Arsenal)</h4><div id="styleBuilder" style="display:flex; flex-wrap:wrap; gap:8px"><span class="btn-ghost style-item">Straight lead</span><span class="btn-ghost style-item">Side kick</span><span class="btn-ghost style-item">Trapping hands</span><span class="btn-ghost style-item">Low feint</span><span class="btn-ghost style-item">Intercepting jab</span></div><button class="btn-ghost" id="saveStyleBtn" style="margin-top:12px">Save Personal Style</button><div id="savedStylesList"></div></div>
-  </div>
-
-  <!-- AI SENSEI TAB (New Advanced) -->
-  <div id="senseiPane" class="tab-pane">
-    <div class="glass-card"><h2><i class="fas fa-microchip"></i> AI Sensei: Formless Intelligence</h2><p>Ask any JKD question, or get a daily combat insight.</p><input type="text" id="aiPrompt" placeholder="e.g., How to improve side kick speed?" style="width:100%; padding:14px; border-radius:48px; margin:12px 0;"><button id="askSenseiBtn" class="btn-primary">Ask Sensei</button><div id="senseiResponse" style="margin-top:20px; background:#0A1914; border-radius:28px; padding:20px;"></div></div>
-    <div class="glass-card"><h3>Daily Combat Wisdom</h3><div id="dailyWisdom"></div><button id="refreshWisdomBtn" class="btn-ghost">New Wisdom</button></div>
-    <div class="glass-card"><h3>JKD Biomechanics Visualizer</h3><canvas id="biomechCanvas" width="400" height="200" class="sim-canvas"></canvas><p id="bioHint">Tracking intercepting angle efficiency</p></div>
+    <div class="glass-card"><h3><i class="fas fa-yin-yang"></i> Self‑Mastery Journal · Emotion AI</h3><textarea rows="3" id="journalEntry" placeholder="Write your flow... AI will detect emotional rigidity..."></textarea><button class="btn-primary" id="saveJournalBtn">Save Insight + Sentiment Scan</button><div id="journalPreview" style="margin-top:12px">📜 Last reflection: —</div></div>
+    <div class="glass-card"><h4>Style Builder (Formless Fusion)</h4><div id="styleBuilder" style="display:flex; flex-wrap:wrap; gap:8px"><span class="btn-ghost style-item">Straight lead</span><span class="btn-ghost style-item">Side kick</span><span class="btn-ghost style-item">Trapping hands</span><span class="btn-ghost style-item">Intercepting jab</span><span class="btn-ghost style-item">Angular pivot</span></div><button id="saveStyleBtn" class="btn-ghost">Save Personal Style</button></div>
   </div>
 </div>
-
 <div class="fab-formless" id="formlessFab"><i class="fas fa-feather-alt fa-fw" style="font-size: 30px;"></i></div>
-<div id="globalModal" class="modal"><div class="modal-card"><h3 id="modalTitle">Formless Insight</h3><p id="modalMsg"></p><button class="btn-primary" id="closeModalBtn">Embrace</button></div></div>
+<div id="globalModal" class="modal"><div class="modal-card"><h3 id="modalTitle">Quantum Insight</h3><p id="modalMsg"></p><button class="btn-primary" id="closeModalBtn">Embrace</button></div></div>
 
-<script>
-  (function(){
-    // ====================== 3D SCENE UPGRADED ======================
-    const container = document.getElementById('three-canvas');
-    if(container && typeof THREE !== 'undefined'){
-      const scene = new THREE.Scene(); scene.background = null;
-      const camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 0.1, 1000);
-      camera.position.z = 22;
-      const renderer = new THREE.WebGLRenderer({ alpha: true });
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      renderer.setClearColor(0x000000,0);
-      container.appendChild(renderer.domElement);
-      const particleCount = 1800;
-      const posArray = new Float32Array(particleCount*3);
-      for(let i=0;i<particleCount;i++){ posArray[i*3]=(Math.random()-0.5)*100; posArray[i*3+1]=(Math.random()-0.5)*60; posArray[i*3+2]=(Math.random()-0.5)*50-20; }
-      const particleGeo = new THREE.BufferGeometry(); particleGeo.setAttribute('position', new THREE.BufferAttribute(posArray,3));
-      const particleMat = new THREE.PointsMaterial({ color: 0x77f1ec, size: 0.13, transparent: true, opacity: 0.5 });
-      const particles = new THREE.Points(particleGeo, particleMat);
-      scene.add(particles);
-      const ringGeo = new THREE.TorusGeometry(4, 0.09, 80, 240);
-      const ringMat = new THREE.MeshStandardMaterial({ color: 0x77f1ec, emissive: 0x1F4D3A, emissiveIntensity: 0.5 });
-      const ring = new THREE.Mesh(ringGeo, ringMat);
-      scene.add(ring);
-      const ring2Geo = new THREE.TorusGeometry(5.2, 0.05, 64, 300);
-      const ring2 = new THREE.Mesh(ring2Geo, ringMat);
-      scene.add(ring2);
-      const ambientLight = new THREE.AmbientLight(0x404060); scene.add(ambientLight);
-      const pointLight = new THREE.PointLight(0x77f1ec, 0.8); pointLight.position.set(4,5,9); scene.add(pointLight);
-      function animate3D(){ requestAnimationFrame(animate3D); particles.rotation.y += 0.0006; particles.rotation.x += 0.0003; ring.rotation.x += 0.007; ring.rotation.z += 0.004; ring2.rotation.y += 0.005; renderer.render(scene,camera); }
-      animate3D(); window.addEventListener('resize',()=>{ camera.aspect=window.innerWidth/window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth,window.innerHeight); });
-    }
-    
-    // ====================== CHART ======================
-    const chartCtx = document.getElementById('warriorChart')?.getContext('2d');
-    if(chartCtx && typeof Chart!=='undefined') new Chart(chartCtx, { type:'line', data:{ labels:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'], datasets:[{ label:'Flow Intensity', data:[78,82,88,85,92,95,98], borderColor:'#77F1EC', backgroundColor:'rgba(119,241,236,0.1)', tension:0.4, fill:true }] }, options:{ responsive:true, maintainAspectRatio:true, plugins:{ legend:{ labels:{ color:'#BDD4C0' } } }, scales:{ y:{ grid:{ color:'#2F4F3A' }, ticks:{ color:'#BDD4C0' } }, x:{ ticks:{ color:'#BDD4C0' } } } } });
-    
-    // ====================== TAO CHAPTERS (Expanded) ======================
-    const chapters = [
-      { name:"On Zen", desc:"Empty mind, no effort", icon:"fa-om", type:"Philosophy", combat:"Intercept thought, not motion." },
-      { name:"Art of the Soul", desc:"Self-actualization", icon:"fa-heart", type:"Self", combat:"Know thyself before battle." },
-      { name:"Jeet Kune Do", desc:"Way of intercepting fist", icon:"fa-fist-raised", type:"Core", combat:"Stop-hit & economy of motion." },
-      { name:"The Formless Form", desc:"No technique as technique", icon:"fa-dharmachakra", type:"Zen", combat:"Adapt fluidly, no fixed pattern." },
-      { name:"Preliminaries", desc:"Stance, balance", icon:"fa-shoe-prints", type:"Training", combat:"Rooted mobility." },
-      { name:"Qualities", desc:"Speed, timing, power", icon:"fa-bolt", type:"Attribute", combat:"Develop attributes before techniques." },
-      { name:"Intercepting Fist", desc:"Stop-hit doctrine", icon:"fa-hand-peace", type:"Core", combat:"Punch the punch" },
-      { name:"Economy of Motion", desc:"Minimum movement", icon:"fa-chart-line", type:"Efficiency", combat:"Directness" }
-    ];
-    const chaptersContainer = document.getElementById("chaptersGrid");
-    if(chaptersContainer){ chapters.forEach(ch=>{ const tile=document.createElement("div"); tile.className="tech-tile"; tile.innerHTML=`<i class="fas ${ch.icon}"></i> <strong>${ch.name}</strong><br><span>${ch.desc}</span>`; tile.onclick=()=>{ document.getElementById("modalTitle").innerText=`📖 ${ch.name}`; document.getElementById("modalMsg").innerHTML=`<strong>Bruce Lens:</strong> ${ch.combat}<br><br>🧘 Zen: ${ch.desc}.`; document.getElementById("globalModal").classList.add("active"); }; chaptersContainer.appendChild(tile); }); }
-    
-    // ====================== DOJO SKILLS (40+ items for richness) ======================
-    const dojoSkills = ["Chi Sao Flow","On-Guard Structure","Footwork Pendulum","Timing Interception","Precision Striking","Power Generation","Side Kick Mechanics","Straight Lead","Feints & Parries","Distance Management","Stop-Hit Drill","Angular Entries","Broken Rhythm","Low Kicks","Trapping Hands","Attack by Combination","Shadow Sparring","Heavy Bag Flow","Focus Mitt Drills","Sensitivity Drills"];
-    const dojoGrid = document.getElementById("dojoSkillsGrid");
-    if(dojoGrid){ dojoSkills.forEach(skill=>{ const div=document.createElement("div"); div.className="tech-tile"; div.innerHTML=`<i class="fas fa-dot-circle"></i> ${skill}`; div.onclick=()=>alert(`🔥 Dojo: ${skill} drill — "Absorb what is useful."`); dojoGrid.appendChild(div); }); }
-    
-    const ways = [{ name:"SAA (Simple Attack)", desc:"Direct"},{ name:"PIA (Progressive Indirect)", desc:"Feint"},{ name:"HIA (Hand Immobilization)", desc:"Trap"},{ name:"ABC (Attack by Combination)", desc:"Rhythm"},{ name:"ABD (Attack by Drawing)", desc:"Expose"}];
-    const waysContainer=document.getElementById("attackWaysGrid"); if(waysContainer){ ways.forEach(w=>{ const div=document.createElement("div"); div.className="tech-tile"; div.innerHTML=`<i class="fas fa-bullseye"></i> <strong>${w.name}</strong><br>${w.desc}`; div.onclick=()=>alert(`🎯 ${w.name} animated breakdown`); waysContainer.appendChild(div); }); }
-    
-    // FOOTWORK SIMULATOR
-    const footCanvas=document.getElementById("footCanvas2D"); let footX=200, footY=180;
-    function drawFootwork(){ if(!footCanvas) return; const ctx=footCanvas.getContext("2d"); footCanvas.width=footCanvas.clientWidth; footCanvas.height=220; ctx.clearRect(0,0,footCanvas.width,footCanvas.height); ctx.fillStyle="#77F1EC"; ctx.shadowBlur=8; ctx.beginPath(); ctx.arc(footX,footY,14,0,Math.PI*2); ctx.fill(); ctx.fillStyle="#fff"; ctx.font="bold 12px Inter"; ctx.fillText("you",footX-8,footY-12); ctx.beginPath(); ctx.arc(footX+42,footY-8,12,0,Math.PI*2); ctx.strokeStyle="#77F1EC"; ctx.stroke(); }
-    function constrain(){ footX=Math.min(footCanvas.width-30,Math.max(30,footX)); footY=Math.min(footCanvas.height-30,Math.max(30,footY)); drawFootwork(); }
-    document.getElementById("stepAdvance")?.addEventListener("click",()=>{ footY-=18; constrain(); });
-    document.getElementById("stepRetreat")?.addEventListener("click",()=>{ footY+=18; constrain(); });
-    document.getElementById("stepPivot")?.addEventListener("click",()=>{ footX+=25; constrain(); });
-    document.getElementById("resetFoot")?.addEventListener("click",()=>{ footX=footCanvas.width/2; footY=footCanvas.height-50; constrain(); });
-    document.getElementById("aiFootAdvice")?.addEventListener("click",()=>alert("AI: Maintain 60/40 weight distribution. Pivot on lead foot for angle entries."));
-    setTimeout(()=>{ if(footCanvas){ footCanvas.width=500; footCanvas.height=220; footX=200; footY=160; drawFootwork(); }},100);
-    
-    // RANGE AWARENESS
-    const rangeCanvas=document.getElementById("rangeCanvas2D"); let rangeVal=95;
-    function drawRange(dist){ if(!rangeCanvas)return; const ctx=rangeCanvas.getContext("2d"); rangeCanvas.width=rangeCanvas.clientWidth; rangeCanvas.height=240; ctx.clearRect(0,0,rangeCanvas.width,rangeCanvas.height); const cx=rangeCanvas.width/2, yBase=rangeCanvas.height-50; ctx.beginPath(); ctx.arc(cx,yBase-20,35,0,Math.PI*2); ctx.strokeStyle="#77F1EC"; ctx.stroke(); ctx.beginPath(); ctx.arc(cx,yBase-20,80,0,Math.PI*2); ctx.stroke(); ctx.fillStyle="#77F1EC"; ctx.beginPath(); ctx.arc(cx-70,yBase,16,0,Math.PI*2); ctx.fill(); ctx.fillStyle="#FFA07A"; ctx.beginPath(); ctx.arc(cx+(dist/1.5),yBase-5,16,0,Math.PI*2); ctx.fill(); let zone=dist<55?"CLINCH RANGE":(dist<115?"PUNCHING RANGE":(dist<170?"KICKING RANGE":"OUT OF RANGE")); document.getElementById("rangeZoneText").innerHTML=`⚡ ${zone} – ${dist<115?"IDEAL INTERCEPT":"ADJUST DISTANCE"}`; }
-    document.getElementById("rangeSlider")?.addEventListener("input",(e)=>{ rangeVal=parseInt(e.target.value); drawRange(rangeVal); }); drawRange(95);
-    
-    // REACTION TRAINER PRO
-    let reactionHistory=[];
-    document.getElementById("reactionTestBtn")?.addEventListener("click",()=>{ const div=document.getElementById("reactionResult"); div.innerHTML="⚡ Prepare... intercept flash!"; setTimeout(()=>{ div.innerHTML="🔥 FLASH! TAP ANYWHERE NOW!"; const start=Date.now(); const handler=()=>{ const rt=Date.now()-start; div.innerHTML=`✅ Reaction time: ${rt}ms — ${rt<250?"Elite interception.":"Sharpen timing."}`; reactionHistory.push(rt); if(reactionHistory.length>5)reactionHistory.shift(); document.getElementById("reactionHistory").innerHTML=`Recent: ${reactionHistory.join("ms, ")}ms`; document.removeEventListener("click",handler); }; document.addEventListener("click",handler,{once:true}); setTimeout(()=>document.removeEventListener("click",handler),1500); }, 800+Math.random()*1000); });
-    
-    // SHADOW OPPONENT ADVANCED
-    document.getElementById("strategyBtn")?.addEventListener("click",()=>{ const opp=document.getElementById("opponentSelect").value; let advice=""; if(opp.includes("Boxer")) advice="Maintain kicking range, intercept jab with stop-hit. Use side kick to keep distance."; else if(opp.includes("Kickboxer")) advice="Close trapping range, low kicks, break rhythm."; else if(opp.includes("Pressure")) advice="Pivot angles, attack by drawing."; else if(opp.includes("Grappler")) advice="Use hand immobilization, mobility and feints."; else advice="Use angular footwork, feint and intercept."; document.getElementById("strategyOutput").innerText=advice; });
-    document.getElementById("simulateSparringBtn")?.addEventListener("click",()=>{ const logDiv=document.getElementById("sparringLog"); logDiv.innerHTML="🥋 Round 1: Intercept and pivot. 🥋 Round 2: Low kick + straight lead. 🥋 Round 3: Broken rhythm, you dominate. Victory by adaptability."; });
-    
-    // JOURNAL
-    let savedJournal=localStorage.getItem("jkd_journal")||"—"; const jPreview=document.getElementById("journalPreview"); if(jPreview) jPreview.innerHTML=`📜 Last reflection: "${savedJournal.substring(0,80)}"`;
-    document.getElementById("saveJournalBtn")?.addEventListener("click",()=>{ const txt=document.getElementById("journalEntry").value; if(txt.trim()){ localStorage.setItem("jkd_journal",txt); if(jPreview) jPreview.innerHTML=`📜 Last reflection: "${txt.substring(0,80)}"`; alert("Insight absorbed."); let ins=parseInt(localStorage.getItem("insightCount")||"112")+1; localStorage.setItem("insightCount",ins); document.getElementById("insightCount").innerText=ins; } });
-    document.getElementById("weaknessDrillBtn")?.addEventListener("click",()=>{ let drills=parseInt(localStorage.getItem("drillCount")||"187")+1; localStorage.setItem("drillCount",drills); document.getElementById("drillCount").innerText=drills; alert("Angular footwork drill +1"); let prog=document.getElementById("weaknessProgress"); if(prog) prog.style.width=Math.min(100,parseInt(prog.style.width)+7)+"%"; });
-    document.getElementById("logEmotionBtn")?.addEventListener("click",()=>{ let em=document.getElementById("emotionSelect").value; alert(`Emotion "${em}" logged. Awareness is the first step to flow.`); });
-    // Style Builder
-    document.querySelectorAll(".style-item").forEach(btn=>btn.addEventListener("click",()=>alert(`➕ Added ${btn.innerText} to personal arsenal.`)));
-    document.getElementById("saveStyleBtn")?.addEventListener("click",()=>alert("Your unique JKD style recorded: fluid, adaptive, formless."));
-    
-    // FLOW BUTTONS
-    document.getElementById("beginFlowBtn")?.addEventListener("click",()=>alert("Enter Flow: 5 min breath, then shadow interception drills. Breathe deep."));
-    document.getElementById("quickLensBtn")?.addEventListener("click",()=>{ document.getElementById("modalTitle").innerText="The Formless Form"; document.getElementById("modalMsg").innerHTML="“The highest technique is to have no technique. Flow, adapt, intercept.”"; document.getElementById("globalModal").classList.add("active"); });
-    document.getElementById("breathTimerBtn")?.addEventListener("click",()=>alert("🧘 4-7-8 Breathing: Inhale 4s, Hold 7s, Exhale 8s. Repeat 4 cycles."));
-    document.getElementById("ambientSoundBtn")?.addEventListener("click",()=>alert("🌊 Zen soundscape: water and wind chimes playing mentally."));
-    document.getElementById("randomKoanBtn")?.addEventListener("click",()=>{ const koans=["Do not be tense, just be ready.","Be water, my friend.","Using no way as way.","Empty your mind.","The successful warrior is the average man with laser-like focus."]; alert(koans[Math.floor(Math.random()*koans.length)]); });
-    
-    // AI SENSEI MODULE
-    document.getElementById("askSenseiBtn")?.addEventListener("click",()=>{ const q=document.getElementById("aiPrompt").value; let ans=""; if(q.toLowerCase().includes("side kick")) ans="Side kick: pivot on supporting foot, hip rotation, extend from center. Train with wall support for balance."; else if(q.toLowerCase().includes("footwork")) ans="Footwork is root of JKD: maintain light steps, bounce not too high, use lateral angles."; else if(q.toLowerCase().includes("intercept")) ans="Intercepting is timing. Use stop-hit drills, parry and strike simultaneously."; else ans="Formless wisdom: Adapt your technique to the situation. No fixed pattern."; document.getElementById("senseiResponse").innerHTML=`<i class="fas fa-robot"></i> ${ans}`; });
-    const wisdom=["Economy of motion defeats brute force.","Intercept the intention, not the strike.","Flow like water, crash like thunder.","Simplicity is the essence of JKD."];
-    document.getElementById("dailyWisdom")?.innerHTML=wisdom[Math.floor(Math.random()*wisdom.length)];
-    document.getElementById("refreshWisdomBtn")?.addEventListener("click",()=>{ document.getElementById("dailyWisdom").innerHTML=wisdom[Math.floor(Math.random()*wisdom.length)]; });
-    // Biomechanics Canvas
-    const bioCanvas=document.getElementById("biomechCanvas"); if(bioCanvas){ const ctx=bioCanvas.getContext("2d"); bioCanvas.width=400; bioCanvas.height=200; ctx.fillStyle="#0F2F28"; ctx.fillRect(0,0,400,200); ctx.beginPath(); ctx.moveTo(80,160); ctx.lineTo(200,80); ctx.lineTo(320,160); ctx.strokeStyle="#77F1EC"; ctx.lineWidth=3; ctx.stroke(); ctx.fillStyle="#77F1EC"; ctx.fillText("Efficient Angle",180,60); }
-    
-    // FAB
-    document.getElementById("formlessFab")?.addEventListener("click",()=>{ const insights=["🌀 Practice footwork without pattern — respond to invisible opponent.","⚡ Your timing sharpens: stop-hit drill 5 min.","📖 Revisit 'Formless Form': no technique as technique.","🌊 Be water: yield and intercept today."]; const rand=insights[Math.floor(Math.random()*insights.length)]; document.getElementById("modalTitle").innerHTML="🌊 Formless Flow"; document.getElementById("modalMsg").innerHTML=rand; document.getElementById("globalModal").classList.add("active"); });
-    document.getElementById("closeModalBtn")?.addEventListener("click",()=>document.getElementById("globalModal").classList.remove("active"));
-    
-    // TAB SWITCHING
-    const panes={ flow:document.getElementById("flowPane"), tao:document.getElementById("taoPane"), dojo:document.getElementById("dojoPane"), lab:document.getElementById("labPane"), self:document.getElementById("selfPane"), sensei:document.getElementById("senseiPane") };
-    const navBtns=document.querySelectorAll(".nav-item");
-    function switchTab(tabId){ Object.keys(panes).forEach(id=>panes[id].classList.remove("active-pane")); panes[tabId].classList.add("active-pane"); navBtns.forEach(btn=>btn.classList.remove("active")); document.querySelector(`.nav-item[data-tab="${tabId}"]`).classList.add("active"); if(typeof gsap!=='undefined') gsap.fromTo(`#${tabId}Pane .glass-card`,{y:15,opacity:0},{y:0,opacity:1,stagger:0.07,duration:0.5}); }
-    navBtns.forEach(btn=>btn.addEventListener("click",()=>switchTab(btn.getAttribute("data-tab"))));
-    
-    // STREAK & STATS
-    let streak=parseInt(localStorage.getItem("streak")||"21"); document.getElementById("streakDisplay").innerText=streak;
-    setInterval(()=>{ streak++; localStorage.setItem("streak",streak); document.getElementById("streakDisplay").innerText=streak; },86400000);
-    if(localStorage.getItem("drillCount")) document.getElementById("drillCount").innerText=localStorage.getItem("drillCount");
-    if(localStorage.getItem("insightCount")) document.getElementById("insightCount").innerText=localStorage.getItem("insightCount");
-  })();
-</script>
-</body>
-</html>
+<script type="module">
+  import * as THREE from 'three';
+  import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+  import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+  import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+  import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+  
+  // ========== NEXT-GEN 3D ==========
+  const container = document.getElementById('three-canvas');
+  const scene = new THREE.Scene();
+  scene.background = null;
+  scene.fog = new THREE.FogExp2(0x030c0f, 0.008);
+  const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera.position.set(0, 2, 18);
+  const renderer = new THREE.WebGLRenderer({ alpha: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(window.devicePixelRatio);
+  container.appendChild(renderer.domElement);
+  
+  // Bloom
+  const renderScene = new RenderPass(scene, camera);
+  const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.2, 0.3, 0.85);
+  bloomPass.threshold = 0.1;
+  bloomPass.strength = 0.65;
+  bloomPass.radius = 0.5;
+  const effectComposer = new EffectComposer(renderer);
+  effectComposer.addPass(renderScene);
+  effectComposer.addPass(bloomPass);
+  
+  // Particle swarm + energy torus
+  const particleCount = 2000;
+  const geometry = new THREE.BufferGeometry();
+  const positions = new Float32Array(particleCount * 3);
+  for (let i = 0; i < particleCount; i++) {
+    positions[i*3] = (Math.random() - 0.5) * 80;
+    positions[i*3+1] = (Math.random() - 0.5) * 45;
+    positions[i*3+2] = (Math.random() - 0.5) * 50 - 25;
+  }
+  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  const particleMat = new THREE.PointsMaterial({ color: 0x00f2fe, size: 0.09, transparent: true, opacity: 0.6, blending: THREE.AdditiveBlending });
+  const particles = new THREE.Points(geometry, particleMat);
+  scene.add(particles);
+  
+  const torusKnot = new THREE.Mesh(
+    new THREE.TorusKnotGeometry(2.2, 0.18, 200, 32, 3, 4),
+    new THREE.MeshStandardMaterial({ color: 0xa855f7, emissive: 0x4ade80, emissiveIntensity: 0.5, metalness: 0.8, roughness: 0.2 })
+  );
+  scene.add(torusKnot);
+  const ambientLight = new THREE.AmbientLight(0x111122);
+  scene.add(ambientLight);
+  const pointLight = new THREE.PointLight(0x00f2fe, 0.8);
+  pointLight.position.set(5, 6, 7);
+  scene.add(pointLight);
+  
+  function animate() {
+    requestAnimationFrame(animate);
+    particles.rotation.y += 0.0005;
+    particles.rotation.x += 0.0003;
+    torusKnot.rotation.x += 0.008;
+    torusKnot.rotation.y += 0.012;
+    effectComposer.render();
+  }
+  animate();
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    effectComposer.setSize(window.innerWidth, window.innerHeight);
+  });
+  
+  // ========== CHART ==========
+  const chartCtx = document.getElementById('warriorChart').getContext('2d');
+  new Chart(chartCtx, {
+    type: 'line',
+    data: { labels: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'], datasets: [{ label: 'Flow Intensity', data: [82,88,91,89,95,97,99], borderColor: '#00f2fe', backgroundColor: 'rgba(0,242,254,0.1)', tension: 0.4, fill: true }] },
+    options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { labels: { color: '#ccf' } } } }
+  });
+  
+  // ========== MEDIAPIPE HANDS INTEGRATION ==========
+  let handSpeed = 0;
+  let lastHandPos = null;
+  let lastTimestamp = 0;
+  const video = document.getElementById('webcamVideo');
+  const handCanvas = document.getElementById('handCanvas');
+  const handCtx = handCanvas.getContext('2d');
+  let hands = null;
+  let cameraObj = null;
+  
+  document.getElementById('enableCamBtn')?.addEventListener('click', async () => {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    video.srcObject = stream;
+    video.play();
+    hands = new Hand
