@@ -1,958 +1,1086 @@
-// ===============================
-// MURPHX PREP V2 - FINAL SCRIPT
-// Professional Glass Rain App Logic
-// ===============================
+/* =========================================================
+   TAO//FLOW / MURPHXPREP - WORLD CLASS PRODUCTION SCRIPT
+   ---------------------------------------------------------
+   Premium cinematic interaction engine
+   Version: 1.0
+   Author: ChatGPT (crafted for a world-class experience)
+   ========================================================= */
 
-document.addEventListener("DOMContentLoaded", () => {
-  // -------------------------------
-  // STATE
-  // -------------------------------
+(() => {
+  "use strict";
+
+  /* =========================================================
+     CONFIG
+     ========================================================= */
+  const CONFIG = {
+    debug: false,
+    reduceMotionQuery: window.matchMedia("(prefers-reduced-motion: reduce)"),
+    mobileBreakpoint: 992,
+    rain: {
+      enabled: true,
+      dropCountDesktop: 90,
+      dropCountTablet: 60,
+      dropCountMobile: 35,
+      minDuration: 1.2,
+      maxDuration: 3.5,
+      minDelay: 0,
+      maxDelay: 4,
+      minOpacity: 0.08,
+      maxOpacity: 0.28
+    },
+    tilt: {
+      maxRotate: 8,
+      perspective: 1200,
+      scale: 1.02,
+      speed: 350
+    },
+    parallax: {
+      intensity: 18
+    },
+    cursor: {
+      enabled: true
+    },
+    scramble: {
+      chars: "アァイィウヴエェオカガキギクグケゲコゴサザシジスズセゼソゾABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789<>/[]{}—=+*"
+    },
+    counters: {
+      duration: 1800
+    },
+    smoothScrollOffset: 0
+  };
+
+  /* =========================================================
+     STATE
+     ========================================================= */
   const state = {
-    currentSection: "dashboard",
-    streak: 1,
-    testsDone: 0,
-    averageScore: 0,
-    accuracy: 0,
-    darkMode: true,
-    timerInterval: null,
-    timerRunning: false,
-    timerSeconds: 300,
-    dailyChallengeStarted: false,
-    quotes: [
-      "The rain teaches patience. The storm teaches power.",
-      "A calm mind cuts deeper than chaos.",
-      "Every master was once a beginner.",
-      "Discipline is your sharpest weapon.",
-      "Small progress every day becomes greatness.",
-      "You are not here to be average.",
-      "Focus is the art of becoming unstoppable."
-    ],
-    quickTests: [],
-    customTests: [],
-    doubts: [
-      {
-        id: 1,
-        subject: "Physics",
-        topic: "Electrostatics",
-        question: "Why is electric field zero inside a conductor in electrostatic equilibrium?",
-        status: "Answered"
-      },
-      {
-        id: 2,
-        subject: "Chemistry",
-        topic: "Chemical Bonding",
-        question: "How to identify bond order quickly in MOT questions?",
-        status: "Pending"
-      }
-    ],
-    subjects: [
-      {
-        name: "Physics",
-        progress: 68,
-        completed: 12,
-        total: 18,
-        topics: [
-          "Units & Dimensions",
-          "Kinematics",
-          "Laws of Motion",
-          "Work Energy Power",
-          "Rotational Motion",
-          "Gravitation",
-          "Thermodynamics",
-          "SHM",
-          "Waves",
-          "Electrostatics",
-          "Current Electricity",
-          "Magnetism",
-          "EMI",
-          "Optics",
-          "Modern Physics"
-        ]
-      },
-      {
-        name: "Chemistry",
-        progress: 64,
-        completed: 9,
-        total: 14,
-        topics: [
-          "Mole Concept",
-          "Atomic Structure",
-          "Periodic Table",
-          "Chemical Bonding",
-          "Thermodynamics",
-          "Equilibrium",
-          "Redox",
-          "Organic Basics",
-          "Hydrocarbons",
-          "Biomolecules"
-        ]
-      },
-      {
-        name: "Biology",
-        progress: 70,
-        completed: 15,
-        total: 22,
-        topics: [
-          "Cell",
-          "Biomolecules",
-          "Cell Cycle",
-          "Plant Kingdom",
-          "Animal Kingdom",
-          "Morphology",
-          "Anatomy",
-          "Genetics",
-          "Evolution",
-          "Human Physiology",
-          "Ecology"
-        ]
-      }
-    ],
-    notes: [],
-    mentorMessages: [
-      {
-        role: "assistant",
-        text: "I am your Murphx AI mentor. Ask me anything about NEET prep, discipline, focus, strategy, or concepts."
-      }
-    ],
-    searchIndex: []
+    isMobile: window.innerWidth < CONFIG.mobileBreakpoint,
+    reducedMotion: CONFIG.reduceMotionQuery.matches,
+    lastScrollY: window.scrollY,
+    ticking: false,
+    rafStore: new Set(),
+    observers: [],
+    rainBuilt: false,
+    loaderComplete: false,
+    mouse: {
+      x: window.innerWidth / 2,
+      y: window.innerHeight / 2,
+      normalizedX: 0,
+      normalizedY: 0
+    }
   };
 
-  // -------------------------------
-  // HELPERS
-  // -------------------------------
-  const $ = (selector) => document.querySelector(selector);
-  const $$ = (selector) => document.querySelectorAll(selector);
+  /* =========================================================
+     UTILITIES
+     ========================================================= */
+  const $ = (sel, parent = document) => parent.querySelector(sel);
+  const $$ = (sel, parent = document) => [...parent.querySelectorAll(sel)];
 
-  const formatTime = (totalSeconds) => {
-    const mins = Math.floor(totalSeconds / 60);
-    const secs = totalSeconds % 60;
-    return `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+  const log = (...args) => {
+    if (CONFIG.debug) console.log("[TAO//FLOW]", ...args);
   };
 
-  const showToast = (message) => {
-    const toast = $("#toast");
-    if (!toast) return;
-    toast.textContent = message;
-    toast.classList.add("show");
+  const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
+
+  const lerp = (start, end, amt) => (1 - amt) * start + amt * end;
+
+  const random = (min, max) => Math.random() * (max - min) + min;
+
+  const mapRange = (value, inMin, inMax, outMin, outMax) => {
+    return ((value - inMin) * (outMax - outMin)) / (inMax - inMin) + outMin;
+  };
+
+  const debounce = (fn, delay = 150) => {
+    let timer;
+    return (...args) => {
+      clearTimeout(timer);
+      timer = setTimeout(() => fn(...args), delay);
+    };
+  };
+
+  const throttleRAF = (fn) => {
+    let running = false;
+    return (...args) => {
+      if (running) return;
+      running = true;
+      requestAnimationFrame(() => {
+        fn(...args);
+        running = false;
+      });
+    };
+  };
+
+  const safeAddClass = (el, cls) => el && el.classList.add(cls);
+  const safeRemoveClass = (el, cls) => el && el.classList.remove(cls);
+  const safeToggleClass = (el, cls, force) => el && el.classList.toggle(cls, force);
+
+  const isElementInViewport = (el, offset = 0) => {
+    if (!el) return false;
+    const rect = el.getBoundingClientRect();
+    return rect.top <= window.innerHeight - offset && rect.bottom >= 0;
+  };
+
+  const prefersReducedMotion = () => state.reducedMotion;
+
+  /* =========================================================
+     APP ROOT / COMMON ELEMENTS
+     ========================================================= */
+  const app = {
+    body: document.body,
+    html: document.documentElement,
+    header: null,
+    navLinks: [],
+    sections: [],
+    loader: null,
+    loaderBar: null,
+    loaderText: null,
+    progressBar: null,
+    rainLayer: null,
+    cursor: null,
+    cursorDot: null,
+    backToTop: null,
+    ambientOrbs: [],
+    magneticButtons: [],
+    tiltCards: [],
+    counters: [],
+    scrambleTexts: [],
+    revealEls: [],
+    parallaxEls: [],
+    menuToggle: null,
+    mobileMenu: null
+  };
+
+  /* =========================================================
+     DOM CACHE
+     ========================================================= */
+  function cacheDOM() {
+    app.header = $(".site-header, header, .navbar, .nav");
+    app.navLinks = $$('a[href^="#"]');
+    app.sections = $$("section[id]");
+    app.loader = $(".site-loader, .loader, #loader");
+    app.loaderBar = $(".loader-progress__bar, .loader-bar, .loader-progress-fill", app.loader || document);
+    app.loaderText = $(".loader-progress__text, .loader-text, .loader-percent", app.loader || document);
+    app.progressBar = $(".scroll-progress, .scroll-progress-bar, #scrollProgress");
+    app.rainLayer = $(".rain-layer, .rain-container, #rainLayer");
+    app.cursor = $(".cursor-glow, .custom-cursor, #cursorGlow");
+    app.cursorDot = $(".cursor-dot, #cursorDot");
+    app.backToTop = $(".back-to-top, #backToTop");
+    app.ambientOrbs = $$(".ambient-orb, .aura-orb, .hero-orb");
+    app.magneticButtons = $$(".magnetic, .btn, .cta, .button");
+    app.tiltCards = $$(".tilt-card, .glass-card, .feature-card, .card");
+    app.counters = $$("[data-counter]");
+    app.scrambleTexts = $$("[data-scramble]");
+    app.revealEls = $$("[data-reveal], .reveal, .fade-up, .fade-in");
+    app.parallaxEls = $$("[data-parallax]");
+    app.menuToggle = $(".menu-toggle, .nav-toggle, #menuToggle");
+    app.mobileMenu = $(".mobile-menu, .nav-menu, .menu-panel, #mobileMenu");
+
+    log("DOM cached");
+  }
+
+  /* =========================================================
+     INITIALIZATION
+     ========================================================= */
+  function init() {
+    cacheDOM();
+    setDeviceFlags();
+    bindGlobalEvents();
+
+    initLoader();
+    initScrollProgress();
+    initRevealSystem();
+    initSmoothAnchors();
+    initActiveNav();
+    initHeaderBehavior();
+    initRainSystem();
+    initCursor();
+    initMagneticButtons();
+    initTiltCards();
+    initParallax();
+    initCounters();
+    initScrambleText();
+    initBackToTop();
+    initRippleEffects();
+    initMobileMenu();
+    initAmbientMotion();
+    initHeroBreathing();
+    initSectionGlowTracking();
+    initHoverSoundlessFeedback();
+    initFocusAccessibility();
+    initLazyClassStates();
+
+    safeAddClass(document.body, "js-ready");
+
+    window.setTimeout(() => {
+      if (!state.loaderComplete) completeLoader();
+    }, 2800);
+
+    log("App initialized");
+  }
+
+  /* =========================================================
+     DEVICE FLAGS
+     ========================================================= */
+  function setDeviceFlags() {
+    state.isMobile = window.innerWidth < CONFIG.mobileBreakpoint;
+    state.reducedMotion = CONFIG.reduceMotionQuery.matches;
+
+    safeToggleClass(app.body, "is-mobile", state.isMobile);
+    safeToggleClass(app.body, "reduced-motion", state.reducedMotion);
+  }
+
+  /* =========================================================
+     GLOBAL EVENTS
+     ========================================================= */
+  function bindGlobalEvents() {
+    window.addEventListener("resize", debounce(handleResize, 150), { passive: true });
+    window.addEventListener("scroll", throttleRAF(handleScroll), { passive: true });
+
+    document.addEventListener("mousemove", throttleRAF(handleMouseMove), { passive: true });
+    document.addEventListener("pointermove", throttleRAF(handleMouseMove), { passive: true });
+
+    CONFIG.reduceMotionQuery.addEventListener?.("change", (e) => {
+      state.reducedMotion = e.matches;
+      safeToggleClass(app.body, "reduced-motion", state.reducedMotion);
+    });
+
+    window.addEventListener("load", () => {
+      completeLoader();
+      refreshActiveNav();
+    });
+  }
+
+  function handleResize() {
+    setDeviceFlags();
+    rebuildRainIfNeeded();
+    refreshActiveNav();
+  }
+
+  function handleScroll() {
+    updateScrollProgress();
+    updateHeaderOnScroll();
+    updateBackToTop();
+    updateSectionGlow();
+  }
+
+  function handleMouseMove(e) {
+    state.mouse.x = e.clientX;
+    state.mouse.y = e.clientY;
+    state.mouse.normalizedX = (e.clientX / window.innerWidth - 0.5) * 2;
+    state.mouse.normalizedY = (e.clientY / window.innerHeight - 0.5) * 2;
+
+    updateCursorPosition();
+    updateParallaxMouse();
+    updateAmbientOrbs();
+  }
+
+  /* =========================================================
+     LOADER SYSTEM
+     ========================================================= */
+  function initLoader() {
+    if (!app.loader) return;
+
+    safeAddClass(app.body, "is-loading");
+
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress += Math.random() * 12;
+      if (progress >= 100) {
+        progress = 100;
+        clearInterval(interval);
+      }
+
+      if (app.loaderBar) app.loaderBar.style.width = `${progress}%`;
+      if (app.loaderText) app.loaderText.textContent = `${Math.floor(progress)}%`;
+    }, 120);
+
+    window.__loaderInterval = interval;
+  }
+
+  function completeLoader() {
+    if (!app.loader || state.loaderComplete) return;
+
+    state.loaderComplete = true;
+    clearInterval(window.__loaderInterval);
+
+    if (app.loaderBar) app.loaderBar.style.width = "100%";
+    if (app.loaderText) app.loaderText.textContent = "100%";
+
+    safeAddClass(app.loader, "is-complete");
+
     setTimeout(() => {
-      toast.classList.remove("show");
-    }, 2500);
-  };
+      safeAddClass(app.loader, "is-hidden");
+      safeRemoveClass(app.body, "is-loading");
+    }, 700);
+  }
 
-  const randomFrom = (arr) => arr[Math.floor(Math.random() * arr.length)];
+  /* =========================================================
+     SCROLL PROGRESS
+     ========================================================= */
+  function initScrollProgress() {
+    updateScrollProgress();
+  }
 
-  const saveState = () => {
-    localStorage.setItem("murphx_prep_state_v2", JSON.stringify({
-      streak: state.streak,
-      testsDone: state.testsDone,
-      averageScore: state.averageScore,
-      accuracy: state.accuracy,
-      darkMode: state.darkMode,
-      quickTests: state.quickTests,
-      customTests: state.customTests,
-      notes: state.notes,
-      doubts: state.doubts,
-      mentorMessages: state.mentorMessages,
-      subjects: state.subjects
-    }));
-  };
+  function updateScrollProgress() {
+    if (!app.progressBar) return;
 
-  const loadState = () => {
-    const raw = localStorage.getItem("murphx_prep_state_v2");
-    if (!raw) return;
-    try {
-      const data = JSON.parse(raw);
-      state.streak = data.streak ?? state.streak;
-      state.testsDone = data.testsDone ?? state.testsDone;
-      state.averageScore = data.averageScore ?? state.averageScore;
-      state.accuracy = data.accuracy ?? state.accuracy;
-      state.darkMode = data.darkMode ?? state.darkMode;
-      state.quickTests = data.quickTests ?? state.quickTests;
-      state.customTests = data.customTests ?? state.customTests;
-      state.notes = data.notes ?? state.notes;
-      state.doubts = data.doubts ?? state.doubts;
-      state.mentorMessages = data.mentorMessages ?? state.mentorMessages;
-      state.subjects = data.subjects ?? state.subjects;
-    } catch (err) {
-      console.warn("Failed to load saved state", err);
-    }
-  };
+    const scrollTop = window.scrollY || document.documentElement.scrollTop;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
 
-  const buildSearchIndex = () => {
-    const index = [];
-    state.subjects.forEach(subject => {
-      index.push({
-        type: "subject",
-        label: subject.name,
-        section: "tests"
-      });
-      subject.topics.forEach(topic => {
-        index.push({
-          type: "topic",
-          label: `${topic} (${subject.name})`,
-          section: "tests"
-        });
-      });
-    });
+    app.progressBar.style.width = `${clamp(progress, 0, 100)}%`;
+  }
 
-    [
-      "Dashboard",
-      "Mock Tests",
-      "Breath Focus",
-      "AI Mentor",
-      "Doubts",
-      "Community",
-      "Profile",
-      "Daily Challenge",
-      "Quick Builder",
-      "Subject Progress",
-      "Focus Timer"
-    ].forEach(label => {
-      index.push({
-        type: "page",
-        label,
-        section: label.toLowerCase().includes("dashboard")
-          ? "dashboard"
-          : label.toLowerCase().includes("breath")
-          ? "breath"
-          : label.toLowerCase().includes("mentor")
-          ? "mentor"
-          : label.toLowerCase().includes("doubts")
-          ? "doubts"
-          : label.toLowerCase().includes("community")
-          ? "community"
-          : label.toLowerCase().includes("profile")
-          ? "profile"
-          : "tests"
-      });
-    });
+  /* =========================================================
+     REVEAL ANIMATIONS
+     ========================================================= */
+  function initRevealSystem() {
+    if (!app.revealEls.length) return;
 
-    state.searchIndex = index;
-  };
-
-  // -------------------------------
-  // NAVIGATION
-  // -------------------------------
-  const sections = $$(".app-section");
-  const navButtons = $$("[data-nav]");
-
-  const switchSection = (sectionName) => {
-    state.currentSection = sectionName;
-
-    sections.forEach(section => {
-      section.classList.toggle("active", section.dataset.section === sectionName);
-    });
-
-    navButtons.forEach(btn => {
-      btn.classList.toggle("active", btn.dataset.nav === sectionName);
-    });
-
-    renderSectionHeader();
-  };
-
-  const renderSectionHeader = () => {
-    const title = $("#mobile-section-title");
-    const subtitle = $("#mobile-section-subtitle");
-    if (!title || !subtitle) return;
-
-    const map = {
-      dashboard: {
-        title: "Dashboard",
-        subtitle: "your study overview"
-      },
-      tests: {
-        title: "Mock Tests",
-        subtitle: "create, solve, review, and improve"
-      },
-      breath: {
-        title: "Breath Focus",
-        subtitle: "calm the storm, sharpen the mind"
-      },
-      mentor: {
-        title: "AI Mentor",
-        subtitle: "ask, learn, improve instantly"
-      },
-      doubts: {
-        title: "Doubts",
-        subtitle: "capture and resolve confusion"
-      },
-      community: {
-        title: "Community",
-        subtitle: "learn with focused aspirants"
-      },
-      profile: {
-        title: "Profile",
-        subtitle: "track your warrior evolution"
-      }
-    };
-
-    title.textContent = map[state.currentSection]?.title || "Murphx Prep";
-    subtitle.textContent = map[state.currentSection]?.subtitle || "rainy glass focus";
-  };
-
-  navButtons.forEach(btn => {
-    btn.addEventListener("click", () => {
-      const target = btn.dataset.nav;
-      if (target) switchSection(target);
-    });
-  });
-
-  // -------------------------------
-  // DASHBOARD RENDER
-  // -------------------------------
-  const renderQuote = () => {
-    const quoteEl = $("#rain-quote");
-    if (quoteEl) {
-      quoteEl.textContent = `"${randomFrom(state.quotes)}"`;
-    }
-  };
-
-  const renderStats = () => {
-    const streakEl = $("#streak-count");
-    const testsDoneEl = $("#tests-done");
-    const avgScoreEl = $("#avg-score");
-    const accuracyEl = $("#accuracy-score");
-    const profileStreak = $("#profile-streak");
-    const profileTests = $("#profile-tests");
-    const profileAvg = $("#profile-avg");
-    const profileAccuracy = $("#profile-accuracy");
-
-    if (streakEl) streakEl.textContent = `${state.streak} day`;
-    if (testsDoneEl) testsDoneEl.textContent = state.testsDone;
-    if (avgScoreEl) avgScoreEl.textContent = `${state.averageScore}%`;
-    if (accuracyEl) accuracyEl.textContent = `${state.accuracy}%`;
-
-    if (profileStreak) profileStreak.textContent = `${state.streak} days`;
-    if (profileTests) profileTests.textContent = state.testsDone;
-    if (profileAvg) profileAvg.textContent = `${state.averageScore}%`;
-    if (profileAccuracy) profileAccuracy.textContent = `${state.accuracy}%`;
-  };
-
-  const renderSubjects = () => {
-    const container = $("#subject-progress-list");
-    const testSubjectSelect = $("#test-subject");
-    const chapterSelect = $("#test-chapter");
-
-    if (container) {
-      container.innerHTML = "";
-      state.subjects.forEach(subject => {
-        const card = document.createElement("div");
-        card.className = "glass-card subject-card";
-        card.innerHTML = `
-          <div class="subject-card-top">
-            <div>
-              <h4>${subject.name}</h4>
-              <p>${subject.completed}/${subject.total} topics</p>
-            </div>
-            <span class="subject-percent">${subject.progress}%</span>
-          </div>
-          <div class="progress-bar">
-            <div class="progress-fill" style="width:${subject.progress}%"></div>
-          </div>
-        `;
-        container.appendChild(card);
-      });
-    }
-
-    if (testSubjectSelect) {
-      testSubjectSelect.innerHTML = `<option value="">Choose Subject</option>`;
-      state.subjects.forEach(subject => {
-        const option = document.createElement("option");
-        option.value = subject.name;
-        option.textContent = subject.name;
-        testSubjectSelect.appendChild(option);
-      });
-    }
-
-    if (chapterSelect && !chapterSelect.dataset.initialized) {
-      chapterSelect.innerHTML = `<option value="">Choose Chapter</option>`;
-      chapterSelect.dataset.initialized = "true";
-    }
-  };
-
-  // -------------------------------
-  // TEST BUILDER
-  // -------------------------------
-  const renderTests = () => {
-    const testList = $("#custom-test-list");
-    if (!testList) return;
-
-    testList.innerHTML = "";
-
-    if (state.customTests.length === 0) {
-      testList.innerHTML = `
-        <div class="glass-card empty-card">
-          <h4>No custom tests yet</h4>
-          <p>Create your first high-focus mock test now.</p>
-        </div>
-      `;
+    if (prefersReducedMotion()) {
+      app.revealEls.forEach((el) => safeAddClass(el, "revealed"));
       return;
     }
 
-    state.customTests.forEach((test, index) => {
-      const card = document.createElement("div");
-      card.className = "glass-card test-card";
-      card.innerHTML = `
-        <div class="test-card-head">
-          <div>
-            <h4>${test.subject} • ${test.chapter}</h4>
-            <p>${test.questions} Questions • ${test.duration} mins</p>
-          </div>
-          <span class="pill">${test.mode}</span>
-        </div>
-        <div class="test-card-actions">
-          <button class="ghost-btn" data-start-test="${index}">Start</button>
-          <button class="ghost-btn danger" data-delete-test="${index}">Delete</button>
-        </div>
-      `;
-      testList.appendChild(card);
-    });
-
-    $$("[data-start-test]").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const idx = Number(btn.dataset.startTest);
-        const test = state.customTests[idx];
-        if (!test) return;
-
-        const score = Math.floor(Math.random() * 41) + 60; // 60-100
-        state.testsDone += 1;
-        state.averageScore = state.testsDone === 1
-          ? score
-          : Math.round(((state.averageScore * (state.testsDone - 1)) + score) / state.testsDone);
-        state.accuracy = Math.min(100, Math.max(50, state.averageScore - Math.floor(Math.random() * 8)));
-        showToast(`Test completed! Score: ${score}%`);
-        renderStats();
-        saveState();
-      });
-    });
-
-    $$("[data-delete-test]").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const idx = Number(btn.dataset.deleteTest);
-        state.customTests.splice(idx, 1);
-        renderTests();
-        saveState();
-        showToast("Test deleted");
-      });
-    });
-  };
-
-  const setupTestBuilder = () => {
-    const subjectSelect = $("#test-subject");
-    const chapterSelect = $("#test-chapter");
-    const createBtn = $("#create-test-btn");
-
-    if (subjectSelect) {
-      subjectSelect.addEventListener("change", () => {
-        const selected = state.subjects.find(s => s.name === subjectSelect.value);
-        if (!chapterSelect) return;
-        chapterSelect.innerHTML = `<option value="">Choose Chapter</option>`;
-
-        if (selected) {
-          selected.topics.forEach(topic => {
-            const option = document.createElement("option");
-            option.value = topic;
-            option.textContent = topic;
-            chapterSelect.appendChild(option);
-          });
-        }
-      });
-    }
-
-    if (createBtn) {
-      createBtn.addEventListener("click", () => {
-        const subject = $("#test-subject")?.value || "";
-        const chapter = $("#test-chapter")?.value || "";
-        const questions = Number($("#test-questions")?.value || 0);
-        const duration = Number($("#test-duration")?.value || 0);
-        const mode = $("#test-mode")?.value || "Rank 1";
-
-        if (!subject || !chapter || !questions || !duration) {
-          showToast("Please fill all test fields");
-          return;
-        }
-
-        state.customTests.push({
-          subject,
-          chapter,
-          questions,
-          duration,
-          mode
-        });
-
-        renderTests();
-        saveState();
-        showToast("Custom test created successfully");
-      });
-    }
-  };
-
-  // -------------------------------
-  // BREATH / FOCUS TIMER
-  // -------------------------------
-  const renderTimer = () => {
-    const timerEl = $("#focus-timer");
-    if (timerEl) timerEl.textContent = formatTime(state.timerSeconds);
-  };
-
-  const setupBreath = () => {
-    const startBtn = $("#start-breath-btn");
-    const resetBtn = $("#reset-breath-btn");
-    const presetBtns = $$("[data-timer-preset]");
-
-    presetBtns.forEach(btn => {
-      btn.addEventListener("click", () => {
-        if (state.timerRunning) return;
-        state.timerSeconds = Number(btn.dataset.timerPreset);
-        renderTimer();
-        showToast(`Timer set to ${Math.floor(state.timerSeconds / 60)} mins`);
-      });
-    });
-
-    if (startBtn) {
-      startBtn.addEventListener("click", () => {
-        if (state.timerRunning) {
-          clearInterval(state.timerInterval);
-          state.timerRunning = false;
-          startBtn.textContent = "Start Focus";
-          showToast("Focus paused");
-          return;
-        }
-
-        state.timerRunning = true;
-        startBtn.textContent = "Pause Focus";
-
-        state.timerInterval = setInterval(() => {
-          if (state.timerSeconds > 0) {
-            state.timerSeconds--;
-            renderTimer();
-          } else {
-            clearInterval(state.timerInterval);
-            state.timerRunning = false;
-            startBtn.textContent = "Start Focus";
-            showToast("Focus session complete. Breathe like thunder.");
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            safeAddClass(entry.target, "revealed");
+            observer.unobserve(entry.target);
           }
-        }, 1000);
-      });
-    }
+        });
+      },
+      { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }
+    );
 
-    if (resetBtn) {
-      resetBtn.addEventListener("click", () => {
-        clearInterval(state.timerInterval);
-        state.timerRunning = false;
-        state.timerSeconds = 300;
-        renderTimer();
-        if (startBtn) startBtn.textContent = "Start Focus";
-        showToast("Timer reset");
-      });
-    }
-  };
-
-  // -------------------------------
-  // AI MENTOR
-  // -------------------------------
-  const renderMentorMessages = () => {
-    const chat = $("#mentor-chat");
-    if (!chat) return;
-
-    chat.innerHTML = "";
-    state.mentorMessages.forEach(msg => {
-      const bubble = document.createElement("div");
-      bubble.className = `chat-bubble ${msg.role}`;
-      bubble.textContent = msg.text;
-      chat.appendChild(bubble);
+    app.revealEls.forEach((el, index) => {
+      el.style.setProperty("--reveal-delay", `${index * 40}ms`);
+      observer.observe(el);
     });
 
-    chat.scrollTop = chat.scrollHeight;
-  };
+    state.observers.push(observer);
+  }
 
-  const getMentorReply = (input) => {
-    const text = input.toLowerCase();
+  /* =========================================================
+     SMOOTH ANCHOR SCROLL
+     ========================================================= */
+  function initSmoothAnchors() {
+    app.navLinks.forEach((link) => {
+      const href = link.getAttribute("href");
+      if (!href || href === "#" || !href.startsWith("#")) return;
 
-    if (text.includes("physics")) {
-      return "For NEET Physics: concepts first, formulas second, questions third. Weak chapter? Do 20 focused numericals + 10 error log corrections.";
-    }
-    if (text.includes("motivation") || text.includes("discipline")) {
-      return "Discipline is stronger than motivation. Study even when the mind resists. That is where rank is built.";
-    }
-    if (text.includes("biology") || text.includes("botany") || text.includes("zoology")) {
-      return "NCERT is king for Biology. Read line by line, underline traps, revise diagrams, and solve assertion-reason questions.";
-    }
-    if (text.includes("chemistry")) {
-      return "Chemistry strategy: Physical = numericals, Organic = mechanism memory, Inorganic = repeated NCERT revision + exception list.";
-    }
-    if (text.includes("test")) {
-      return "After every mock: classify errors into concept gap, silly mistake, speed issue, and overthinking. Fix the pattern, not just the question.";
-    }
-    return "Good question. My best advice: break it into concept → repetition → testing → error correction. That is how toppers create inevitability.";
-  };
+      link.addEventListener("click", (e) => {
+        const target = document.querySelector(href);
+        if (!target) return;
 
-  const setupMentor = () => {
-    const input = $("#mentor-input");
-    const sendBtn = $("#mentor-send-btn");
+        e.preventDefault();
 
-    const sendMessage = () => {
-      const text = input?.value?.trim();
-      if (!text) return;
+        const headerOffset = app.header ? app.header.offsetHeight : 0;
+        const top = target.getBoundingClientRect().top + window.scrollY - headerOffset - CONFIG.smoothScrollOffset;
 
-      state.mentorMessages.push({
-        role: "user",
-        text
+        window.scrollTo({
+          top,
+          behavior: prefersReducedMotion() ? "auto" : "smooth"
+        });
+
+        closeMobileMenuIfOpen();
+      });
+    });
+  }
+
+  /* =========================================================
+     ACTIVE NAV LINK
+     ========================================================= */
+  function initActiveNav() {
+    refreshActiveNav();
+    window.addEventListener("scroll", throttleRAF(refreshActiveNav), { passive: true });
+  }
+
+  function refreshActiveNav() {
+    if (!app.sections.length || !app.navLinks.length) return;
+
+    const headerHeight = app.header ? app.header.offsetHeight : 0;
+    const scrollPosition = window.scrollY + headerHeight + 80;
+
+    let currentId = "";
+
+    app.sections.forEach((section) => {
+      const top = section.offsetTop;
+      const height = section.offsetHeight;
+      if (scrollPosition >= top && scrollPosition < top + height) {
+        currentId = section.id;
+      }
+    });
+
+    app.navLinks.forEach((link) => {
+      const href = link.getAttribute("href");
+      const isActive = href === `#${currentId}`;
+      safeToggleClass(link, "active", isActive);
+    });
+  }
+
+  /* =========================================================
+     HEADER SHOW/HIDE ON SCROLL
+     ========================================================= */
+  function initHeaderBehavior() {
+    updateHeaderOnScroll();
+  }
+
+  function updateHeaderOnScroll() {
+    if (!app.header) return;
+
+    const currentY = window.scrollY;
+    const isScrollingDown = currentY > state.lastScrollY;
+    const atTop = currentY < 40;
+
+    safeToggleClass(app.header, "is-scrolled", currentY > 10);
+    safeToggleClass(app.header, "is-hidden", isScrollingDown && currentY > 120);
+    safeToggleClass(app.header, "is-top", atTop);
+
+    state.lastScrollY = currentY;
+  }
+
+  /* =========================================================
+     RAIN SYSTEM
+     ========================================================= */
+  function initRainSystem() {
+    if (!CONFIG.rain.enabled || !app.rainLayer || prefersReducedMotion()) return;
+    buildRain();
+  }
+
+  function getRainDropCount() {
+    if (window.innerWidth < 640) return CONFIG.rain.dropCountMobile;
+    if (window.innerWidth < 1024) return CONFIG.rain.dropCountTablet;
+    return CONFIG.rain.dropCountDesktop;
+  }
+
+  function buildRain() {
+    if (!app.rainLayer) return;
+
+    app.rainLayer.innerHTML = "";
+    const count = getRainDropCount();
+
+    const fragment = document.createDocumentFragment();
+
+    for (let i = 0; i < count; i++) {
+      const drop = document.createElement("span");
+      drop.className = "rain-drop";
+
+      const left = random(0, 100);
+      const duration = random(CONFIG.rain.minDuration, CONFIG.rain.maxDuration);
+      const delay = random(CONFIG.rain.minDelay, CONFIG.rain.maxDelay);
+      const opacity = random(CONFIG.rain.minOpacity, CONFIG.rain.maxOpacity);
+      const height = random(8, 28);
+      const blur = random(0, 1.5);
+
+      drop.style.left = `${left}%`;
+      drop.style.animationDuration = `${duration}s`;
+      drop.style.animationDelay = `${delay}s`;
+      drop.style.opacity = opacity.toFixed(2);
+      drop.style.height = `${height}px`;
+      drop.style.filter = `blur(${blur}px)`;
+
+      fragment.appendChild(drop);
+    }
+
+    app.rainLayer.appendChild(fragment);
+    state.rainBuilt = true;
+  }
+
+  function rebuildRainIfNeeded() {
+    if (!CONFIG.rain.enabled || !app.rainLayer || prefersReducedMotion()) return;
+    buildRain();
+  }
+
+  /* =========================================================
+     CUSTOM CURSOR
+     ========================================================= */
+  function initCursor() {
+    if (!CONFIG.cursor.enabled || state.isMobile || prefersReducedMotion()) return;
+    if (!app.cursor && !app.cursorDot) return;
+
+    document.body.classList.add("has-custom-cursor");
+
+    const interactive = $$("a, button, .btn, .magnetic, input, textarea, .card, .tilt-card");
+
+    interactive.forEach((el) => {
+      el.addEventListener("mouseenter", () => {
+        safeAddClass(app.cursor, "is-hovering");
+        safeAddClass(app.cursorDot, "is-hovering");
       });
 
-      const reply = getMentorReply(text);
+      el.addEventListener("mouseleave", () => {
+        safeRemoveClass(app.cursor, "is-hovering");
+        safeRemoveClass(app.cursorDot, "is-hovering");
+      });
+    });
+  }
 
-      setTimeout(() => {
-        state.mentorMessages.push({
-          role: "assistant",
-          text: reply
+  function updateCursorPosition() {
+    if (state.isMobile || prefersReducedMotion()) return;
+
+    if (app.cursor) {
+      app.cursor.style.transform = `translate3d(${state.mouse.x}px, ${state.mouse.y}px, 0)`;
+    }
+
+    if (app.cursorDot) {
+      app.cursorDot.style.transform = `translate3d(${state.mouse.x}px, ${state.mouse.y}px, 0)`;
+    }
+  }
+
+  /* =========================================================
+     MAGNETIC BUTTONS
+     ========================================================= */
+  function initMagneticButtons() {
+    if (!app.magneticButtons.length || state.isMobile || prefersReducedMotion()) return;
+
+    app.magneticButtons.forEach((btn) => {
+      btn.addEventListener("mousemove", (e) => {
+        const rect = btn.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        const moveX = mapRange(x, 0, rect.width, -10, 10);
+        const moveY = mapRange(y, 0, rect.height, -8, 8);
+
+        btn.style.transform = `translate3d(${moveX}px, ${moveY}px, 0)`;
+      });
+
+      btn.addEventListener("mouseleave", () => {
+        btn.style.transform = "translate3d(0,0,0)";
+      });
+    });
+  }
+
+  /* =========================================================
+     GLASS CARD TILT
+     ========================================================= */
+  function initTiltCards() {
+    if (!app.tiltCards.length || state.isMobile || prefersReducedMotion()) return;
+
+    app.tiltCards.forEach((card) => {
+      card.style.transformStyle = "preserve-3d";
+
+      card.addEventListener("mousemove", (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+
+        const rotateY = ((x - centerX) / centerX) * CONFIG.tilt.maxRotate;
+        const rotateX = -((y - centerY) / centerY) * CONFIG.tilt.maxRotate;
+
+        card.style.transition = "transform 80ms linear";
+        card.style.transform = `
+          perspective(${CONFIG.tilt.perspective}px)
+          rotateX(${rotateX}deg)
+          rotateY(${rotateY}deg)
+          scale(${CONFIG.tilt.scale})
+        `;
+
+        const glare = card.querySelector(".card-glare, .glare");
+        if (glare) {
+          glare.style.opacity = "1";
+          glare.style.background = `
+            radial-gradient(
+              circle at ${x}px ${y}px,
+              rgba(255,255,255,0.22),
+              rgba(255,255,255,0.08) 18%,
+              transparent 50%
+            )
+          `;
+        }
+      });
+
+      card.addEventListener("mouseleave", () => {
+        card.style.transition = `transform ${CONFIG.tilt.speed}ms ease`;
+        card.style.transform = `
+          perspective(${CONFIG.tilt.perspective}px)
+          rotateX(0deg)
+          rotateY(0deg)
+          scale(1)
+        `;
+
+        const glare = card.querySelector(".card-glare, .glare");
+        if (glare) glare.style.opacity = "0";
+      });
+    });
+  }
+
+  /* =========================================================
+     PARALLAX ELEMENTS
+     ========================================================= */
+  function initParallax() {
+    if (!app.parallaxEls.length || state.isMobile || prefersReducedMotion()) return;
+    updateParallaxMouse();
+  }
+
+  function updateParallaxMouse() {
+    if (!app.parallaxEls.length || state.isMobile || prefersReducedMotion()) return;
+
+    app.parallaxEls.forEach((el) => {
+      const depth = parseFloat(el.dataset.parallax || "1");
+      const moveX = state.mouse.normalizedX * CONFIG.parallax.intensity * depth;
+      const moveY = state.mouse.normalizedY * CONFIG.parallax.intensity * depth;
+
+      el.style.transform = `translate3d(${moveX}px, ${moveY}px, 0)`;
+    });
+  }
+
+  /* =========================================================
+     COUNTERS
+     ========================================================= */
+  function initCounters() {
+    if (!app.counters.length) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          animateCounter(entry.target);
+          observer.unobserve(entry.target);
         });
-        renderMentorMessages();
-        saveState();
-      }, 350);
+      },
+      { threshold: 0.4 }
+    );
 
-      input.value = "";
-      renderMentorMessages();
-      saveState();
+    app.counters.forEach((counter) => observer.observe(counter));
+    state.observers.push(observer);
+  }
+
+  function animateCounter(el) {
+    const target = parseFloat(el.dataset.counter || "0");
+    const prefix = el.dataset.prefix || "";
+    const suffix = el.dataset.suffix || "";
+    const decimals = parseInt(el.dataset.decimals || "0", 10);
+    const duration = parseInt(el.dataset.duration || CONFIG.counters.duration, 10);
+
+    const startTime = performance.now();
+
+    const step = (now) => {
+      const progress = clamp((now - startTime) / duration, 0, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const current = target * eased;
+
+      el.textContent = `${prefix}${current.toFixed(decimals)}${suffix}`;
+
+      if (progress < 1) {
+        requestAnimationFrame(step);
+      } else {
+        el.textContent = `${prefix}${target.toFixed(decimals)}${suffix}`;
+      }
     };
 
-    if (sendBtn) sendBtn.addEventListener("click", sendMessage);
-    if (input) {
-      input.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") sendMessage();
-      });
-    }
-  };
+    requestAnimationFrame(step);
+  }
 
-  // -------------------------------
-  // DOUBTS
-  // -------------------------------
-  const renderDoubts = () => {
-    const list = $("#doubts-list");
-    if (!list) return;
+  /* =========================================================
+     TEXT SCRAMBLE EFFECT
+     ========================================================= */
+  function initScrambleText() {
+    if (!app.scrambleTexts.length || prefersReducedMotion()) return;
 
-    list.innerHTML = "";
-
-    if (state.doubts.length === 0) {
-      list.innerHTML = `
-        <div class="glass-card empty-card">
-          <h4>No doubts saved</h4>
-          <p>Your clarity board is empty. Add a doubt now.</p>
-        </div>
-      `;
-      return;
-    }
-
-    state.doubts.forEach((doubt, index) => {
-      const card = document.createElement("div");
-      card.className = "glass-card doubt-card";
-      card.innerHTML = `
-        <div class="doubt-meta">
-          <span class="pill">${doubt.subject}</span>
-          <span class="status ${doubt.status.toLowerCase()}">${doubt.status}</span>
-        </div>
-        <h4>${doubt.topic}</h4>
-        <p>${doubt.question}</p>
-        <div class="doubt-actions">
-          <button class="ghost-btn" data-resolve-doubt="${index}">
-            ${doubt.status === "Pending" ? "Mark Answered" : "Mark Pending"}
-          </button>
-          <button class="ghost-btn danger" data-delete-doubt="${index}">Delete</button>
-        </div>
-      `;
-      list.appendChild(card);
-    });
-
-    $$("[data-resolve-doubt]").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const idx = Number(btn.dataset.resolveDoubt);
-        const doubt = state.doubts[idx];
-        if (!doubt) return;
-        doubt.status = doubt.status === "Pending" ? "Answered" : "Pending";
-        renderDoubts();
-        saveState();
-      });
-    });
-
-    $$("[data-delete-doubt]").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const idx = Number(btn.dataset.deleteDoubt);
-        state.doubts.splice(idx, 1);
-        renderDoubts();
-        saveState();
-        showToast("Doubt deleted");
-      });
-    });
-  };
-
-  const setupDoubts = () => {
-    const addBtn = $("#add-doubt-btn");
-    if (!addBtn) return;
-
-    addBtn.addEventListener("click", () => {
-      const subject = $("#doubt-subject")?.value || "";
-      const topic = $("#doubt-topic")?.value?.trim() || "";
-      const question = $("#doubt-question")?.value?.trim() || "";
-
-      if (!subject || !topic || !question) {
-        showToast("Please fill all doubt fields");
-        return;
-      }
-
-      state.doubts.unshift({
-        id: Date.now(),
-        subject,
-        topic,
-        question,
-        status: "Pending"
-      });
-
-      $("#doubt-topic").value = "";
-      $("#doubt-question").value = "";
-
-      renderDoubts();
-      saveState();
-      showToast("Doubt saved");
-    });
-  };
-
-  // -------------------------------
-  // COMMUNITY
-  // -------------------------------
-  const setupCommunity = () => {
-    const joinBtn = $("#join-community-btn");
-    const postBtn = $("#community-post-btn");
-    const feed = $("#community-feed");
-
-    if (joinBtn) {
-      joinBtn.addEventListener("click", () => {
-        showToast("Joined Rain Glass Focus Circle 🌧️");
-      });
-    }
-
-    if (postBtn && feed) {
-      postBtn.addEventListener("click", () => {
-        const input = $("#community-input");
-        const text = input?.value?.trim();
-        if (!text) {
-          showToast("Write something first");
-          return;
-        }
-
-        const card = document.createElement("div");
-        card.className = "glass-card community-post";
-        card.innerHTML = `
-          <div class="community-post-head">
-            <span class="avatar">A</span>
-            <div>
-              <h4>Aditya NEET 2026</h4>
-              <p>Just now</p>
-            </div>
-          </div>
-          <p>${text}</p>
-        `;
-        feed.prepend(card);
-
-        input.value = "";
-        showToast("Posted to community");
-      });
-    }
-  };
-
-  // -------------------------------
-  // PROFILE
-  // -------------------------------
-  const setupProfile = () => {
-    const themeBtn = $("#theme-toggle-btn");
-    const resetBtn = $("#reset-data-btn");
-
-    if (themeBtn) {
-      themeBtn.addEventListener("click", () => {
-        state.darkMode = !state.darkMode;
-        document.body.classList.toggle("light-mode", !state.darkMode);
-        saveState();
-        showToast(state.darkMode ? "Dark rain mode enabled" : "Light mode enabled");
-      });
-    }
-
-    if (resetBtn) {
-      resetBtn.addEventListener("click", () => {
-        const confirmReset = confirm("Reset all Murphx progress and local data?");
-        if (!confirmReset) return;
-
-        localStorage.removeItem("murphx_prep_state_v2");
-        location.reload();
-      });
-    }
-  };
-
-  // -------------------------------
-  // SEARCH
-  // -------------------------------
-  const setupSearch = () => {
-    const input = $("#global-search");
-    const results = $("#search-results");
-
-    if (!input || !results) return;
-
-    input.addEventListener("input", () => {
-      const query = input.value.trim().toLowerCase();
-
-      if (!query) {
-        results.innerHTML = "";
-        results.classList.remove("show");
-        return;
-      }
-
-      const matched = state.searchIndex.filter(item =>
-        item.label.toLowerCase().includes(query)
-      ).slice(0, 8);
-
-      results.innerHTML = "";
-
-      if (matched.length === 0) {
-        results.innerHTML = `<div class="search-empty">No results found</div>`;
-        results.classList.add("show");
-        return;
-      }
-
-      matched.forEach(item => {
-        const row = document.createElement("button");
-        row.className = "search-item";
-        row.innerHTML = `
-          <span>${item.label}</span>
-          <small>${item.type}</small>
-        `;
-        row.addEventListener("click", () => {
-          switchSection(item.section);
-          input.value = item.label;
-          results.innerHTML = "";
-          results.classList.remove("show");
-          showToast(`Opened ${item.label}`);
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          runScramble(entry.target);
+          observer.unobserve(entry.target);
         });
-        results.appendChild(row);
-      });
+      },
+      { threshold: 0.5 }
+    );
 
-      results.classList.add("show");
+    app.scrambleTexts.forEach((el) => observer.observe(el));
+    state.observers.push(observer);
+  }
+
+  function runScramble(el) {
+    const finalText = el.dataset.scramble || el.textContent.trim();
+    const chars = CONFIG.scramble.chars;
+    let frame = 0;
+    const totalFrames = Math.max(20, finalText.length * 3);
+
+    const update = () => {
+      let output = "";
+
+      for (let i = 0; i < finalText.length; i++) {
+        if (i < frame / 3) {
+          output += finalText[i];
+        } else {
+          output += chars[Math.floor(Math.random() * chars.length)];
+        }
+      }
+
+      el.textContent = output;
+      frame++;
+
+      if (frame <= totalFrames) {
+        requestAnimationFrame(update);
+      } else {
+        el.textContent = finalText;
+      }
+    };
+
+    update();
+  }
+
+  /* =========================================================
+     BACK TO TOP
+     ========================================================= */
+  function initBackToTop() {
+    if (!app.backToTop) return;
+
+    app.backToTop.addEventListener("click", () => {
+      window.scrollTo({
+        top: 0,
+        behavior: prefersReducedMotion() ? "auto" : "smooth"
+      });
+    });
+
+    updateBackToTop();
+  }
+
+  function updateBackToTop() {
+    if (!app.backToTop) return;
+    safeToggleClass(app.backToTop, "is-visible", window.scrollY > 500);
+  }
+
+  /* =========================================================
+     RIPPLE EFFECT
+     ========================================================= */
+  function initRippleEffects() {
+    const rippleTargets = $$("[data-ripple], .btn, button");
+
+    rippleTargets.forEach((el) => {
+      el.addEventListener("click", function (e) {
+        const rect = this.getBoundingClientRect();
+        const ripple = document.createElement("span");
+        ripple.className = "ripple";
+
+        const size = Math.max(rect.width, rect.height);
+        const x = e.clientX - rect.left - size / 2;
+        const y = e.clientY - rect.top - size / 2;
+
+        ripple.style.width = ripple.style.height = `${size}px`;
+        ripple.style.left = `${x}px`;
+        ripple.style.top = `${y}px`;
+
+        this.appendChild(ripple);
+
+        setTimeout(() => ripple.remove(), 700);
+      });
+    });
+  }
+
+  /* =========================================================
+     MOBILE MENU
+     ========================================================= */
+  function initMobileMenu() {
+    if (!app.menuToggle || !app.mobileMenu) return;
+
+    app.menuToggle.addEventListener("click", () => {
+      const isOpen = app.mobileMenu.classList.contains("is-open");
+      safeToggleClass(app.mobileMenu, "is-open", !isOpen);
+      safeToggleClass(app.menuToggle, "is-active", !isOpen);
+      safeToggleClass(app.body, "menu-open", !isOpen);
     });
 
     document.addEventListener("click", (e) => {
-      if (!input.contains(e.target) && !results.contains(e.target)) {
-        results.classList.remove("show");
+      if (!app.mobileMenu.classList.contains("is-open")) return;
+      const clickedInsideMenu = app.mobileMenu.contains(e.target);
+      const clickedToggle = app.menuToggle.contains(e.target);
+
+      if (!clickedInsideMenu && !clickedToggle) {
+        closeMobileMenuIfOpen();
       }
     });
-  };
+  }
 
-  // -------------------------------
-  // DAILY CHALLENGE
-  // -------------------------------
-  const setupDailyChallenge = () => {
-    const startBtn = $("#start-challenge-btn");
-    const statusEl = $("#challenge-status");
+  function closeMobileMenuIfOpen() {
+    if (!app.mobileMenu || !app.menuToggle) return;
+    safeRemoveClass(app.mobileMenu, "is-open");
+    safeRemoveClass(app.menuToggle, "is-active");
+    safeRemoveClass(app.body, "menu-open");
+  }
 
-    if (!startBtn) return;
+  /* =========================================================
+     AMBIENT ORB MOTION
+     ========================================================= */
+  function initAmbientMotion() {
+    if (!app.ambientOrbs.length || state.isMobile || prefersReducedMotion()) return;
+    updateAmbientOrbs();
+  }
 
-    startBtn.addEventListener("click", () => {
-      if (!state.dailyChallengeStarted) {
-        state.dailyChallengeStarted = true;
-        startBtn.textContent = "Complete Challenge";
-        if (statusEl) statusEl.textContent = "Challenge in progress • 5 questions • Physics";
-        showToast("Daily challenge started");
+  function updateAmbientOrbs() {
+    if (!app.ambientOrbs.length || state.isMobile || prefersReducedMotion()) return;
+
+    app.ambientOrbs.forEach((orb, index) => {
+      const depth = parseFloat(orb.dataset.depth || (index + 1) * 0.2);
+      const x = state.mouse.normalizedX * 20 * depth;
+      const y = state.mouse.normalizedY * 20 * depth;
+      orb.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+    });
+  }
+
+  /* =========================================================
+     HERO BREATHING ANIMATION CLASS TRIGGER
+     ========================================================= */
+  function initHeroBreathing() {
+    const hero = $(".hero, .hero-section, .landing-hero");
+    if (!hero) return;
+
+    if (prefersReducedMotion()) {
+      safeAddClass(hero, "hero-static");
+    } else {
+      safeAddClass(hero, "hero-breathing");
+    }
+  }
+
+  /* =========================================================
+     SECTION GLOW TRACKING
+     ========================================================= */
+  function initSectionGlowTracking() {
+    const sections = $$(".glow-section, section");
+    if (!sections.length || state.isMobile || prefersReducedMotion()) return;
+
+    sections.forEach((section) => {
+      section.addEventListener("mousemove", (e) => {
+        const rect = section.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        section.style.setProperty("--mx", `${x}px`);
+        section.style.setProperty("--my", `${y}px`);
+      });
+    });
+  }
+
+  function updateSectionGlow() {
+    // Reserved for future scroll-reactive glow logic
+  }
+
+  /* =========================================================
+     SUBTLE HOVER FEEDBACK
+     ========================================================= */
+  function initHoverSoundlessFeedback() {
+    const hovers = $$(".feature-card, .glass-card, .nav-link, .icon-wrap");
+
+    hovers.forEach((el) => {
+      el.addEventListener("mouseenter", () => safeAddClass(el, "is-hovered"));
+      el.addEventListener("mouseleave", () => safeRemoveClass(el, "is-hovered"));
+    });
+  }
+
+  /* =========================================================
+     ACCESSIBILITY FOCUS STATES
+     ========================================================= */
+  function initFocusAccessibility() {
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Tab") {
+        safeAddClass(document.body, "using-keyboard");
+      }
+    });
+
+    document.addEventListener("mousedown", () => {
+      safeRemoveClass(document.body, "using-keyboard");
+    });
+  }
+
+  /* =========================================================
+     LAZY CLASS STATES FOR VISUAL POLISH
+     ========================================================= */
+  function initLazyClassStates() {
+    const delayedEls = $$("[data-delay-class]");
+
+    delayedEls.forEach((el) => {
+      const delay = parseInt(el.dataset.delay || "300", 10);
+      const cls = el.dataset.delayClass || "is-active";
+
+      setTimeout(() => safeAddClass(el, cls), delay);
+    });
+  }
+
+  /* =========================================================
+     OPTIONAL: PAGE TRANSITION LINKS
+     ========================================================= */
+  function initPageTransitions() {
+    const links = $$("a[data-transition]");
+    if (!links.length) return;
+
+    links.forEach((link) => {
+      link.addEventListener("click", (e) => {
+        const href = link.getAttribute("href");
+        if (!href || href.startsWith("#") || href.startsWith("javascript:")) return;
+
+        e.preventDefault();
+        safeAddClass(document.body, "page-transitioning");
+
+        setTimeout(() => {
+          window.location.href = href;
+        }, 450);
+      });
+    });
+  }
+
+  /* =========================================================
+     OPTIONAL: TYPEWRITER
+     ========================================================= */
+  function initTypewriter() {
+    const typeEl = $("[data-typewriter]");
+    if (!typeEl || prefersReducedMotion()) return;
+
+    const words = (typeEl.dataset.words || "").split("|").filter(Boolean);
+    if (!words.length) return;
+
+    let wordIndex = 0;
+    let charIndex = 0;
+    let deleting = false;
+
+    const tick = () => {
+      const currentWord = words[wordIndex];
+      const currentText = currentWord.substring(0, charIndex);
+
+      typeEl.textContent = currentText;
+
+      if (!deleting) {
+        charIndex++;
+        if (charIndex > currentWord.length) {
+          deleting = true;
+          setTimeout(tick, 1000);
+          return;
+        }
       } else {
-        state.dailyChallengeStarted = false;
-        startBtn.textContent = "Start Challenge";
-        if (statusEl) statusEl.textContent = "Completed for today • Great work";
-        state.testsDone += 1;
-        const challengeScore = Math.floor(Math.random() * 21) + 80;
-        state.averageScore = state.testsDone === 1
-          ? challengeScore
-          : Math.round(((state.averageScore * (state.testsDone - 1)) + challengeScore) / state.testsDone);
-        state.accuracy = Math.min(100, Math.max(60, state.averageScore - Math.floor(Math.random() * 5)));
-        renderStats();
-        saveState();
-        showToast(`Challenge completed • Score ${challengeScore}%`);
+        charIndex--;
+        if (charIndex < 0) {
+          deleting = false;
+          wordIndex = (wordIndex + 1) % words.length;
+          charIndex = 0;
+        }
       }
+
+      setTimeout(tick, deleting ? 50 : 90);
+    };
+
+    tick();
+  }
+
+  /* =========================================================
+     OPTIONAL: MARQUEE PAUSE ON HOVER
+     ========================================================= */
+  function initMarqueeControl() {
+    const marquees = $$(".marquee, .ticker");
+
+    marquees.forEach((marquee) => {
+      marquee.addEventListener("mouseenter", () => safeAddClass(marquee, "is-paused"));
+      marquee.addEventListener("mouseleave", () => safeRemoveClass(marquee, "is-paused"));
     });
-  };
+  }
 
-  // -------------------------------
-  // QUICK ACTIONS
-  // -------------------------------
-  const setupQuickActions = () => {
-    const quickMock = $("#quick-mock-btn");
-    const quickBreath = $("#quick-breath-btn");
-    const quickMentor = $("#quick-mentor-btn");
-    const quickDoubt = $("#quick-doubt-btn");
+  /* =========================================================
+     OPTIONAL: ACCORDION
+     ========================================================= */
+  function initAccordion() {
+    const items = $$(".accordion-item");
 
-    if (quickMock) {
-      quickMock.addEventListener("click", () => switchSection("tests"));
+    items.forEach((item) => {
+      const trigger = $(".accordion-trigger", item);
+      const panel = $(".accordion-panel", item);
+
+      if (!trigger || !panel) return;
+
+      trigger.addEventListener("click", () => {
+        const isOpen = item.classList.contains("is-open");
+
+        items.forEach((i) => {
+          safeRemoveClass(i, "is-open");
+          const p = $(".accordion-panel", i);
+          if (p) p.style.maxHeight = null;
+        });
+
+        if (!isOpen) {
+          safeAddClass(item, "is-open");
+          panel.style.maxHeight = `${panel.scrollHeight}px`;
+        }
+      });
+    });
+  }
+
+  /* =========================================================
+     OPTIONAL: TABS
+     ========================================================= */
+  function initTabs() {
+    const tabGroups = $$(".tabs");
+
+    tabGroups.forEach((group) => {
+      const buttons = $$("[data-tab-target]", group);
+      const panels = $$("[data-tab-panel]", group);
+
+      buttons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const target = btn.dataset.tabTarget;
+
+          buttons.forEach((b) => safeRemoveClass(b, "active"));
+          panels.forEach((p) => safeRemoveClass(p, "active"));
+
+          safeAddClass(btn, "active");
+          const panel = group.querySelector(`[data-tab-panel="${target}"]`);
+          if (panel) safeAddClass(panel, "active");
+        });
+      });
+    });
+  }
+
+  /* =========================================================
+     OPTIONAL: VIDEO MODAL
+     ========================================================= */
+  function initVideoModal() {
+    const triggers = $$("[data-video-open]");
+    const modal = $(".video-modal");
+    const iframe = $(".video-modal iframe", modal || document);
+    const closeBtn = $(".video-modal-close", modal || document);
+
+    if (!triggers.length || !modal || !iframe) return;
+
+    triggers.forEach((trigger) => {
+      trigger.addEventListener("click", () => {
+        const src = trigger.dataset.videoOpen;
+        iframe.src = src;
+        safeAddClass(modal, "is-open");
+        safeAddClass(document.body, "modal-open");
+      });
+    });
+
+    closeBtn?.addEventListener("click", closeModal);
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) closeModal();
+    });
+
+    function closeModal() {
+      safeRemoveClass(modal, "is-open");
+      safeRemoveClass(document.body, "modal-open");
+      iframe.src = "";
     }
+  }
 
-    if (quickBreath) {
-      quickBreath.addEventListener("click", () => switchSection("breath"));
-    }
+  /* =========================================================
+     OPTIONAL INIT CALLS
+     ========================================================= */
+  function initOptionalModules() {
+    initPageTransitions();
+    initTypewriter();
+    initMarqueeControl();
+    initAccordion();
+    initTabs();
+    initVideoModal();
+  }
 
-    if (quickMentor) {
-      quickMentor.addEventListener("click", () => switchSection("mentor"));
-    }
-
-    if (quickDoubt) {
-      quickDoubt.addEventListener("click", () => switchSection("doubts"));
-    }
-  };
-
-  // -------------------------------
-  // RAIN FX
-  // -------------------------------
-  const createRain = () => {
-    const rainLayer = $("#rain-layer");
-    if (!rainLayer) return;
-
-    rainLayer.innerHTML = "";
-
-    for (let i = 0; i < 40; i++) {
-      const drop = document.createElement("span");
-      drop.className = "rain-drop";
-      drop.style.left = `${Math.random() * 100}%`;
-      drop.style.animationDuration = `${0.8 + Math.random() * 1.6}s`;
-      drop.style.animationDelay = `${Math.random() * 2}s`;
-      drop.style.opacity = `${0.08 + Math.random() * 0.2}`;
-      drop.style.height = `${10 + Math.random() * 18}px`;
-      rainLayer.appendChild(drop);
-    }
-  };
-
-  // -------------------------------
-  // INIT
-  // -------------------------------
-  const init = () => {
-    loadState();
-    buildSearchIndex();
-    renderSectionHeader();
-    renderQuote();
-    renderStats();
-    renderSubjects();
-    renderTests();
-    renderTimer();
-    renderMentorMessages();
-    renderDoubts();
-    createRain();
-
-    setupTestBuilder();
-    setupBreath();
-    setupMentor();
-    setupDoubts();
-    setupCommunity();
-    setupProfile();
-    setupSearch();
-    setupDailyChallenge();
-    setupQuickActions();
-
-    document.body.classList.toggle("light-mode", !state.darkMode);
-
-    setInterval(renderQuote, 8000);
-    switchSection("dashboard");
-  };
-
-  init();
-});
+  /* =========================================================
+     START
+     ========================================================= */
+  document.addEventListener("DOMContentLoaded", () => {
+    init();
+    initOptionalModules();
+  });
+})();
