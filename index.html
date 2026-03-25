@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
-  <title>NEO//FLOW | Quantum JKD · AI Dojo · Formless Intelligence</title>
+  <title>✦ NEO//FLOW ✦ | Quantum JKD · Yin-Yang Nexus · Formless AI Dojo</title>
   <!-- Google Fonts & Icons -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -34,14 +34,12 @@
 
     :root {
       --quantum-teal: #00f2fe;
-      --deep-void: #030c0f;
       --neon-iris: #a855f7;
       --plasma-green: #4ade80;
       --crystal-white: #eef5ff;
-      --glass-bg: rgba(8, 28, 34, 0.55);
-      --glass-border: rgba(0, 242, 254, 0.35);
+      --glass-bg: rgba(8, 28, 34, 0.6);
+      --glass-border: rgba(0, 242, 254, 0.4);
       --card-radius: 36px;
-      --transition-super: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.2);
     }
 
     body {
@@ -60,7 +58,6 @@
       height: 100%;
       z-index: 0;
       pointer-events: none;
-      opacity: 0.85;
     }
 
     .grain-overlay {
@@ -90,11 +87,11 @@
       flex-wrap: wrap;
       margin-bottom: 28px;
       padding: 12px 28px;
-      background: rgba(0, 0, 0, 0.55);
+      background: rgba(0, 0, 0, 0.6);
       backdrop-filter: blur(18px);
       border-radius: 80px;
       border: 1px solid var(--glass-border);
-      box-shadow: 0 8px 32px rgba(0,242,254,0.1);
+      box-shadow: 0 8px 32px rgba(0,242,254,0.15);
     }
 
     .logo {
@@ -110,7 +107,6 @@
       border-radius: 30px;
       clip-path: polygon(20% 0%, 80% 0%, 100% 20%, 100% 80%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
       box-shadow: 0 0 25px rgba(0,242,254,0.6);
-      transition: transform 0.5s ease;
     }
 
     .logo h1 {
@@ -166,10 +162,10 @@
       border-radius: var(--card-radius);
       padding: 28px;
       margin-bottom: 28px;
-      transition: var(--transition-super);
+      transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.2);
       box-shadow: 0 12px 28px rgba(0,0,0,0.5);
     }
-    .glass-card:hover { border-color: var(--quantum-teal); transform: translateY(-6px); background: rgba(0, 30, 35, 0.7); }
+    .glass-card:hover { border-color: var(--quantum-teal); transform: translateY(-6px); background: rgba(0, 30, 35, 0.75); }
 
     .btn-primary, .btn-ghost {
       border-radius: 60px;
@@ -192,12 +188,13 @@
     }
 
     .tech-tile {
-      background: rgba(0, 0, 0, 0.65);
+      background: rgba(0, 0, 0, 0.7);
       border-left: 4px solid var(--quantum-teal);
       padding: 16px;
       border-radius: 28px;
       cursor: pointer;
       transition: 0.2s;
+      margin-bottom: 12px;
     }
     .tech-tile:hover { background: rgba(0,242,254,0.2); transform: translateX(6px); }
 
@@ -256,6 +253,11 @@
       z-index: 99;
       box-shadow: 0 0 28px cyan;
     }
+    .skill-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 18px;
+    }
     @media (max-width: 768px) {
       .app-container { padding: 12px; }
       .nav-item span { display: none; }
@@ -279,7 +281,7 @@
     <div class="nav-item" data-tab="self"><i class="fas fa-feather-alt"></i><span>Self</span></div>
   </div>
 
-  <!-- FLOW TAB (Enhanced with AI Coach & Biofeedback) -->
+  <!-- FLOW TAB -->
   <div id="flowPane" class="tab-pane active-pane">
     <div class="glass-card" style="text-align:center">
       <i class="fas fa-quote-left" style="color:cyan; font-size:2.4rem"></i>
@@ -291,7 +293,7 @@
     <div class="glass-card">
       <div style="display:flex; justify-content:space-between"><span><i class="fas fa-chart-line"></i> Quantum Flow Index</span><span>🔥 <span id="streakDisplay">21</span> day streak</span></div>
       <canvas id="warriorChart" height="140" style="max-height:140px; width:100%; margin:16px 0"></canvas>
-      <div class="skill-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:12px"><div>Interception IQ: <span id="interceptGrade">A+</span></div><div>Drills: <span id="drillCount">87</span></div><div>Insights: <span id="insightCount">42</span></div><div>Flow Sync: <span id="focusPercent">98</span>%</div></div>
+      <div class="skill-grid" style="grid-template-columns:1fr 1fr"><div>Interception IQ: <span id="interceptGrade">A+</span></div><div>Drills: <span id="drillCount">87</span></div><div>Insights: <span id="insightCount">42</span></div><div>Flow Sync: <span id="focusPercent">98</span>%</div></div>
     </div>
     <div class="glass-card">
       <h3><i class="fas fa-microphone-alt"></i> Voice Command · AI Coach</h3>
@@ -305,27 +307,27 @@
     </div>
   </div>
 
-  <!-- TAO AI TAB (Dynamic AI generated insights) -->
+  <!-- TAO AI TAB -->
   <div id="taoPane" class="tab-pane">
     <div class="glass-card"><h2><i class="fas fa-dragon"></i> Tao Quantum Lens · Bruce AI</h2><p>Generative combat philosophy + intercept principles</p><button id="generateAITaoBtn" class="btn-primary">✨ Generate AI Insight</button><div id="aiTaoOutput" style="margin-top:20px; font-style:italic;"></div></div>
     <div id="chaptersGrid" class="skill-grid"></div>
   </div>
 
-  <!-- AI DOJO (Adaptive Sparring Partner + Webcam AI Motion Capture) -->
+  <!-- AI DOJO -->
   <div id="dojoPane" class="tab-pane">
     <div class="glass-card"><h2><i class="fas fa-video"></i> AI Motion Capture · Intercept Vision</h2><p>Enable webcam → track hand speed → real-time interception score</p><button id="enableCamBtn" class="btn-primary"><i class="fas fa-camera"></i> Activate AI Vision</button><div style="position:relative"><video id="webcamVideo" class="webcam-preview" autoplay muted playsinline style="width:100%; max-width:400px; border-radius:28px;"></video><canvas id="handCanvas" style="position:absolute; top:0; left:0; width:100%; max-width:400px; border-radius:28px;" width="400" height="300"></canvas></div><div id="handSpeedDisplay" style="margin-top:10px">🖐️ Hand Speed: -- m/s | Intercept Readiness: --</div></div>
     <div class="glass-card"><h3><i class="fas fa-robot"></i> Adaptive Sparring AI (Dynamic Difficulty)</h3><p>Opponent adapts to your reaction score</p><div id="sparringStatus">⚔️ AI Opponent: Pressure Fighter · Level 3</div><button id="sparringInterceptBtn" class="btn-ghost">Simulate Intercept Strike</button><div id="sparringResult"></div></div>
     <div class="glass-card"><h3><i class="fas fa-shoe-prints"></i> Quantum Footwork Simulator (Ghost AI)</h3><canvas id="footCanvas2D" width="500" height="260" class="sim-canvas"></canvas><div style="display:flex; gap:12px; flex-wrap:wrap"><button class="btn-ghost" id="stepAdvance">⬆️ Advance</button><button class="btn-ghost" id="stepRetreat">⬇️ Retreat</button><button class="btn-ghost" id="stepPivot">🔄 Pivot</button><button class="btn-ghost" id="resetFoot">Reset</button></div><p id="ghostAdvice">Ghost predicts: Maintain range ~ 1.2m</p></div>
   </div>
 
-  <!-- LAB: REACTION & STRATEGY ENHANCED -->
+  <!-- LAB -->
   <div id="labPane" class="tab-pane">
     <div class="glass-card"><h3><i class="fas fa-chart-simple"></i> Range Awareness + AI Predictor</h3><canvas id="rangeCanvas2D" width="500" height="260" class="sim-canvas"></canvas><input type="range" id="rangeSlider" min="20" max="200" value="95"><div id="rangeZoneText" style="text-align:center; background:#00000066; border-radius:40px; padding:8px;">⚡ PUNCHING RANGE – OPTIMAL INTERCEPT ZONE</div></div>
-    <div class="glass-card"><h4><i class="fas fa-bolt"></i> Quantum Reaction Trainer (EEG-like)</h4><button class="btn-primary" id="reactionTestBtn">⚡ Start Neural Reaction Test</button><div id="reactionResult" style="margin-top:12px"></div><canvas id="reactionHistogram" width="400" height="100" style="width:100%; height:100px;"></canvas></div>
+    <div class="glass-card"><h4><i class="fas fa-bolt"></i> Quantum Reaction Trainer (EEG-like)</h4><button class="btn-primary" id="reactionTestBtn">⚡ Start Neural Reaction Test</button><div id="reactionResult" style="margin-top:12px"></div></div>
     <div class="glass-card"><h4><i class="fas fa-chess-board"></i> Shadow Opponent AI (Generative Strategy)</h4><select id="opponentSelect"><option>Aggressive Boxer</option><option>Kickboxer</option><option>Pressure Fighter</option><option>Grappler</option><option>Elusive Counter-Striker</option></select><button class="btn-ghost" id="strategyBtn">Get JKD Strategy</button><p id="strategyOutput"></p></div>
   </div>
 
-  <!-- SELF (Upgraded Journal + Emotion AI) -->
+  <!-- SELF -->
   <div id="selfPane" class="tab-pane">
     <div class="glass-card"><h3><i class="fas fa-yin-yang"></i> Self‑Mastery Journal · Emotion AI</h3><textarea rows="3" id="journalEntry" placeholder="Write your flow... AI will detect emotional rigidity..."></textarea><button class="btn-primary" id="saveJournalBtn">Save Insight + Sentiment Scan</button><div id="journalPreview" style="margin-top:12px">📜 Last reflection: —</div></div>
     <div class="glass-card"><h4>Style Builder (Formless Fusion)</h4><div id="styleBuilder" style="display:flex; flex-wrap:wrap; gap:8px"><span class="btn-ghost style-item">Straight lead</span><span class="btn-ghost style-item">Side kick</span><span class="btn-ghost style-item">Trapping hands</span><span class="btn-ghost style-item">Intercepting jab</span><span class="btn-ghost style-item">Angular pivot</span></div><button id="saveStyleBtn" class="btn-ghost">Save Personal Style</button></div>
@@ -336,67 +338,203 @@
 
 <script type="module">
   import * as THREE from 'three';
-  import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
   import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
   import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
   import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
   
-  // ========== NEXT-GEN 3D ==========
+  // ========== 3D SCENE WITH TWINKLING STARS & NEON YIN-YANG ==========
   const container = document.getElementById('three-canvas');
   const scene = new THREE.Scene();
   scene.background = null;
-  scene.fog = new THREE.FogExp2(0x030c0f, 0.008);
+  scene.fog = new THREE.FogExp2(0x030c0f, 0.006);
   const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-  camera.position.set(0, 2, 18);
-  const renderer = new THREE.WebGLRenderer({ alpha: true });
+  camera.position.set(0, 1.8, 16);
+  camera.lookAt(0, 1, 0);
+  const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setPixelRatio(window.devicePixelRatio);
   container.appendChild(renderer.domElement);
   
-  // Bloom
+  // Bloom effect for neon glow
   const renderScene = new RenderPass(scene, camera);
-  const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.2, 0.3, 0.85);
+  const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.3, 0.4, 0.85);
   bloomPass.threshold = 0.1;
-  bloomPass.strength = 0.65;
-  bloomPass.radius = 0.5;
+  bloomPass.strength = 0.8;
+  bloomPass.radius = 0.6;
   const effectComposer = new EffectComposer(renderer);
   effectComposer.addPass(renderScene);
   effectComposer.addPass(bloomPass);
   
-  // Particle swarm + energy torus
-  const particleCount = 2000;
-  const geometry = new THREE.BufferGeometry();
-  const positions = new Float32Array(particleCount * 3);
-  for (let i = 0; i < particleCount; i++) {
-    positions[i*3] = (Math.random() - 0.5) * 80;
-    positions[i*3+1] = (Math.random() - 0.5) * 45;
-    positions[i*3+2] = (Math.random() - 0.5) * 50 - 25;
+  // ========== TWINKLING STARFIELD ==========
+  const starCount = 2800;
+  const starGeo = new THREE.BufferGeometry();
+  const starPositions = new Float32Array(starCount * 3);
+  const starColors = new Float32Array(starCount * 3);
+  for (let i = 0; i < starCount; i++) {
+    starPositions[i*3] = (Math.random() - 0.5) * 200;
+    starPositions[i*3+1] = (Math.random() - 0.5) * 100;
+    starPositions[i*3+2] = (Math.random() - 0.5) * 80 - 40;
+    const intensity = 0.4 + Math.random() * 0.8;
+    starColors[i*3] = 0.6 + Math.random() * 0.4;
+    starColors[i*3+1] = 0.7 + Math.random() * 0.3;
+    starColors[i*3+2] = 1.0;
   }
-  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-  const particleMat = new THREE.PointsMaterial({ color: 0x00f2fe, size: 0.09, transparent: true, opacity: 0.6, blending: THREE.AdditiveBlending });
-  const particles = new THREE.Points(geometry, particleMat);
-  scene.add(particles);
+  starGeo.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+  starGeo.setAttribute('color', new THREE.BufferAttribute(starColors, 3));
+  const starMat = new THREE.PointsMaterial({ size: 0.12, vertexColors: true, transparent: true, opacity: 0.9, blending: THREE.AdditiveBlending });
+  const stars = new THREE.Points(starGeo, starMat);
+  scene.add(stars);
   
-  const torusKnot = new THREE.Mesh(
-    new THREE.TorusKnotGeometry(2.2, 0.18, 200, 32, 3, 4),
-    new THREE.MeshStandardMaterial({ color: 0xa855f7, emissive: 0x4ade80, emissiveIntensity: 0.5, metalness: 0.8, roughness: 0.2 })
-  );
-  scene.add(torusKnot);
+  // Animated twinkling (via GSAP or manual loop)
+  function twinkleStars() {
+    const time = Date.now() * 0.002;
+    starMat.opacity = 0.7 + Math.sin(time) * 0.2;
+    requestAnimationFrame(twinkleStars);
+  }
+  twinkleStars();
+  
+  // ========== NEON YIN-YANG SIGN ==========
+  const createYinYangTexture = () => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 512;
+    canvas.height = 512;
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, 512, 512);
+    // Background radial glow
+    const grad = ctx.createRadialGradient(256, 256, 0, 256, 256, 256);
+    grad.addColorStop(0, 'rgba(0,242,254,0.3)');
+    grad.addColorStop(0.5, 'rgba(168,85,247,0.2)');
+    grad.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, 512, 512);
+    
+    // Draw Yin-Yang
+    ctx.save();
+    ctx.translate(256, 256);
+    ctx.scale(1, 1);
+    // Outer circle
+    ctx.beginPath();
+    ctx.arc(0, 0, 220, 0, Math.PI * 2);
+    ctx.fillStyle = 'white';
+    ctx.fill();
+    ctx.strokeStyle = '#00f2fe';
+    ctx.lineWidth = 8;
+    ctx.stroke();
+    // Upper half black
+    ctx.beginPath();
+    ctx.arc(0, 0, 220, Math.PI/2, Math.PI*1.5);
+    ctx.fillStyle = 'black';
+    ctx.fill();
+    // Small circles
+    ctx.beginPath();
+    ctx.arc(0, -110, 70, 0, Math.PI*2);
+    ctx.fillStyle = 'black';
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(0, 110, 70, 0, Math.PI*2);
+    ctx.fillStyle = 'white';
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(0, -110, 28, 0, Math.PI*2);
+    ctx.fillStyle = 'white';
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(0, 110, 28, 0, Math.PI*2);
+    ctx.fillStyle = 'black';
+    ctx.fill();
+    
+    // Neon edge effect
+    ctx.beginPath();
+    ctx.arc(0, 0, 220, 0, Math.PI*2);
+    ctx.strokeStyle = '#00f2fe';
+    ctx.lineWidth = 12;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(0, 0, 220, 0, Math.PI*2);
+    ctx.strokeStyle = '#a855f7';
+    ctx.lineWidth = 4;
+    ctx.stroke();
+    
+    ctx.restore();
+    return new THREE.CanvasTexture(canvas);
+  };
+  
+  const yinYangMat = new THREE.MeshStandardMaterial({ map: createYinYangTexture(), emissive: 0x00f2fe, emissiveIntensity: 0.45, metalness: 0.7, roughness: 0.3 });
+  const yinYangPlane = new THREE.Mesh(new THREE.PlaneGeometry(4.2, 4.2), yinYangMat);
+  yinYangPlane.position.set(0, 1.4, -3);
+  scene.add(yinYangPlane);
+  
+  // Rotating neon rings around Yin-Yang
+  const ringGeo = new THREE.TorusGeometry(2.6, 0.05, 64, 300);
+  const ringMat = new THREE.MeshStandardMaterial({ color: 0x00f2fe, emissive: 0x00f2fe, emissiveIntensity: 0.8 });
+  const outerRing = new THREE.Mesh(ringGeo, ringMat);
+  outerRing.position.set(0, 1.4, -2.9);
+  scene.add(outerRing);
+  
+  const ring2Geo = new THREE.TorusGeometry(3.0, 0.04, 64, 300);
+  const ringMat2 = new THREE.MeshStandardMaterial({ color: 0xa855f7, emissive: 0xa855f7, emissiveIntensity: 0.7 });
+  const outerRing2 = new THREE.Mesh(ring2Geo, ringMat2);
+  outerRing2.position.set(0, 1.4, -2.88);
+  scene.add(outerRing2);
+  
+  // Floating energy particles around Yin-Yang
+  const energyParticleCount = 800;
+  const energyGeo = new THREE.BufferGeometry();
+  const energyPos = [];
+  for (let i = 0; i < energyParticleCount; i++) {
+    const radius = 2.2 + Math.random() * 1.5;
+    const theta = Math.random() * Math.PI * 2;
+    const phi = Math.acos(2 * Math.random() - 1);
+    const x = Math.sin(phi) * Math.cos(theta) * radius;
+    const y = Math.sin(phi) * Math.sin(theta) * radius + 1.4;
+    const z = Math.cos(phi) * radius - 2.8;
+    energyPos.push(x, y, z);
+  }
+  energyGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(energyPos), 3));
+  const energyMat = new THREE.PointsMaterial({ color: 0x00f2fe, size: 0.05, transparent: true, blending: THREE.AdditiveBlending });
+  const energyOrbit = new THREE.Points(energyGeo, energyMat);
+  scene.add(energyOrbit);
+  
+  // Ambient + dynamic lights
   const ambientLight = new THREE.AmbientLight(0x111122);
   scene.add(ambientLight);
-  const pointLight = new THREE.PointLight(0x00f2fe, 0.8);
-  pointLight.position.set(5, 6, 7);
-  scene.add(pointLight);
+  const pointLight1 = new THREE.PointLight(0x00f2fe, 0.9);
+  pointLight1.position.set(3, 3, 2);
+  scene.add(pointLight1);
+  const pointLight2 = new THREE.PointLight(0xa855f7, 0.7);
+  pointLight2.position.set(-2, 4, 3);
+  scene.add(pointLight2);
   
-  function animate() {
-    requestAnimationFrame(animate);
-    particles.rotation.y += 0.0005;
-    particles.rotation.x += 0.0003;
-    torusKnot.rotation.x += 0.008;
-    torusKnot.rotation.y += 0.012;
+  // Additional floating particles (background stars motion)
+  const nebulaParticles = new THREE.BufferGeometry();
+  const nebulaPos = [];
+  for (let i = 0; i < 1200; i++) {
+    nebulaPos.push((Math.random() - 0.5) * 100, (Math.random() - 0.5) * 60, (Math.random() - 0.5) * 50 - 30);
+  }
+  nebulaParticles.setAttribute('position', new THREE.BufferAttribute(new Float32Array(nebulaPos), 3));
+  const nebulaMat = new THREE.PointsMaterial({ color: 0x88aaff, size: 0.07, transparent: true, opacity: 0.4, blending: THREE.AdditiveBlending });
+  const nebulaField = new THREE.Points(nebulaParticles, nebulaMat);
+  scene.add(nebulaField);
+  
+  // Animation loop
+  let time = 0;
+  function animateScene() {
+    requestAnimationFrame(animateScene);
+    time += 0.008;
+    yinYangPlane.rotation.z = Math.sin(time * 0.3) * 0.1;
+    yinYangPlane.rotation.y = Math.sin(time * 0.2) * 0.2;
+    outerRing.rotation.x += 0.008;
+    outerRing.rotation.z += 0.005;
+    outerRing2.rotation.x -= 0.006;
+    outerRing2.rotation.z += 0.007;
+    energyOrbit.rotation.y += 0.01;
+    energyOrbit.rotation.x = Math.sin(time * 0.5) * 0.2;
+    stars.rotation.y += 0.0003;
+    stars.rotation.x += 0.0002;
+    nebulaField.rotation.y += 0.0002;
     effectComposer.render();
   }
-  animate();
+  animateScene();
   window.addEventListener('resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
@@ -404,7 +542,8 @@
     effectComposer.setSize(window.innerWidth, window.innerHeight);
   });
   
-  // ========== CHART ==========
+  // ========== UI & AI FUNCTIONALITY ==========
+  // Chart
   const chartCtx = document.getElementById('warriorChart').getContext('2d');
   new Chart(chartCtx, {
     type: 'line',
@@ -412,18 +551,212 @@
     options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { labels: { color: '#ccf' } } } }
   });
   
-  // ========== MEDIAPIPE HANDS INTEGRATION ==========
-  let handSpeed = 0;
-  let lastHandPos = null;
-  let lastTimestamp = 0;
+  // Tao chapters
+  const chapters = [
+    { name:"On Zen", desc:"Empty mind, no effort", icon:"fa-om", combat:"Intercept thought, not motion." },
+    { name:"Art of the Soul", desc:"Self-actualization", icon:"fa-heart", combat:"Know thyself before battle." },
+    { name:"Jeet Kune Do", desc:"Way of intercepting fist", icon:"fa-fist-raised", combat:"Stop-hit & economy of motion." },
+    { name:"The Formless Form", desc:"No technique as technique", icon:"fa-dharmachakra", combat:"Adapt fluidly, no fixed pattern." },
+    { name:"Preliminaries", desc:"Stance, balance", icon:"fa-shoe-prints", combat:"Rooted mobility." },
+    { name:"Qualities", desc:"Speed, timing, power", icon:"fa-bolt", combat:"Develop attributes before techniques." }
+  ];
+  const chaptersContainer = document.getElementById("chaptersGrid");
+  if (chaptersContainer) {
+    chapters.forEach(ch => {
+      const tile = document.createElement("div");
+      tile.className = "tech-tile";
+      tile.innerHTML = `<i class="fas ${ch.icon}"></i> <strong>${ch.name}</strong><br><span style="font-size:0.7rem">${ch.desc}</span>`;
+      tile.onclick = () => {
+        document.getElementById("modalTitle").innerText = `📖 ${ch.name}`;
+        document.getElementById("modalMsg").innerHTML = `<strong>Bruce Lens:</strong> ${ch.combat}<br><br>🧘 Zen: ${ch.desc}.`;
+        document.getElementById("globalModal").classList.add("active");
+      };
+      chaptersContainer.appendChild(tile);
+    });
+  }
+  
+  // AI Tao Generator
+  const taoQuotes = ["Formlessness adapts to pressure like water to rock.", "Intercept not the strike, but the intention behind it.", "Absorb what is useful, discard what is useless.", "The highest technique is to have no technique.", "Flow with the live opponent, not against memory.", "Be like water making its way through cracks."];
+  document.getElementById('generateAITaoBtn')?.addEventListener('click', () => {
+    const rand = taoQuotes[Math.floor(Math.random() * taoQuotes.length)];
+    document.getElementById('aiTaoOutput').innerHTML = `<i class="fas fa-quote-right"></i> ${rand}`;
+  });
+  
+  // MediaPipe Hands
+  let handSpeed = 0, lastHandPos = null, lastTimestamp = 0;
   const video = document.getElementById('webcamVideo');
   const handCanvas = document.getElementById('handCanvas');
   const handCtx = handCanvas.getContext('2d');
-  let hands = null;
-  let cameraObj = null;
-  
+  let handsModule, cameraModule;
   document.getElementById('enableCamBtn')?.addEventListener('click', async () => {
     const stream = await navigator.mediaDevices.getUserMedia({ video: true });
     video.srcObject = stream;
     video.play();
-    hands = new Hand
+    handsModule = new Hands({ locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}` });
+    handsModule.setOptions({ maxNumHands: 1, modelComplexity: 1, minDetectionConfidence: 0.5 });
+    handsModule.onResults((results) => {
+      handCtx.clearRect(0, 0, handCanvas.width, handCanvas.height);
+      if (results.multiHandLandmarks && results.multiHandLandmarks.length) {
+        const landmarks = results.multiHandLandmarks[0];
+        const indexTip = landmarks[8];
+        const now = Date.now();
+        if (lastHandPos && lastTimestamp) {
+          const dx = (indexTip.x - lastHandPos.x) * 400;
+          const dy = (indexTip.y - lastHandPos.y) * 300;
+          const dt = (now - lastTimestamp) / 1000;
+          const speed = Math.hypot(dx, dy) / dt;
+          handSpeed = Math.min(6, speed);
+          document.getElementById('handSpeedDisplay').innerHTML = `🖐️ Hand Speed: ${handSpeed.toFixed(2)} m/s | Intercept Readiness: ${handSpeed > 2.5 ? 'ELITE' : (handSpeed > 1.2 ? 'FAST' : 'NEED FLOW')}`;
+        }
+        lastHandPos = { x: indexTip.x, y: indexTip.y };
+        lastTimestamp = now;
+        for (const lm of landmarks) {
+          handCtx.beginPath();
+          handCtx.arc(lm.x * handCanvas.width, lm.y * handCanvas.height, 4, 0, 2*Math.PI);
+          handCtx.fillStyle = '#00f2fe';
+          handCtx.fill();
+        }
+      }
+    });
+    cameraModule = new Camera(video, { onFrame: async () => { await handsModule.send({ image: video }); }, width: 640, height: 480 });
+    cameraModule.start();
+  });
+  
+  // Voice Commands
+  const SpeechRecog = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (SpeechRecog) {
+    const recognition = new SpeechRecog();
+    recognition.continuous = true;
+    recognition.onresult = (event) => {
+      const cmd = event.results[event.results.length-1][0].transcript.toLowerCase();
+      document.getElementById('voiceFeedback').innerHTML = `🎙️ Command: "${cmd}"`;
+      if (cmd.includes('interception') || cmd.includes('start drill')) document.getElementById('reactionTestBtn').click();
+      else if (cmd.includes('analyze stance')) alert("🧘 Stance analysis: Center gravity, lead hand forward. Relax shoulders.");
+      else if (cmd.includes('adaptive sparring')) document.getElementById('sparringInterceptBtn').click();
+      else if (cmd.includes('journal')) document.getElementById('saveJournalBtn').click();
+      else if (cmd.includes('flow')) document.getElementById('beginFlowBtn').click();
+    };
+    recognition.start();
+  }
+  
+  // Adaptive Sparring AI
+  let sparringLevel = 3, interceptSuccess = 0;
+  document.getElementById('sparringInterceptBtn')?.addEventListener('click', () => {
+    const rt = Math.random() * 300 + 150;
+    const success = rt < (220 - (sparringLevel * 5));
+    if (success) interceptSuccess++;
+    else interceptSuccess = Math.max(0, interceptSuccess-0.5);
+    if (interceptSuccess > 4 && sparringLevel < 8) { sparringLevel++; interceptSuccess=0; }
+    else if (interceptSuccess < -2 && sparringLevel > 1) { sparringLevel--; interceptSuccess=0; }
+    document.getElementById('sparringStatus').innerHTML = `⚔️ AI Opponent: Level ${sparringLevel} · Adaptive`;
+    document.getElementById('sparringResult').innerHTML = success ? `✅ Intercept landed! (${rt.toFixed(0)}ms) AI level ↑` : `❌ Missed! AI counter. Level ${sparringLevel}`;
+  });
+  
+  // Footwork Simulator
+  const footCanvas = document.getElementById('footCanvas2D');
+  let footX = 220, footY = 160;
+  function drawFoot() {
+    if(!footCanvas) return;
+    const ctx = footCanvas.getContext('2d');
+    footCanvas.width = 500; footCanvas.height = 220;
+    ctx.clearRect(0,0,500,220);
+    ctx.fillStyle='#00f2fe'; ctx.shadowBlur=8;
+    ctx.beginPath(); ctx.arc(footX, footY, 14,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='white'; ctx.fillText('you', footX-8, footY-12);
+    ctx.beginPath(); ctx.arc(footX+38, footY-6, 12,0,Math.PI*2); ctx.strokeStyle='cyan'; ctx.stroke();
+  }
+  function constrainFoot() {
+    footX = Math.min(470, Math.max(30, footX)); footY = Math.min(200, Math.max(30, footY));
+    drawFoot();
+    document.getElementById('ghostAdvice').innerHTML = `Ghost predicts: ${footX < 150 ? 'Close range → intercept' : (footX > 300 ? 'Out of range → advance' : 'Ideal trap zone')}`;
+  }
+  document.getElementById('stepAdvance')?.addEventListener('click',()=>{ footY-=18; constrainFoot(); });
+  document.getElementById('stepRetreat')?.addEventListener('click',()=>{ footY+=18; constrainFoot(); });
+  document.getElementById('stepPivot')?.addEventListener('click',()=>{ footX+=25; constrainFoot(); });
+  document.getElementById('resetFoot')?.addEventListener('click',()=>{ footX=250; footY=160; constrainFoot(); });
+  constrainFoot();
+  
+  // Range Awareness
+  const rangeCanvasEl = document.getElementById('rangeCanvas2D');
+  if(rangeCanvasEl){
+    const rCtx = rangeCanvasEl.getContext('2d');
+    let rangeVal=95;
+    function drawRange(dist){
+      rangeCanvasEl.width = rangeCanvasEl.clientWidth; rangeCanvasEl.height=220;
+      rCtx.clearRect(0,0,rangeCanvasEl.width,220);
+      const cx=rangeCanvasEl.width/2, yBase=160;
+      rCtx.strokeStyle='cyan';
+      rCtx.beginPath(); rCtx.arc(cx, yBase-20, 35,0,Math.PI*2); rCtx.stroke();
+      rCtx.beginPath(); rCtx.arc(cx, yBase-20, 85,0,Math.PI*2); rCtx.stroke();
+      rCtx.fillStyle='cyan'; rCtx.beginPath(); rCtx.arc(cx-70, yBase, 16,0,Math.PI*2); rCtx.fill();
+      rCtx.fillStyle='#ffaa77'; rCtx.beginPath(); rCtx.arc(cx + (dist/1.5), yBase-5, 16,0,Math.PI*2); rCtx.fill();
+      let zone = dist<55 ? "CLINCH" : (dist<115 ? "PUNCHING RANGE (INTERCEPT)" : (dist<170 ? "KICKING RANGE" : "OUT"));
+      document.getElementById('rangeZoneText').innerHTML = `⚡ ${zone} – ${dist<115 ? "OPTIMAL INTERCEPT" : "ADJUST DISTANCE"}`;
+    }
+    document.getElementById('rangeSlider').addEventListener('input',(e)=>{ rangeVal = e.target.value; drawRange(rangeVal); });
+    drawRange(95);
+  }
+  
+  // Reaction Trainer
+  document.getElementById('reactionTestBtn')?.addEventListener('click', () => {
+    const div = document.getElementById('reactionResult');
+    div.innerHTML = "🧠 Neural priming...";
+    setTimeout(() => {
+      div.innerHTML = "✨ STRIKE FLASH! TAP NOW!";
+      const start = Date.now();
+      const handler = () => {
+        const rt = Date.now() - start;
+        div.innerHTML = `⚡ Reaction: ${rt}ms — ${rt < 220 ? "Quantum Interceptor" : "Enhance with flow drills"}`;
+        document.removeEventListener('click', handler);
+      };
+      document.addEventListener('click', handler, { once: true });
+      setTimeout(() => document.removeEventListener('click', handler), 1500);
+    }, 800 + Math.random() * 1200);
+  });
+  
+  // Strategy AI
+  document.getElementById('strategyBtn')?.addEventListener('click',()=>{
+    const opp = document.getElementById('opponentSelect').value;
+    const strategies = { "Aggressive Boxer":"Intercept jab with stop-hit. Side kick to maintain distance.", "Kickboxer":"Enter trapping range, low kicks, angular footwork.", "Pressure Fighter":"Pivot, attack by drawing, lateral movement + feints.", "Grappler":"Hand immobilization, maintain sprawl awareness.", "Elusive Counter-Striker":"Feint to draw counter, intercept with straight lead." };
+    document.getElementById('strategyOutput').innerText = strategies[opp] || "Adapt fluidly, no fixed pattern.";
+  });
+  
+  // Journal
+  let savedJournal = localStorage.getItem("jkd_journal") || "—";
+  document.getElementById('journalPreview').innerHTML = `📜 Last reflection: "${savedJournal.substring(0,80)}"`;
+  document.getElementById('saveJournalBtn')?.addEventListener('click', () => {
+    const txt = document.getElementById('journalEntry').value;
+    if(txt.trim()) {
+      localStorage.setItem("jkd_journal", txt);
+      document.getElementById('journalPreview').innerHTML = `📜 Last reflection: "${txt.substring(0,80)}"`;
+      let insights = parseInt(localStorage.getItem("insightCount") || "42") + 1;
+      localStorage.setItem("insightCount", insights);
+      document.getElementById("insightCount").innerText = insights;
+      alert("AI Analysis: Flow recorded. Emotional rigidity low.");
+    }
+  });
+  
+  // Misc UI
+  document.getElementById('beginFlowBtn')?.addEventListener('click',()=>alert("🌀 Neural Flow active: 5min shadow + breath sync. Be water."));
+  document.getElementById('breathTimerBtn')?.addEventListener('click',()=>alert("🧘 Binaural alpha waves + 4-7-8 breathing: Inhale 4, hold 7, exhale 8."));
+  document.getElementById('weaknessDrillBtn')?.addEventListener('click',()=>{ let drills=parseInt(localStorage.getItem("drillCount")||"87")+1; localStorage.setItem("drillCount",drills); document.getElementById("drillCount").innerText=drills; alert("AI Drill: Angular footwork + stop-hit combos. +1 Drill."); });
+  document.querySelectorAll('.style-item').forEach(el=>el.addEventListener('click',()=>alert(`➕ ${el.innerText} added to Formless Arsenal`)));
+  document.getElementById('saveStyleBtn')?.addEventListener('click',()=>alert("Your unique style fused: adaptive, intercepting, formless."));
+  document.getElementById('formlessFab')?.addEventListener('click',()=>{ document.getElementById('modalTitle').innerHTML="🌊 Formless Flow"; document.getElementById('modalMsg').innerHTML="Intercept the moment, adapt without pattern. Your style is alive."; document.getElementById('globalModal').classList.add('active'); });
+  document.getElementById('closeModalBtn')?.addEventListener('click',()=>document.getElementById('globalModal').classList.remove('active'));
+  
+  // Tab switching
+  const panes = { flow:document.getElementById('flowPane'), tao:document.getElementById('taoPane'), dojo:document.getElementById('dojoPane'), lab:document.getElementById('labPane'), self:document.getElementById('selfPane') };
+  document.querySelectorAll('.nav-item').forEach(btn=>btn.addEventListener('click',()=>{
+    const tab=btn.dataset.tab; Object.values(panes).forEach(p=>p.classList.remove('active-pane')); panes[tab].classList.add('active-pane');
+    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active')); btn.classList.add('active');
+    gsap.fromTo(`#${tab}Pane .glass-card`, {y:20,opacity:0}, {y:0,opacity:1, stagger:0.08, duration:0.5});
+  }));
+  
+  // Streak & counters
+  let streak=parseInt(localStorage.getItem("streak")||"21"); document.getElementById("streakDisplay").innerText=streak;
+  if(localStorage.getItem("insightCount")) document.getElementById("insightCount").innerText=localStorage.getItem("insightCount");
+  if(localStorage.getItem("drillCount")) document.getElementById("drillCount").innerText=localStorage.getItem("drillCount");
+</script>
+</body>
+</html>
