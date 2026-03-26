@@ -504,4 +504,261 @@
   camera.lookAt(0, 1, 0);
   const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setPixelR
+  renderer.setPixelRatio(window.devicePixelRatio);
+  container.appendChild(renderer.domElement);
+  const renderScene = new RenderPass(scene, camera);
+  const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.2, 0.3, 0.7);
+  bloomPass.threshold = 0.1; bloomPass.strength = 0.65; bloomPass.radius = 0.5;
+  const effectComposer = new EffectComposer(renderer);
+  effectComposer.addPass(renderScene);
+  effectComposer.addPass(bloomPass);
+
+  // Stars (twinkling)
+  const starCount = 2600;
+  const starGeo = new THREE.BufferGeometry();
+  const starPos = [];
+  for (let i = 0; i < starCount; i++) {
+    starPos.push((Math.random() - 0.5) * 200, (Math.random() - 0.5) * 110, (Math.random() - 0.5) * 80 - 30);
+  }
+  starGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(starPos), 3));
+  const starMat = new THREE.PointsMaterial({ color: 0xcbdda8, size: 0.11, transparent: true, blending: THREE.AdditiveBlending });
+  const stars = new THREE.Points(starGeo, starMat);
+  scene.add(stars);
+
+  // Neon Yin-Yang texture
+  const createYinYangTex = () => {
+    const canvas = document.createElement('canvas'); canvas.width = 512; canvas.height = 512;
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, 512, 512);
+    ctx.translate(256, 256);
+    ctx.beginPath(); ctx.arc(0, 0, 220, 0, Math.PI * 2); ctx.fillStyle = '#e6e2c3'; ctx.fill();
+    ctx.beginPath(); ctx.arc(0, 0, 220, Math.PI / 2, Math.PI * 1.5); ctx.fillStyle = '#2f3a28'; ctx.fill();
+    ctx.beginPath(); ctx.arc(0, -110, 70, 0, Math.PI * 2); ctx.fillStyle = '#2f3a28'; ctx.fill();
+    ctx.beginPath(); ctx.arc(0, 110, 70, 0, Math.PI * 2); ctx.fillStyle = '#e6e2c3'; ctx.fill();
+    ctx.beginPath(); ctx.arc(0, -110, 26, 0, Math.PI * 2); ctx.fillStyle = '#e6e2c3'; ctx.fill();
+    ctx.beginPath(); ctx.arc(0, 110, 26, 0, Math.PI * 2); ctx.fillStyle = '#2f3a28'; ctx.fill();
+    ctx.strokeStyle = '#f5b042'; ctx.lineWidth = 10; ctx.beginPath(); ctx.arc(0, 0, 220, 0, Math.PI * 2); ctx.stroke();
+    return new THREE.CanvasTexture(canvas);
+  };
+  const yinMat = new THREE.MeshStandardMaterial({ map: createYinYangTex(), emissive: 0x6fbf73, emissiveIntensity: 0.4, metalness: 0.5 });
+  const yinPlane = new THREE.Mesh(new THREE.PlaneGeometry(4.6, 4.6), yinMat);
+  yinPlane.position.set(0, 1.0, -3.5);
+  scene.add(yinPlane);
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(2.9, 0.07, 64, 300), new THREE.MeshStandardMaterial({ color: 0xf5b042, emissive: 0xb87333, emissiveIntensity: 0.7 }));
+  ring.position.set(0, 1.0, -3.4);
+  scene.add(ring);
+  const ambient = new THREE.AmbientLight(0x332a1a); scene.add(ambient);
+  const pointLight = new THREE.PointLight(0x6fbf73, 0.9); pointLight.position.set(3, 4, 6); scene.add(pointLight);
+
+  function animate3D() {
+    requestAnimationFrame(animate3D);
+    stars.rotation.y += 0.0003;
+    stars.rotation.x += 0.0002;
+    ring.rotation.z += 0.006;
+    ring.rotation.x += 0.004;
+    effectComposer.render();
+  }
+  animate3D();
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    effectComposer.setSize(window.innerWidth, window.innerHeight);
+  });
+
+  // ---------- AUTHENTIC CHAPTERS (Tao of JKD) ----------
+  const chapters = [
+    { name: "ON ZEN", desc: "Voidness, no-mind", icon: "fa-om", content: "Into a soul absolutely free from thoughts and emotion, even the tiger finds no room to insert its fierce claws. The way to transcend karma lies in the proper use of mind. Moving, be like water. Still, be like a mirror." },
+    { name: "ART OF THE SOUL", desc: "Expression of inner vision", icon: "fa-heart", content: "Art reveals itself in psychic understanding of the inner essence of things. An artist’s expression is his soul made apparent. Art is never decoration, but work of enlightenment." },
+    { name: "JEET KUNE DO", desc: "Way of the intercepting fist", icon: "fa-fist-raised", content: "JKD favors formlessness to assume all forms. Simplicity is the shortest distance between two points. The tools are to destroy the ego, not just the opponent." },
+    { name: "ORGANIZED DESPAIR", desc: "Against classical mess", icon: "fa-skull", content: "Instead of facing combat in its suchness, systems accumulate fancy mess. Real combat is alive. The classical man is a bundle of routine. Truth is outside patterns." },
+    { name: "ON-GUARD & STANCE", desc: "Small phasic bent-knee stance", icon: "fa-shoe-prints", content: "Lead foot light, rear heel cocked. Chin tucked, hands in subtle motion. Balance is key. Never set or tensed, but ready and flexible." },
+    { name: "FIVE WAYS OF ATTACK", desc: "SAA, PIA, HIA, ABC, ABD", icon: "fa-bullseye", content: "Simple Attack, Progressive Indirect, Hand Immobilization, Attack by Combination, Attack by Drawing. Economy and directness." },
+    { name: "INTERCEPTION", desc: "Stop-hit & timing", icon: "fa-bolt", content: "To intercept, you must not block the punch but the intention. Half-beat rhythm, broken timing. Directness is the mother of efficiency." },
+    { name: "THE FORMALESS FORM", desc: "No technique as technique", icon: "fa-dharmachakra", content: "Having no form means not being limited by form. The highest technique is to have no technique. Your mind must be free to see what is." }
+  ];
+  const grid = document.getElementById("chaptersGrid");
+  chapters.forEach(ch => {
+    const tile = document.createElement("div"); tile.className = "chapter-tile";
+    tile.innerHTML = `<i class="fas ${ch.icon} fa-lg"></i> <strong style="font-size:1.2rem">${ch.name}</strong><br><span>${ch.desc}</span>`;
+    tile.onclick = () => { document.getElementById("modalTitle").innerText = ch.name; document.getElementById("modalMsg").innerHTML = `<em>“${ch.content}”</em><br><br>— Tao of Jeet Kune Do`; document.getElementById("globalModal").classList.add("active"); };
+    grid.appendChild(tile);
+  });
+
+  // Five ways of attack
+  const ways = [{ name: "SAA (Simple Attack)", desc: "Direct attack with minimal telegraph. Straight lead." }, { name: "PIA (Progressive Indirect)", desc: "Feint to draw reaction, then attack." }, { name: "HIA (Hand Immobilization)", desc: "Trap & strike simultaneously. JKD signature." }, { name: "ABC (Attack by Combination)", desc: "Broken rhythm combos, not repetitive." }, { name: "ABD (Attack by Drawing)", desc: "Create opening by exposing a target, then intercept." }];
+  const waysContainer = document.getElementById("attackWaysGrid");
+  ways.forEach(w => { const div = document.createElement("div"); div.className = "chapter-tile"; div.innerHTML = `<i class="fas fa-crosshairs"></i> <strong>${w.name}</strong><br>${w.desc}`; div.onclick = () => alert(`🎯 ${w.name}: ${w.desc} — “Absorb what is useful.”`); waysContainer.appendChild(div); });
+
+  // Voice Commands
+  const SpeechRecog = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (SpeechRecog) {
+    const recognition = new SpeechRecog();
+    recognition.continuous = true;
+    recognition.onresult = (e) => {
+      const cmd = e.results[e.results.length - 1][0].transcript.toLowerCase();
+      document.getElementById('voiceFeedback').innerHTML = `🎙️ Command: "${cmd}"`;
+      if (cmd.includes('empty') || cmd.includes('cup')) alert("Empty your cup: become devoid to gain totality.");
+      else if (cmd.includes('intercept')) document.getElementById('reactionTestBtn').click();
+      else if (cmd.includes('tao verse')) document.getElementById('randomKoanBtn').click();
+      else if (cmd.includes('journal')) document.getElementById('saveJournalBtn').click();
+    };
+    recognition.start();
+  }
+
+  // MediaPipe Hands
+  let handSpeed = 0, lastPos = null, lastTime = 0;
+  const video = document.getElementById('webcamVideo'), handCanvas = document.getElementById('handCanvas'), handCtx = handCanvas.getContext('2d');
+  let handsModule, cameraModule;
+  document.getElementById('enableCamBtn')?.addEventListener('click', async () => {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    video.srcObject = stream; video.play();
+    handsModule = new Hands({ locateFile: f => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${f}` });
+    handsModule.setOptions({ maxNumHands: 1, modelComplexity: 1, minDetectionConfidence: 0.5 });
+    handsModule.onResults(res => {
+      handCtx.clearRect(0, 0, handCanvas.width, handCanvas.height);
+      if (res.multiHandLandmarks?.length) {
+        const lm = res.multiHandLandmarks[0];
+        const idx = lm[8];
+        const now = Date.now();
+        if (lastPos && lastTime) {
+          const dx = (idx.x - lastPos.x) * 400, dy = (idx.y - lastPos.y) * 300, dt = (now - lastTime) / 1000;
+          handSpeed = Math.min(6, Math.hypot(dx, dy) / dt);
+          document.getElementById('handSpeedDisplay').innerHTML = `🖐️ Hand Speed: ${handSpeed.toFixed(2)} m/s | Intercept: ${handSpeed > 2.2 ? "ELITE" : handSpeed > 1.2 ? "FAST" : "Calm Flow"}`;
+        }
+        lastPos = { x: idx.x, y: idx.y }; lastTime = now;
+        for (let p of lm) { handCtx.beginPath(); handCtx.arc(p.x * handCanvas.width, p.y * handCanvas.height, 4, 0, 2 * Math.PI); handCtx.fillStyle = '#f5b042'; handCtx.fill(); }
+      }
+    });
+    cameraModule = new Camera(video, { onFrame: async () => await handsModule.send({ image: video }), width: 640, height: 480 });
+    cameraModule.start();
+  });
+
+  // Adaptive Sparring
+  let sparLevel = 3, successCount = 0;
+  document.getElementById('sparringInterceptBtn')?.addEventListener('click', () => {
+    const rt = Math.random() * 300 + 150;
+    const win = rt < (220 - (sparLevel * 5));
+    win ? successCount++ : successCount = Math.max(0, successCount - 0.6);
+    if (successCount > 4 && sparLevel < 8) sparLevel++;
+    else if (successCount < -2 && sparLevel > 1) sparLevel--;
+    document.getElementById('sparringStatus').innerHTML = `⚔️ AI Level ${sparLevel} · Adaptive JKD`;
+    document.getElementById('sparringResult').innerHTML = win ? `✅ Intercept landed! (${rt.toFixed(0)}ms) — “Stop-hit”` : `❌ Countered. Sharpen timing.`;
+  });
+
+  // Footwork Simulator
+  const footCanvas = document.getElementById('footCanvas2D');
+  let fx = 230, fy = 150;
+  function drawFoot() {
+    if (!footCanvas) return;
+    const ctx = footCanvas.getContext('2d');
+    footCanvas.width = 500; footCanvas.height = 210;
+    ctx.clearRect(0, 0, 500, 210);
+    ctx.fillStyle = '#f5b042'; ctx.beginPath(); ctx.arc(fx, fy, 14, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#e6e2c3'; ctx.fillText("you", fx - 8, fy - 10);
+    ctx.beginPath(); ctx.arc(fx + 38, fy - 6, 12, 0, Math.PI * 2); ctx.strokeStyle = '#6fbf73'; ctx.stroke();
+  }
+  function constrain() {
+    fx = Math.min(470, Math.max(30, fx)); fy = Math.min(190, Math.max(30, fy));
+    drawFoot();
+    document.getElementById('ghostAdvice').innerHTML = fx < 140 ? "Close-range → intercept opportunity" : (fx > 360 ? "Out of range → advance with small steps" : "Ideal JKD range: half-beat ready");
+  }
+  document.getElementById('stepAdvance')?.addEventListener('click', () => { fy -= 16; constrain(); });
+  document.getElementById('stepRetreat')?.addEventListener('click', () => { fy += 16; constrain(); });
+  document.getElementById('stepPivot')?.addEventListener('click', () => { fx += 22; constrain(); });
+  document.getElementById('resetFoot')?.addEventListener('click', () => { fx = 250; fy = 150; constrain(); });
+  constrain();
+
+  // Range Awareness
+  const rangeCanvas = document.getElementById('rangeCanvas2D');
+  if (rangeCanvas) {
+    const rCtx = rangeCanvas.getContext('2d');
+    let rVal = 95;
+    function drawRange(d) {
+      rangeCanvas.width = rangeCanvas.clientWidth; rangeCanvas.height = 210;
+      rCtx.clearRect(0, 0, rangeCanvas.width, 210);
+      const cx = rangeCanvas.width / 2, yB = 140;
+      rCtx.strokeStyle = '#6fbf73'; rCtx.beginPath(); rCtx.arc(cx, yB - 15, 35, 0, Math.PI * 2); rCtx.stroke();
+      rCtx.beginPath(); rCtx.arc(cx, yB - 15, 85, 0, Math.PI * 2); rCtx.stroke();
+      rCtx.fillStyle = '#f5b042'; rCtx.beginPath(); rCtx.arc(cx - 60, yB, 14, 0, Math.PI * 2); rCtx.fill();
+      rCtx.fillStyle = '#f5b042aa'; rCtx.beginPath(); rCtx.arc(cx + (d / 1.5), yB - 4, 14, 0, Math.PI * 2); rCtx.fill();
+      let zone = d < 55 ? "CLINCH" : (d < 115 ? "PUNCHING (INTERCEPT)" : (d < 170 ? "KICKING RANGE" : "OUT"));
+      document.getElementById('rangeZoneText').innerHTML = `⚡ ${zone} — ${d < 115 ? "Optimal Stop-Hit Zone" : "Adjust Distance"}`;
+    }
+    document.getElementById('rangeSlider').addEventListener('input', e => { rVal = e.target.value; drawRange(rVal); });
+    drawRange(95);
+  }
+
+  // Reaction
+  document.getElementById('reactionTestBtn')?.addEventListener('click', () => {
+    const div = document.getElementById('reactionResult');
+    div.innerHTML = "🧠 Stillness... wait for strike flash";
+    setTimeout(() => {
+      div.innerHTML = "✨ STRIKE NOW! TAP!";
+      const start = Date.now();
+      const handler = () => {
+        const rt = Date.now() - start;
+        div.innerHTML = `⚡ Reaction: ${rt}ms — ${rt < 210 ? "Elite Interception" : "Sharpen with stop-hit drills"}`;
+        document.removeEventListener('click', handler);
+      };
+      document.addEventListener('click', handler, { once: true });
+      setTimeout(() => document.removeEventListener('click', handler), 1500);
+    }, 800 + Math.random() * 1200);
+  });
+
+  // Strategy AI
+  document.getElementById('strategyBtn')?.addEventListener('click', () => {
+    const opp = document.getElementById('opponentSelect').value;
+    const strat = { "Aggressive Boxer": "Intercept the jab with stop-hit. Use side kick to maintain distance. Straight lead to the head.", "Kickboxer": "Close the gap, trapping range, low kicks to base, broken rhythm.", "Pressure Fighter": "Pivot angles, attack by drawing, lateral movement, feint to open.", "Grappler": "Hand immobilization, control wrists, keep upright posture, straight punches.", "Elusive Counter-Striker": "Feint to draw counter, then intercept with straight lead, use half-beat timing." };
+    document.getElementById('strategyOutput').innerText = strat[opp] || "Adapt without pattern — be like water.";
+  });
+
+  // Journal & LocalStorage
+  let savedJournal = localStorage.getItem("jkd_journal") || "—";
+  document.getElementById('journalPreview').innerHTML = `📜 Last reflection: "${savedJournal.substring(0, 80)}"`;
+  document.getElementById('saveJournalBtn')?.addEventListener('click', () => {
+    const txt = document.getElementById('journalEntry').value;
+    if (txt.trim()) {
+      localStorage.setItem("jkd_journal", txt);
+      document.getElementById('journalPreview').innerHTML = `📜 Last reflection: "${txt.substring(0, 80)}"`;
+      let ins = parseInt(localStorage.getItem("insightCount") || "42") + 1;
+      localStorage.setItem("insightCount", ins);
+      document.getElementById("insightCount").innerText = ins;
+      alert("Insight absorbed. The Tao deepens.");
+    }
+  });
+
+  // UI Helpers
+  document.getElementById('generateAITaoBtn')?.addEventListener('click', () => {
+    const wisdom = ["“To obtain enlightenment, the extinction of everything which obscures true knowledge.”", "“The oneness of all life is a truth fully realized when false notions of a separate self are annihilated.”", "“Simplicity is the shortest distance between two points.”", "“There is no fixed teaching — only appropriate medicine for a particular ailment.”"];
+    document.getElementById('aiTaoOutput').innerHTML = `<i class="fas fa-quote-right"></i> ${wisdom[Math.floor(Math.random() * wisdom.length)]}`;
+  });
+  document.getElementById('randomKoanBtn')?.addEventListener('click', () => {
+    const koans = ["Do not run away; let go. Do not seek, for it will come when least expected.", "Empty your cup so that it may be filled; become devoid to gain totality.", "Be like water making its way through cracks.", "The perfect way is only difficult for those who pick and choose."];
+    document.getElementById('dailyPassage').innerHTML = koans[Math.floor(Math.random() * koans.length)];
+  });
+  document.getElementById('beginFlowBtn')?.addEventListener('click', () => alert("🌀 Enter Flow: No thought, no resistance. Be water."));
+  document.getElementById('breathTimerBtn')?.addEventListener('click', () => alert("🧘 4-7-8: Inhale 4, hold 7, exhale 8. Calm the mind like a mirror."));
+  document.getElementById('weaknessDrillBtn')?.addEventListener('click', () => { let d = parseInt(localStorage.getItem("drillCount") || "87") + 1; localStorage.setItem("drillCount", d); document.getElementById("drillCount").innerText = d; alert("+1 Drill: Angular footwork + stop-hit combos."); });
+  document.querySelectorAll('.style-item').forEach(el => el.addEventListener('click', () => alert(`➕ ${el.innerText} added to your formless style — “Absorb what is useful.”`)));
+  document.getElementById('saveStyleBtn')?.addEventListener('click', () => alert("Your personal JKD style recorded: fluid, adaptive, no fixed pattern."));
+  document.getElementById('formlessFab')?.addEventListener('click', () => { document.getElementById('modalTitle').innerHTML = "🌊 Formless Form"; document.getElementById('modalMsg').innerHTML = "“The highest technique is to have no technique. Your art is the expression of your soul.” — Bruce Lee"; document.getElementById('globalModal').classList.add('active'); });
+  document.getElementById('closeModalBtn')?.addEventListener('click', () => document.getElementById('globalModal').classList.remove('active'));
+
+  // Chart
+  const chartCtx = document.getElementById('warriorChart').getContext('2d');
+  new Chart(chartCtx, { type: 'line', data: { labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'], datasets: [{ label: 'Wu Wei Flow', data: [80, 86, 90, 88, 94, 96, 98], borderColor: '#f5b042', backgroundColor: 'rgba(111,191,115,0.1)', tension: 0.4, fill: true }] }, options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { labels: { color: '#e6e2c3' } } } } });
+  let streak = parseInt(localStorage.getItem("streak") || "21"); document.getElementById("streakDisplay").innerText = streak;
+  if (localStorage.getItem("insightCount")) document.getElementById("insightCount").innerText = localStorage.getItem("insightCount");
+  if (localStorage.getItem("drillCount")) document.getElementById("drillCount").innerText = localStorage.getItem("drillCount");
+
+  // Tab switching with GSAP
+  const panes = { flow: document.getElementById('flowPane'), tao: document.getElementById('taoPane'), dojo: document.getElementById('dojoPane'), lab: document.getElementById('labPane'), self: document.getElementById('selfPane') };
+  document.querySelectorAll('.nav-item').forEach(btn => btn.addEventListener('click', () => {
+    const tab = btn.dataset.tab; Object.values(panes).forEach(p => p.classList.remove('active-pane')); panes[tab].classList.add('active-pane');
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active')); btn.classList.add('active');
+    gsap.fromTo(`#${tab}Pane .glass-card`, { y: 18, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.07, duration: 0.6 });
+  }));
+</script>
+</body>
+</html>
