@@ -3,61 +3,105 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>CONSCIOUS DISCIPLINE · NEET 2027</title>
-  <!-- Google Fonts & Chart.js & Font Awesome -->
+  <title>CONSCIOUS DISCIPLINE · NEET 2027 (Upgraded)</title>
+  <!-- Fonts & Icons & Charts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
+    /* ---------- RESET & VARIABLES (Upgraded Glassmorphic) ---------- */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
+
+    :root {
+      --bg-gradient: radial-gradient(circle at 10% 20%, #0B1120, #05080f);
+      --card-bg: rgba(18, 25, 45, 0.65);
+      --border-glow: rgba(0, 180, 255, 0.3);
+      --text-primary: #edf4ff;
+      --accent: #2b9eff;
+      --accent-glow: #7bc9ff;
+      --danger: #ff4d4d;
+    }
+
+    body.dark-midnight {
+      --bg-gradient: radial-gradient(circle at 30% 10%, #0a0f1a, #03060c);
+      --card-bg: rgba(10, 18, 30, 0.8);
+      --border-glow: rgba(100, 150, 255, 0.3);
+    }
+
     body {
-      background: radial-gradient(circle at 10% 20%, #0B1120, #070b14);
+      background: var(--bg-gradient);
       font-family: 'Inter', sans-serif;
-      color: #edf4ff;
+      color: var(--text-primary);
       line-height: 1.5;
       scroll-behavior: smooth;
+      min-height: 100vh;
+      padding: 1rem;
+      transition: background 0.3s ease;
     }
-    /* glass morphism + modern gen-z */
-    .glass-panel {
-      background: rgba(18, 25, 45, 0.65);
+
+    /* Glassmorphic Core */
+    .glass-card, .glass-panel {
+      background: var(--card-bg);
       backdrop-filter: blur(12px);
       border-radius: 2rem;
-      border: 1px solid rgba(0, 180, 255, 0.25);
-      box-shadow: 0 25px 40px -12px rgba(0,0,0,0.4);
-      transition: all 0.2s ease;
+      border: 1px solid var(--border-glow);
+      box-shadow: 0 25px 40px -12px rgba(0, 0, 0, 0.4);
+      transition: all 0.25s ease;
     }
-    .glass-panel:hover {
-      border-color: #2b9effaa;
-      box-shadow: 0 30px 45px -12px #0044ff30;
+
+    .glass-card:hover, .glass-panel:hover {
+      border-color: var(--accent);
+      box-shadow: 0 30px 45px -12px rgba(0, 68, 255, 0.3);
+      transform: translateY(-2px);
     }
+
     .container {
       max-width: 1400px;
       margin: 0 auto;
-      padding: 1rem 1.5rem 2rem;
+      padding: 0 1rem;
     }
-    /* navigation */
+
+    /* Typography */
+    h1 {
+      font-size: 2rem;
+      background: linear-gradient(135deg, #FFFFFF, var(--accent-glow));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      display: inline-block;
+    }
+
+    h3 {
+      font-size: 1.3rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Navigation */
     .nav-bar {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
       gap: 0.6rem;
       margin-bottom: 2rem;
-      background: #0f1422cc;
+      background: rgba(15, 20, 34, 0.8);
       backdrop-filter: blur(10px);
       border-radius: 4rem;
       padding: 0.5rem 1rem;
-      border: 1px solid #2b9eff30;
+      border: 1px solid var(--border-glow);
     }
+
     .nav-btn {
       background: transparent;
       border: none;
-      padding: 0.7rem 1.4rem;
+      padding: 0.7rem 1.6rem;
       font-weight: 600;
-      font-size: 1rem;
       border-radius: 3rem;
       color: #bbd9ff;
       cursor: pointer;
@@ -65,49 +109,42 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      font-family: 'Inter', sans-serif;
+      font-family: inherit;
     }
-    .nav-btn i { font-size: 1.1rem; }
+
     .nav-btn.active {
       background: linear-gradient(125deg, #1a5d9c, #0e3a66);
       color: white;
       box-shadow: 0 4px 12px #0066ff40;
-      border: 0.5px solid #7bc9ff;
     }
+
     .nav-btn:hover:not(.active) {
-      background: #1f2a4e80;
-      color: white;
+      background: rgba(31, 42, 78, 0.8);
+      transform: scale(0.96);
     }
-    /* page container */
+
+    /* Page Animations */
     .page {
       display: none;
-      animation: fade 0.25s ease;
+      animation: fadeSlide 0.3s ease;
     }
-    .active-page {
-      display: block;
-    }
-    @keyframes fade {
+    .active-page { display: block; }
+    @keyframes fadeSlide {
       from { opacity: 0; transform: translateY(6px);}
       to { opacity: 1; transform: translateY(0);}
     }
-    h1, h2, h3 {
-      font-weight: 700;
-      letter-spacing: -0.3px;
-    }
-    h1 { font-size: 2rem; background: linear-gradient(135deg,#FFFFFF,#7bc9ff); -webkit-background-clip: text; background-clip: text; color: transparent; display: inline-block;}
-    .glow-text {
-      text-shadow: 0 0 6px #2b9eff80;
-    }
-    /* grid */
+
+    /* Grid */
     .grid-2, .grid-3 {
       display: grid;
       gap: 1.5rem;
     }
-    .grid-2 { grid-template-columns: repeat(auto-fit, minmax(300px,1fr)); }
-    .grid-3 { grid-template-columns: repeat(auto-fit, minmax(270px,1fr)); }
-    .card {
-      padding: 1.4rem 1.6rem;
-    }
+    .grid-2 { grid-template-columns: repeat(auto-fit, minmax(310px, 1fr)); }
+    .grid-3 { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+
+    .card { padding: 1.6rem; }
+
+    /* Progress bars */
     .progress-bar {
       background: #1e2744;
       border-radius: 40px;
@@ -118,20 +155,39 @@
     .progress-fill {
       width: 0%;
       height: 100%;
-      background: linear-gradient(90deg, #2b9eff, #7bc9ff);
-      border-radius: 40px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-glow));
+      transition: width 0.3s;
     }
+
+    /* Task items */
+    .task-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(30, 42, 66, 0.5);
+      padding: 0.7rem 1rem;
+      border-radius: 1.5rem;
+      margin: 0.5rem 0;
+      transition: 0.2s;
+    }
+    .task-item:hover { background: rgba(43, 85, 120, 0.4); }
+    input[type="checkbox"] { width: 20px; height: 20px; accent-color: var(--accent); }
+
     button, .btn {
       background: #1c3552;
       border: none;
-      padding: 0.5rem 1.2rem;
+      padding: 0.6rem 1.3rem;
       border-radius: 2rem;
       color: white;
       font-weight: 500;
       cursor: pointer;
-      transition: 0.15s;
+      transition: 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
     }
-    button:hover { background: #2b9eff; transform: scale(0.97);}
+    button:hover { background: var(--accent); transform: scale(0.97); }
+
     input, select {
       background: #0f1629;
       border: 1px solid #2c406e;
@@ -139,349 +195,466 @@
       border-radius: 2rem;
       color: white;
       width: 100%;
-      margin: 0.3rem 0;
     }
-    .task-item {
+
+    .badge {
+      background: rgba(43, 158, 255, 0.2);
+      border-radius: 2rem;
+      padding: 0.2rem 1rem;
+      font-size: 0.75rem;
+    }
+
+    /* Pomodoro */
+    .timer-circle {
+      background: #0f1422;
+      border-radius: 50%;
+      width: 130px;
+      height: 130px;
       display: flex;
       align-items: center;
-      gap: 12px;
-      background: #1e2a4270;
-      padding: 0.6rem 1rem;
-      border-radius: 1.5rem;
-      margin: 0.5rem 0;
+      justify-content: center;
+      font-size: 2rem;
+      font-weight: 800;
+      margin: 0 auto;
+      border: 2px solid var(--accent);
     }
-    .badge {
-      background: #2b9eff30;
-      border-radius: 2rem;
-      padding: 0.2rem 0.8rem;
-      font-size: 0.75rem;
-      font-weight: 600;
-    }
-    footer {
-      text-align: center;
-      margin-top: 2.5rem;
-      opacity: 0.6;
-      font-size: 0.8rem;
-    }
-    @media (max-width: 700px) {
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #0f1422; }
+    ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
+
+    /* Responsive */
+    @media (max-width: 768px) {
       .nav-btn span { display: none; }
-      .nav-btn i { margin: 0; font-size: 1.4rem; }
-      .nav-btn { padding: 0.6rem 1rem; }
-    }
-    .week-plan {
-      max-height: 380px;
-      overflow-y: auto;
-    }
-    hr {
-      border-color: #2b9eff30;
-      margin: 1rem 0;
-    }
-    .chart-container {
-      background: #0b1020aa;
-      border-radius: 1.5rem;
-      padding: 1rem;
+      .nav-btn i { font-size: 1.3rem; }
+      .timer-circle { width: 100px; height: 100px; font-size: 1.5rem; }
+      h1 { font-size: 1.4rem; }
     }
   </style>
 </head>
 <body>
 <div class="container">
   <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; margin-bottom: 1rem;">
-    <div><h1><i class="fas fa-brain"></i> CONSCIOUS DISCIPLINE</h1><p style="font-size: 0.85rem;">NEET 2027 · rank maker ecosystem</p></div>
-    <div class="badge" id="liveDate"></div>
+    <div><h1><i class="fas fa-brain"></i> CONSCIOUS DISCIPLINE</h1><p style="font-size: 0.8rem;">NEET 2027 · upgraded rank ecosystem</p></div>
+    <div><button id="themeToggleBtn" class="badge" style="background:#1f2a44;"><i class="fas fa-moon"></i> Midnight Mode</button></div>
   </div>
 
-  <!-- navigation 5 pages -->
   <div class="nav-bar">
     <button class="nav-btn active" data-page="dashboard"><i class="fas fa-chalkboard-user"></i><span> Dashboard</span></button>
-    <button class="nav-btn" data-page="weekly"><i class="fas fa-calendar-week"></i><span> Weekly Planner</span></button>
-    <button class="nav-btn" data-page="revision"><i class="fas fa-rocket"></i><span> Revision Sprint</span></button>
-    <button class="nav-btn" data-page="progress"><i class="fas fa-chart-line"></i><span> Progress Tracker</span></button>
+    <button class="nav-btn" data-page="weekly"><i class="fas fa-calendar-week"></i><span> Weekly</span></button>
+    <button class="nav-btn" data-page="revision"><i class="fas fa-rocket"></i><span> Sprint</span></button>
+    <button class="nav-btn" data-page="progress"><i class="fas fa-chart-line"></i><span> Progress</span></button>
     <button class="nav-btn" data-page="rank"><i class="fas fa-medal"></i><span> Rank Lab</span></button>
+    <button class="nav-btn" data-page="focus"><i class="fas fa-clock"></i><span> Focus</span></button>
   </div>
 
-  <!-- ============================= PAGE 1 : DASHBOARD ========================= -->
+  <!-- DASHBOARD -->
   <div id="dashboard" class="page active-page">
     <div class="grid-2">
-      <div class="glass-panel card">
+      <div class="glass-card card">
         <h3><i class="fas fa-hourglass-half"></i> NEET 2027 Countdown</h3>
-        <div id="countdownDisplay" style="font-size: 1.8rem; font-weight: 800; margin: 1rem 0;">--d --h --m</div>
-        <div class="progress-bar"><div class="progress-fill" id="yearProgressFill" style="width:0%"></div></div>
-        <p>Target: 1st Sunday May 2027</p>
+        <div id="countdownDisplay" style="font-size: 2rem; font-weight:800;">--d --h --m</div>
+        <div class="progress-bar mt-1"><div class="progress-fill" id="yearProgressFill" style="width:0%"></div></div>
       </div>
-      <div class="glass-panel card">
-        <h3><i class="fas fa-bullhorn"></i> Realistic Rank Advice</h3>
-        <p id="motivationTip">✨ Consistency over intensity. 6–7 hours daily with revision → 98%ile possible.</p>
+      <div class="glass-card card">
+        <h3><i class="fas fa-bullhorn"></i> Realistic Advice</h3>
+        <p id="motivationTip">✨ 6–7 hours daily + revision → 98%ile possible.</p>
         <div class="badge" id="rankEstimate">Estimated Rank: --</div>
-        <button id="refreshAdviceBtn" style="margin-top: 12px;">↻ Refresh advice</button>
+        <button id="refreshAdviceBtn" style="margin-top:12px;">↻ Refresh</button>
       </div>
-      <div class="glass-panel card">
-        <h3><i class="fas fa-tasks"></i> Today's core tasks</h3>
-        <ul id="quickTasksList" style="margin-left: 1.2rem;"></ul>
-        <a href="#" data-nav="weekly" style="color:#7bc9ff; font-size:0.8rem;">→ open weekly planner</a>
-      </div>
-    </div>
-    <div class="grid-2" style="margin-top: 1.5rem;">
-      <div class="glass-panel card">
-        <h3>📊 Weekly snapshot</h3>
-        <div>Tasks done this week: <span id="weekTaskDone">0</span>/<span id="weekTotalTasks">0</span></div>
-        <div class="progress-bar mt-1"><div class="progress-fill" id="weekFillBar"></div></div>
-        <div>Latest test score: <span id="latestTestScoreDash">--</span>/720</div>
-      </div>
-      <div class="glass-panel card">
-        <h3>🧠 Mindset & Strategy</h3>
-        <p>“Real rank makers analyse mistakes. Use the Rank Lab to convert score to rank estimate.”</p>
-        <i class="fas fa-microphone-alt"></i> 3–4 month NCERT Sprint is ready in Revision Sprint tab.
+      <div class="glass-card card">
+        <h3><i class="fas fa-tasks"></i> Quick Tasks</h3>
+        <ul id="quickTasksList" style="margin-left:1rem;"></ul>
+        <a href="#" data-nav="weekly" style="color:var(--accent-glow);">→ open weekly planner</a>
       </div>
     </div>
   </div>
 
-  <!-- ============================= PAGE 2 : WEEKLY PLANNER ========================= -->
+  <!-- WEEKLY PLANNER -->
   <div id="weekly" class="page">
-    <div class="glass-panel card" style="margin-bottom: 1.5rem;">
-      <div style="display: flex; justify-content: space-between; flex-wrap: wrap;">
-        <h3><i class="fas fa-list-check"></i> Weekly Revision + Tests (Idea 3)</h3>
-        <button id="resetWeeklyTasksBtn"><i class="fas fa-undo-alt"></i> Reset week</button>
-      </div>
-      <div class="week-plan" id="weeklyTasksContainer"></div>
-      <hr>
-      <div><label>📝 Weekly Test Score (0-720):</label>
-        <input type="number" id="weeklyTestScore" placeholder="e.g., 540" min="0" max="720">
-        <button id="saveWeeklyScoreBtn">Save Score</button>
-        <div id="weeklyScoreFeedback" style="margin-top: 6px;"></div>
-      </div>
-    </div>
-    <div class="grid-2">
-      <div class="glass-panel card">
-        <h4>⚡ Study strategy for rank</h4>
-        <p>✔️ Complete 80% weekly tasks → guaranteed syllabus progress.<br>✔️ Score >600/720 → top 5000 rank.<br>✔️ Analyse each wrong answer.</p>
-      </div>
-      <div class="glass-panel card">
-        <h4>📅 Next week preview</h4>
-        <p>After completing this week, jump to next NCERT chapters.<br>Revision Sprint includes daily micro schedule.</p>
-      </div>
+    <div class="glass-card card">
+      <div style="display:flex; justify-content:space-between;"><h3>📋 Weekly Tasks + Tests</h3><button id="resetWeeklyTasksBtn">Reset week</button></div>
+      <div id="weeklyTasksContainer" style="max-height:400px; overflow-y:auto;"></div>
+      <hr style="margin:1rem 0;">
+      <label>📝 Weekly Test Score (0-720):</label>
+      <input type="number" id="weeklyTestScore" placeholder="e.g., 560">
+      <button id="saveWeeklyScoreBtn">Save Score</button>
+      <div id="weeklyScoreFeedback" class="mt-1"></div>
     </div>
   </div>
 
-  <!-- ============================= PAGE 3 : REVISION SPRINT (3-4 months plan) ========================= -->
+  <!-- REVISION SPRINT -->
   <div id="revision" class="page">
-    <div class="glass-panel card">
-      <h3><i class="fas fa-calendar-alt"></i> 3‑4 Month Realistic Revision Plan – "NCERT Sprint"</h3>
-      <p>Structured for maximum retention. Click on each week to mark as done (auto saves).</p>
-      <div id="sprintWeeksContainer" style="display: flex; flex-direction: column; gap: 0.8rem; max-height: 500px; overflow-y: auto; margin-top: 1rem;"></div>
-      <button id="resetSprintProgress" style="margin-top: 1rem;">⟳ Reset all sprint progress</button>
+    <div class="glass-card card">
+      <h3><i class="fas fa-calendar-alt"></i> NCERT Sprint (3‑4 months)</h3>
+      <div id="sprintWeeksContainer"></div>
+      <button id="resetSprintProgress" class="mt-2">⟳ Reset sprint</button>
     </div>
   </div>
 
-  <!-- ============================= PAGE 4 : PROGRESS TRACKER ========================= -->
+  <!-- PROGRESS TRACKER -->
   <div id="progress" class="page">
     <div class="grid-2">
-      <div class="glass-panel card">
-        <h3><i class="fas fa-chart-simple"></i> Test score trend (last 6 weeks)</h3>
-        <canvas id="scoreTrendChart" width="400" height="250" style="max-height: 250px; width:100%"></canvas>
+      <div class="glass-card card">
+        <h3>📈 Score Trend</h3>
+        <canvas id="scoreTrendChart" width="400" height="250"></canvas>
       </div>
-      <div class="glass-panel card">
-        <h3>📖 Syllabus coverage estimation</h3>
-        <div class="progress-label"><span>Coverage %</span><span id="syllabusPercentText">0%</span></div>
-        <div class="progress-bar"><div class="progress-fill" id="syllabusChartFill" style="width:0%"></div></div>
-        <canvas id="syllabusPieChart" width="200" height="200" style="max-height: 170px; margin-top: 1rem;"></canvas>
+      <div class="glass-card card">
+        <h3>📖 Syllabus Coverage</h3>
+        <div><span id="syllabusPercentText">0%</span> covered</div>
+        <div class="progress-bar"><div class="progress-fill" id="syllabusChartFill"></div></div>
+        <canvas id="syllabusPieChart" width="200" height="200"></canvas>
       </div>
     </div>
-    <div class="glass-panel card" style="margin-top: 1rem;">
-      <h3>🏆 Mastery & consistency metrics</h3>
-      <div>Weekly tasks completion rate: <span id="consistencyRate">0%</span></div>
-      <div>Current streak (weeks with >70% tasks): <span id="streakCount">0</span> weeks</div>
-      <button id="resetAllDataBtn" style="background:#b91c1c;">⚠️ Reset all app data</button>
+    <div class="glass-card card mt-2">
+      <h3>🔥 Consistency Streak</h3>
+      <div>Weekly tasks completion: <span id="consistencyRate">0%</span></div>
+      <div>Weeks with score >400: <span id="streakCount">0</span> weeks</div>
+      <button id="resetAllDataBtn" style="background:#b91c1c;">⚠️ Reset all data</button>
     </div>
   </div>
 
-  <!-- ============================= PAGE 5 : RANK LAB ========================= -->
+  <!-- RANK LAB -->
   <div id="rank" class="page">
-    <div class="glass-panel card">
-      <h3><i class="fas fa-chart-line"></i> Rank Estimator & Actionable Plan</h3>
-      <p>Enter your expected score in a full mock (out of 720) → get realistic rank & advice.</p>
-      <input type="number" id="mockScoreInput" placeholder="Mock test score (0-720)" min="0" max="720">
-      <button id="estimateRankBtn">Estimate my rank</button>
-      <div id="rankResult" style="margin-top: 1rem; font-weight: bold; background:#0f1424; border-radius: 2rem; padding: 1rem;"></div>
+    <div class="glass-card card">
+      <h3>🎯 Rank Estimator</h3>
+      <input type="number" id="mockScoreInput" placeholder="Mock test score (0-720)">
+      <button id="estimateRankBtn">Estimate Rank</button>
+      <div id="rankResult" style="margin-top:1rem;"></div>
+      <div id="suggestionBox" style="margin-top:1rem; background:#0f1424; border-radius:1rem; padding:0.8rem;"></div>
     </div>
-    <div class="grid-2" style="margin-top: 1rem;">
-      <div class="glass-panel card">
-        <h4>🎯 Rank milestones</h4>
-        <ul style="margin-left: 1rem;">
-          <li>650+ → AIR <500 (extraordinary)</li>
-          <li>600-649 → AIR 500-3000</li>
-          <li>550-599 → AIR 3000-12000</li>
-          <li>500-549 → AIR 12000-35000</li>
-        </ul>
+  </div>
+
+  <!-- FOCUS MODE (POMODORO) -->
+  <div id="focus" class="page">
+    <div class="grid-2">
+      <div class="glass-card card text-center">
+        <h3><i class="fas fa-hourglass-start"></i> Pomodoro Timer</h3>
+        <div class="timer-circle" id="timerDisplay">25:00</div>
+        <div class="mt-2">
+          <button id="startTimerBtn"><i class="fas fa-play"></i> Start</button>
+          <button id="pauseTimerBtn"><i class="fas fa-pause"></i> Pause</button>
+          <button id="resetTimerBtn"><i class="fas fa-sync-alt"></i> Reset</button>
+        </div>
+        <p class="mt-1">Study 25 min → Break 5 min</p>
       </div>
-      <div class="glass-panel card">
-        <h4>💡 Suggestions based on your scores</h4>
-        <p id="suggestionBox">Save weekly test scores to get personalised tips.</p>
+      <div class="glass-card card">
+        <h3>📅 Streak Calendar (this month)</h3>
+        <div id="streakCalendar" style="display: grid; grid-template-columns: repeat(7,1fr); gap:6px;"></div>
+        <p class="mt-1"><i class="fas fa-fire"></i> Click on today's date to mark study day!</p>
       </div>
     </div>
   </div>
-  <footer>⚡ CONSCIOUS DISCIPLINE • Data persists locally • Build for NEET 2027 rank makers</footer>
+  <footer style="text-align:center; margin-top:2rem; opacity:0.6;">⚡ CONSCIOUS DISCIPLINE · Data stays on your device</footer>
 </div>
 
 <script>
-  // ----------------------------- GLOBAL STATE & INITIALIZATION -------------------
-  // tasks for current week (static but can be reset)
-  const defaultTasks = [
-    "Physics: 2 chapters + 40 numericals (NCERT + HCV)", "Chemistry: Inorganic+Organic revision + 30 MCQs", 
-    "Biology: 4 NCERT units + 100 PYQs", "Previous week weak topics revision (2 hrs)", "One full mock (subjectwise)",
-    "Analyze mistakes & make error log", "Daily formula revision (30 min)"
-  ];
-  let weeklyTasks = [];
-  let weeklyScores = []; // array of {date: weekStart, score}
-  let sprintWeeks = [];   // each {weekIndex, completed, title, description}
-  let syllabusPercent = 15; // dynamic
+  // ---------- UPGRADED FULL SCRIPT (including timer, calendar, all features) ----------
+  (function() {
+    // ----- Data models
+    let weeklyTasks = [];
+    let weeklyScores = [];
+    let sprintWeeks = [];
+    let syllabusPercent = 18;
+    let studyCalendar = {}; // "YYYY-MM-DD": true
+    let timerInterval = null;
+    let timerSeconds = 25 * 60;
+    let isRunning = false;
 
-  // Helper: load / save localStorage
-  function loadData() {
-    const storedTasks = localStorage.getItem("CD_tasks");
-    if(storedTasks) weeklyTasks = JSON.parse(storedTasks);
-    else weeklyTasks = defaultTasks.map(t => ({text: t, completed: false}));
-    
-    const storedScores = localStorage.getItem("CD_scores");
-    if(storedScores) weeklyScores = JSON.parse(storedScores);
-    else weeklyScores = [];
-    
-    const storedSprint = localStorage.getItem("CD_sprint");
-    if(storedSprint) sprintWeeks = JSON.parse(storedSprint);
-    else initSprintWeeks();
-    
-    const storedSyllabus = localStorage.getItem("CD_syllabus");
-    if(storedSyllabus) syllabusPercent = parseInt(storedSyllabus);
-    else syllabusPercent = 18;
-  }
-  function initSprintWeeks() {
-    sprintWeeks = [];
-    const weeksPlan = [
-      "Week 1-2: NCERT Physics (Mechanics + Kinematics) + Bio Unit 1-2",
-      "Week 3-4: Chemistry (Mole Concept + Thermochem) + Bio Human Physiology",
-      "Week 5-6: Physics (Optics + Waves) + Inorganic Periodic table",
-      "Week 7-8: Organic Chemistry (GOC, Hydrocarbons) + Bio Genetics",
-      "Week 9-10: Full syllabus mocks + weak area revival",
-      "Week 11-12: NCERT Exemplar + Previous Year final sprint + Diagrams"
+    const DEFAULT_TASKS = [
+      "Physics: 2 chapters + 40 numericals",
+      "Chemistry: Organic+Inorganic + 30 MCQs",
+      "Biology: 4 NCERT units + 100 PYQs",
+      "Weak topics revision (2 hrs)",
+      "One full mock test",
+      "Analyse mistakes & error log",
+      "Daily formula revision 30 min"
     ];
-    for(let i=0; i<weeksPlan.length; i++) {
-      sprintWeeks.push({ weekIndex: i, title: `Phase ${i+1}`, description: weeksPlan[i], completed: false });
+    const SPRINT_PLAN = [
+      { title: "Phase 1", desc: "Mechanics + Diversity in Living World" },
+      { title: "Phase 2", desc: "Mole Concept + Human Physiology I" },
+      { title: "Phase 3", desc: "Optics + Periodic Table" },
+      { title: "Phase 4", desc: "GOC, Hydrocarbons + Genetics" },
+      { title: "Phase 5", desc: "Full syllabus mocks (3/week)" },
+      { title: "Phase 6", desc: "NCERT Exemplar + PYQ marathon" }
+    ];
+
+    // Helper: today's date YYYY-MM-DD
+    function getTodayStr() { return new Date().toISOString().slice(0,10); }
+
+    // Load / Save
+    function loadData() {
+      weeklyTasks = JSON.parse(localStorage.getItem("CD_tasks") || JSON.stringify(DEFAULT_TASKS.map(t => ({text:t, completed:false}))));
+      weeklyScores = JSON.parse(localStorage.getItem("CD_scores") || "[]");
+      let storedSprint = localStorage.getItem("CD_sprint");
+      if(storedSprint) sprintWeeks = JSON.parse(storedSprint);
+      else sprintWeeks = SPRINT_PLAN.map((item,idx) => ({ weekIndex:idx, title:item.title, description:item.desc, completed:false }));
+      syllabusPercent = parseInt(localStorage.getItem("CD_syllabus") || "18");
+      studyCalendar = JSON.parse(localStorage.getItem("CD_calendar") || "{}");
     }
-  }
-  function saveAll() {
-    localStorage.setItem("CD_tasks", JSON.stringify(weeklyTasks));
-    localStorage.setItem("CD_scores", JSON.stringify(weeklyScores));
-    localStorage.setItem("CD_sprint", JSON.stringify(sprintWeeks));
-    localStorage.setItem("CD_syllabus", syllabusPercent);
-  }
-  
-  // Countdown logic
-  function getNeet2027Date() {
-    let date = new Date(2027, 4, 1); // May 1
-    while(date.getDay() !== 0) date.setDate(date.getDate()+1);
-    return date;
-  }
-  function updateCountdown() {
-    const target = getNeet2027Date();
-    const now = new Date();
-    const diff = target - now;
-    if(diff<=0) { document.getElementById("countdownDisplay").innerText = "0d 0h 0m"; return; }
-    const days = Math.floor(diff/(1000*60*60*24));
-    const hours = Math.floor((diff/(1000*60*60))%24);
-    const mins = Math.floor((diff/(1000*60))%60);
-    document.getElementById("countdownDisplay").innerText = `${days}d ${hours}h ${mins}m`;
-    // year progress
-    const startYear = new Date(2026, 4, 1);
-    const total = target - startYear;
-    const elapsed = now - startYear;
-    let percent = Math.min(100, Math.max(0, (elapsed/total)*100));
-    document.getElementById("yearProgressFill").style.width = percent+"%";
-  }
-  
-  // RENDER WEEKLY TASKS
-  function renderWeeklyTasks() {
-    const container = document.getElementById("weeklyTasksContainer");
-    if(!container) return;
-    container.innerHTML = "";
-    weeklyTasks.forEach((task, idx) => {
-      const div = document.createElement("div");
-      div.className = "task-item";
-      const cb = document.createElement("input");
-      cb.type = "checkbox";
-      cb.checked = task.completed;
-      cb.addEventListener("change", (e) => {
-        weeklyTasks[idx].completed = e.target.checked;
-        saveAll();
-        renderWeeklyTasks();
-        updateDashboardSnapshots();
-        updateProgressPageMetrics();
+    function saveAll() {
+      localStorage.setItem("CD_tasks", JSON.stringify(weeklyTasks));
+      localStorage.setItem("CD_scores", JSON.stringify(weeklyScores));
+      localStorage.setItem("CD_sprint", JSON.stringify(sprintWeeks));
+      localStorage.setItem("CD_syllabus", syllabusPercent);
+      localStorage.setItem("CD_calendar", JSON.stringify(studyCalendar));
+    }
+
+    // Countdown
+    function getNeet2027Date() {
+      let d = new Date(2027, 4, 1);
+      while(d.getDay() !== 0) d.setDate(d.getDate()+1);
+      return d;
+    }
+    function updateCountdown() {
+      const target = getNeet2027Date();
+      const diff = target - new Date();
+      if(diff<=0) { document.getElementById("countdownDisplay").innerText="0d 0h 0m"; return; }
+      const days = Math.floor(diff/86400000);
+      const hours = Math.floor((diff%86400000)/3600000);
+      const mins = Math.floor((diff%3600000)/60000);
+      document.getElementById("countdownDisplay").innerText = `${days}d ${hours}h ${mins}m`;
+      const start = new Date(2026,4,1);
+      const total = target-start;
+      const elapsed = new Date()-start;
+      let p = Math.min(100, Math.max(0, (elapsed/total)*100));
+      document.getElementById("yearProgressFill").style.width = p+"%";
+    }
+
+    // Render weekly tasks
+    function renderWeeklyTasks() {
+      const container = document.getElementById("weeklyTasksContainer");
+      if(!container) return;
+      container.innerHTML = "";
+      weeklyTasks.forEach((t, i) => {
+        const div = document.createElement("div");
+        div.className = "task-item";
+        const cb = document.createElement("input");
+        cb.type = "checkbox";
+        cb.checked = t.completed;
+        cb.addEventListener("change", (e) => {
+          weeklyTasks[i].completed = e.target.checked;
+          saveAll();
+          renderWeeklyTasks();
+          updateDashboardAndProgress();
+          recalcSyllabus();
+        });
+        const span = document.createElement("span");
+        span.innerText = t.text;
+        div.appendChild(cb); div.appendChild(span);
+        container.appendChild(div);
       });
-      const span = document.createElement("span");
-      span.innerText = task.text;
-      div.appendChild(cb); div.appendChild(span);
-      container.appendChild(div);
-    });
-    document.getElementById("weekTotalTasks").innerText = weeklyTasks.length;
-    const done = weeklyTasks.filter(t=>t.completed).length;
-    document.getElementById("weekTaskDone").innerText = done;
-    const percentDone = weeklyTasks.length ? (done/weeklyTasks.length)*100 : 0;
-    if(document.getElementById("weekFillBar")) document.getElementById("weekFillBar").style.width = percentDone+"%";
-    updateDashboardSnapshots();
-  }
-  
-  function updateDashboardSnapshots() {
-    const done = weeklyTasks.filter(t=>t.completed).length;
-    if(document.getElementById("weekTaskDone")) document.getElementById("weekTaskDone").innerText = done;
-    const latest = weeklyScores.length? weeklyScores[weeklyScores.length-1].score : "--";
-    document.getElementById("latestTestScoreDash").innerText = latest;
-    const percDone = weeklyTasks.length ? (done/weeklyTasks.length)*100 : 0;
-    if(document.getElementById("weekFillBar")) document.getElementById("weekFillBar").style.width = percDone+"%";
-    // quick tasks list dashboard
-    const quickList = document.getElementById("quickTasksList");
-    if(quickList) {
-      quickList.innerHTML = "";
-      weeklyTasks.slice(0,3).forEach(t => {
-        let li = document.createElement("li");
-        li.innerHTML = t.completed ? `<s>${t.text}</s>` : t.text;
-        quickList.appendChild(li);
+      const total = weeklyTasks.length, done = weeklyTasks.filter(t=>t.completed).length;
+      document.getElementById("weekTotalTasks") && (document.getElementById("weekTotalTasks").innerText = total);
+      document.getElementById("weekTaskDone") && (document.getElementById("weekTaskDone").innerText = done);
+      if(document.getElementById("weekFillBar")) document.getElementById("weekFillBar").style.width = (total? (done/total)*100 : 0)+"%";
+    }
+
+    function updateDashboardAndProgress() {
+      const done = weeklyTasks.filter(t=>t.completed).length;
+      document.getElementById("weekTaskDone") && (document.getElementById("weekTaskDone").innerText = done);
+      let lastScore = weeklyScores.length ? weeklyScores[weeklyScores.length-1].score : "--";
+      document.getElementById("latestTestScoreDash") && (document.getElementById("latestTestScoreDash").innerText = lastScore);
+      const quickList = document.getElementById("quickTasksList");
+      if(quickList) {
+        quickList.innerHTML = "";
+        weeklyTasks.slice(0,3).forEach(t => {
+          let li = document.createElement("li");
+          li.innerHTML = t.completed ? `<s>${t.text}</s>` : t.text;
+          quickList.appendChild(li);
+        });
+      }
+      if(lastScore !== "--") document.getElementById("rankEstimate").innerText = `Estimated Rank: ${estimateRankCategory(lastScore)}`;
+      recalcSyllabus();
+      updateProgressPageMetrics();
+    }
+
+    function recalcSyllabus() {
+      let taskComp = weeklyTasks.filter(t=>t.completed).length/weeklyTasks.length*100;
+      let avgScore = weeklyScores.length ? weeklyScores.reduce((a,b)=>a+b.score,0)/weeklyScores.length : 0;
+      let newP = Math.floor(15 + taskComp*0.3 + (avgScore/720)*30);
+      syllabusPercent = Math.min(95, Math.max(12, newP));
+      saveAll();
+      if(document.getElementById("syllabusPercentText")) document.getElementById("syllabusPercentText").innerText = syllabusPercent+"%";
+      if(document.getElementById("syllabusChartFill")) document.getElementById("syllabusChartFill").style.width = syllabusPercent+"%";
+      if(window.syllabusPieChart) {
+        window.syllabusPieChart.data.datasets[0].data = [syllabusPercent, 100-syllabusPercent];
+        window.syllabusPieChart.update();
+      }
+    }
+
+    // Scores & charts
+    function addWeeklyScore(score) {
+      weeklyScores.push({ date: new Date().toISOString().slice(0,10), score });
+      if(weeklyScores.length>10) weeklyScores.shift();
+      saveAll();
+      updateScoreChart();
+      recalcSyllabus();
+      updateDashboardAndProgress();
+    }
+
+    let scoreChart = null;
+    function updateScoreChart() {
+      const ctx = document.getElementById("scoreTrendChart")?.getContext("2d");
+      if(!ctx) return;
+      if(scoreChart) scoreChart.destroy();
+      scoreChart = new Chart(ctx, {
+        type: 'line',
+        data: { labels: weeklyScores.map((_,i)=>`W${i+1}`), datasets: [{ label:'Score/720', data: weeklyScores.map(s=>s.score), borderColor:'#2b9eff', fill:true }] },
+        options: { responsive: true }
       });
     }
-    // update syllabus estimate based on task completion + scores average
-    let avgScore = 0;
-    if(weeklyScores.length){
-      let sum=0; weeklyScores.forEach(s=>sum+=s.score); avgScore = sum/weeklyScores.length;
+    let syllabusPieChart = null;
+    function initPie() {
+      const ctx = document.getElementById("syllabusPieChart")?.getContext("2d");
+      if(!ctx) return;
+      if(syllabusPieChart) syllabusPieChart.destroy();
+      syllabusPieChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: { labels: ['Covered','Remaining'], datasets: [{ data: [syllabusPercent, 100-syllabusPercent], backgroundColor: ['#2b9eff','#2a3a60'] }] }
+      });
     }
-    let newSyl = Math.min(95, Math.floor((done/weeklyTasks.length)*30) + Math.floor(avgScore/25) + 15);
-    syllabusPercent = Math.max(12, Math.min(92, newSyl));
-    localStorage.setItem("CD_syllabus", syllabusPercent);
-    if(document.getElementById("syllabusPercentText")) document.getElementById("syllabusPercentText").innerText = syllabusPercent+"%";
-    if(document.getElementById("syllabusChartFill")) document.getElementById("syllabusChartFill").style.width = syllabusPercent+"%";
-    updateConsistencyMetrics();
-    if(window.syllabusPieChart && typeof window.syllabusPieChart.update === 'function') {
-      window.syllabusPieChart.data.datasets[0].data = [syllabusPercent, 100-syllabusPercent];
-      window.syllabusPieChart.update();
+
+    function updateProgressPageMetrics() {
+      let done = weeklyTasks.filter(t=>t.completed).length;
+      let consistency = weeklyTasks.length ? Math.round((done/weeklyTasks.length)*100) : 0;
+      document.getElementById("consistencyRate").innerText = consistency+"%";
+      let streak = 0;
+      for(let i=weeklyScores.length-1; i>=0; i--) if(weeklyScores[i].score>400) streak++; else break;
+      document.getElementById("streakCount").innerText = streak;
+      recalcSyllabus();
+      if(scoreChart) scoreChart.update();
     }
-  }
-  
-  // Save weekly score
-  function addWeeklyScore(score) {
-    const now = new Date();
-    const weekStart = new Date(now.setDate(now.getDate()-now.getDay()));
-    weeklyScores.push({ date: weekStart.toISOString().slice(0,10), score: score });
-    if(weeklyScores.length > 8) weeklyScores.shift();
-    saveAll();
-    updateScoreChart();
-    updateDashboardSnapshots();
-    document.getElementById("weeklyScoreFeedback").innerHTML = "✅ Score saved! Trend updated.";
-    updateRankLabSuggestion();
-  }
-  
-  // chart score trend
-  let scoreChart = null;
-  function updateScoreChart() {
-    const ctx = document.getElementById("scoreTrendChart")?.getContext("2d");
-    if(!ctx) return;
-    const labels = weeklyScores.map((s,i)=>`W${i+1}`);
-    const data = weeklyScores.map(s=>s.score);
-    if(scoreChart) scoreChart.destroy();
-    scoreChart = new Chart(ctx, {
-      type: 'line', data: { labels, datasets: [{ label:'Test Score /720', data, borderColor:'
+
+    // Sprint render
+    function renderSprint() {
+      const cont = document.getElementById("sprintWeeksContainer");
+      if(!cont) return;
+      cont.innerHTML = "";
+      sprintWeeks.forEach((w,idx) => {
+        const div = document.createElement("div");
+        div.className = "task-item";
+        const cb = document.createElement("input");
+        cb.type = "checkbox";
+        cb.checked = w.completed;
+        cb.addEventListener("change", () => { sprintWeeks[idx].completed = cb.checked; saveAll(); renderSprint(); });
+        const text = document.createElement("div");
+        text.style.flex="1";
+        text.innerHTML = `<strong>${w.title}</strong><br><span style="font-size:0.8rem;">${w.description}</span>`;
+        div.appendChild(cb); div.appendChild(text);
+        cont.appendChild(div);
+      });
+    }
+
+    // Rank logic
+    function estimateRankCategory(score) {
+      if(score>=680) return "AIR 1-200";
+      if(score>=650) return "AIR 200-800";
+      if(score>=600) return "AIR 800-4000";
+      if(score>=550) return "AIR 4000-15000";
+      if(score>=500) return "AIR 15000-40000";
+      if(score>=400) return "AIR 40000-100000";
+      return "Below 1.5L";
+    }
+    function updateRankLabSuggestion() {
+      const last = weeklyScores.length ? weeklyScores[weeklyScores.length-1].score : null;
+      let sug = "Add weekly test score to get personalised advice.";
+      if(last) {
+        if(last<450) sug = "Focus on NCERT line‑by‑line, solve 100+ PYQs/week.";
+        else if(last<550) sug = "Increase mock frequency; analyse mistakes deeply.";
+        else if(last<650) sug = "Excellent! Maintain accuracy, attempt full syllabus mocks.";
+        else sug = "Topper trajectory! Keep revising, avoid silly mistakes.";
+      }
+      document.getElementById("suggestionBox").innerHTML = sug;
+    }
+
+    // Pomodoro
+    function updateTimerDisplay() {
+      let mins = Math.floor(timerSeconds/60);
+      let secs = timerSeconds%60;
+      document.getElementById("timerDisplay").innerText = `${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
+    }
+    function startTimer() { if(timerInterval) clearInterval(timerInterval); isRunning=true; timerInterval = setInterval(() => { if(timerSeconds<=0) { clearInterval(timerInterval); isRunning=false; alert("Time's up! Take a break."); } else { timerSeconds--; updateTimerDisplay(); } }, 1000); }
+    function pauseTimer() { clearInterval(timerInterval); isRunning=false; }
+    function resetTimer() { pauseTimer(); timerSeconds=25*60; updateTimerDisplay(); }
+
+    // Streak calendar
+    function renderCalendar() {
+      const today = getTodayStr();
+      const firstDay = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+      const start = new Date(firstDay);
+      start.setDate(start.getDate() - start.getDay());
+      const calendarDiv = document.getElementById("streakCalendar");
+      calendarDiv.innerHTML = "";
+      for(let i=0;i<42;i++) {
+        const date = new Date(start);
+        date.setDate(start.getDate()+i);
+        const dateStr = date.toISOString().slice(0,10);
+        const isToday = dateStr === today;
+        const isMarked = studyCalendar[dateStr] === true;
+        const btn = document.createElement("button");
+        btn.innerText = date.getDate();
+        btn.style.background = isMarked ? "#2b9eff" : "#1f2a44";
+        btn.style.borderRadius = "12px";
+        btn.style.padding = "8px";
+        btn.style.cursor = "pointer";
+        if(isToday) btn.style.border = "2px solid white";
+        btn.addEventListener("click", () => {
+          if(dateStr === today) {
+            studyCalendar[dateStr] = !studyCalendar[dateStr];
+            saveAll();
+            renderCalendar();
+          } else alert("You can only mark today's study session!");
+        });
+        calendarDiv.appendChild(btn);
+      }
+    }
+
+    // Reset functions
+    function resetWeekly() { weeklyTasks = weeklyTasks.map(t=>({...t, completed:false})); saveAll(); renderWeeklyTasks(); updateDashboardAndProgress(); }
+    function resetSprintAll() { sprintWeeks = SPRINT_PLAN.map((item,idx)=>({ weekIndex:idx, title:item.title, description:item.desc, completed:false })); saveAll(); renderSprint(); }
+    function resetAllApp() { if(confirm("Erase everything?")) { localStorage.clear(); loadData(); saveAll(); renderWeeklyTasks(); renderSprint(); updateScoreChart(); initPie(); updateDashboardAndProgress(); recalcSyllabus(); renderCalendar(); } }
+
+    // Theme toggle
+    function toggleTheme() { document.body.classList.toggle("dark-midnight"); localStorage.setItem("CD_theme", document.body.classList.contains("dark-midnight") ? "midnight" : ""); }
+    function loadTheme() { if(localStorage.getItem("CD_theme")==="midnight") document.body.classList.add("dark-midnight"); }
+
+    // Navigation
+    function switchPage(pageId) {
+      document.querySelectorAll(".page").forEach(p=>p.classList.remove("active-page"));
+      document.getElementById(pageId).classList.add("active-page");
+      document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));
+      document.querySelector(`.nav-btn[data-page="${pageId}"]`).classList.add("active");
+      if(pageId==="progress") { updateScoreChart(); initPie(); updateProgressPageMetrics(); }
+      if(pageId==="rank") updateRankLabSuggestion();
+      if(pageId==="focus") renderCalendar();
+    }
+
+    // Event binding
+    function bindEvents() {
+      document.querySelectorAll(".nav-btn").forEach(btn=>btn.addEventListener("click",()=>switchPage(btn.getAttribute("data-page"))));
+      document.querySelectorAll("[data-nav]").forEach(el=>el.addEventListener("click",(e)=>{e.preventDefault(); switchPage(el.getAttribute("data-nav"));}));
+      document.getElementById("resetWeeklyTasksBtn")?.addEventListener("click",resetWeekly);
+      document.getElementById("saveWeeklyScoreBtn")?.addEventListener("click",()=>{ let v=parseInt(document.getElementById("weeklyTestScore").value); if(!isNaN(v)&&v>=0&&v<=720) addWeeklyScore(v); else alert("Enter 0-720"); });
+      document.getElementById("resetSprintProgress")?.addEventListener("click",resetSprintAll);
+      document.getElementById("resetAllDataBtn")?.addEventListener("click",resetAllApp);
+      document.getElementById("estimateRankBtn")?.addEventListener("click",()=>{ let s=parseInt(document.getElementById("mockScoreInput").value); if(!isNaN(s)&&s>=0&&s<=720) document.getElementById("rankResult").innerHTML=`Predicted Rank: ${estimateRankCategory(s)}`; else alert("Valid score 0-720"); });
+      document.getElementById("refreshAdviceBtn")?.addEventListener("click",()=>{ document.getElementById("motivationTip").innerHTML = ["Consistency > Intensity","Revise weak topics daily","Mock tests are key"][Math.floor(Math.random()*3)]; });
+      document.getElementById("startTimerBtn")?.addEventListener("click",startTimer);
+      document.getElementById("pauseTimerBtn")?.addEventListener("click",pauseTimer);
+      document.getElementById("resetTimerBtn")?.addEventListener("click",resetTimer);
+      document.getElementById("themeToggleBtn")?.addEventListener("click",toggleTheme);
+    }
+
+    function init() {
+      loadData(); loadTheme(); bindEvents();
+      renderWeeklyTasks(); renderSprint(); updateCountdown(); setInterval(updateCountdown,1000);
+      updateDashboardAndProgress(); updateScoreChart(); initPie(); updateRankLabSuggestion();
+      renderCalendar();
+    }
+    init();
+  })();
+</script>
+</body>
+</html>
