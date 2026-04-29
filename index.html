@@ -2,408 +2,486 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Meditate NEET 2027</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>CONSCIOUS DISCIPLINE · NEET 2027</title>
+  <!-- Google Fonts & Chart.js & Font Awesome -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: 'Segoe UI', 'Poppins', system-ui, -apple-system, sans-serif;
     }
-
     body {
-      background: linear-gradient(145deg, #0a0f1e 0%, #0c1222 100%);
-      min-height: 100vh;
-      padding: 2rem 1.5rem;
-      color: #eef5ff;
+      background: radial-gradient(circle at 10% 20%, #0B1120, #070b14);
+      font-family: 'Inter', sans-serif;
+      color: #edf4ff;
+      line-height: 1.5;
+      scroll-behavior: smooth;
     }
-
-    /* Glassmorphic Gen‑Z cards */
-    .glass-card {
+    /* glass morphism + modern gen-z */
+    .glass-panel {
       background: rgba(18, 25, 45, 0.65);
       backdrop-filter: blur(12px);
       border-radius: 2rem;
-      border: 1px solid rgba(80, 180, 255, 0.2);
-      box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(0, 180, 255, 0.25);
+      box-shadow: 0 25px 40px -12px rgba(0,0,0,0.4);
       transition: all 0.2s ease;
     }
-
-    .glass-card:hover {
-      border-color: rgba(80, 180, 255, 0.5);
-      box-shadow: 0 25px 40px -14px rgba(0, 160, 255, 0.2);
+    .glass-panel:hover {
+      border-color: #2b9effaa;
+      box-shadow: 0 30px 45px -12px #0044ff30;
     }
-
-    /* main grid */
-    .dashboard {
+    .container {
       max-width: 1400px;
       margin: 0 auto;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 1.8rem;
+      padding: 1rem 1.5rem 2rem;
     }
-
-    /* countdown section */
-    .countdown-box {
-      text-align: center;
-      padding: 1.8rem;
-    }
-
-    .neet-date {
-      font-size: 1rem;
-      letter-spacing: 1px;
-      background: #00a6ff20;
-      display: inline-block;
-      padding: 0.2rem 1rem;
-      border-radius: 60px;
-      margin-bottom: 1rem;
-    }
-
-    .timer {
+    /* navigation */
+    .nav-bar {
       display: flex;
+      flex-wrap: wrap;
       justify-content: center;
-      gap: 1.2rem;
-      flex-wrap: wrap;
-      margin-top: 1rem;
+      gap: 0.6rem;
+      margin-bottom: 2rem;
+      background: #0f1422cc;
+      backdrop-filter: blur(10px);
+      border-radius: 4rem;
+      padding: 0.5rem 1rem;
+      border: 1px solid #2b9eff30;
     }
-
-    .time-unit {
-      background: #0f1424cc;
-      padding: 0.6rem 1rem;
-      border-radius: 1.5rem;
-      min-width: 70px;
-    }
-
-    .time-number {
-      font-size: 2.2rem;
-      font-weight: 800;
-      background: linear-gradient(135deg, #fff, #7bc9ff);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-
-    /* weekly planner */
-    .weekly-card {
-      padding: 1.6rem;
-    }
-
-    .week-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      flex-wrap: wrap;
-      margin-bottom: 1.2rem;
-    }
-
-    .task-item {
-      background: #1e2a3e70;
-      margin: 0.7rem 0;
-      padding: 0.7rem 1rem;
-      border-radius: 1.2rem;
+    .nav-btn {
+      background: transparent;
+      border: none;
+      padding: 0.7rem 1.4rem;
+      font-weight: 600;
+      font-size: 1rem;
+      border-radius: 3rem;
+      color: #bbd9ff;
+      cursor: pointer;
+      transition: all 0.2s;
       display: flex;
       align-items: center;
-      gap: 0.8rem;
-      transition: 0.1s;
+      gap: 8px;
+      font-family: 'Inter', sans-serif;
     }
-
-    .task-item input {
-      width: 20px;
-      height: 20px;
-      accent-color: #2b9eff;
-    }
-
-    .task-text {
-      flex: 1;
-    }
-
-    .test-score {
-      margin-top: 1.5rem;
-      padding-top: 1rem;
-      border-top: 1px dashed #3a4a6e;
-    }
-
-    input, select, button {
-      background: #0e1628;
-      border: 1px solid #2c3f66;
-      padding: 0.5rem 0.8rem;
-      border-radius: 1.2rem;
+    .nav-btn i { font-size: 1.1rem; }
+    .nav-btn.active {
+      background: linear-gradient(125deg, #1a5d9c, #0e3a66);
       color: white;
-      font-size: 0.9rem;
+      box-shadow: 0 4px 12px #0066ff40;
+      border: 0.5px solid #7bc9ff;
     }
-
-    button {
-      background: #1e3b5c;
-      cursor: pointer;
-      font-weight: 600;
-      transition: 0.1s;
+    .nav-btn:hover:not(.active) {
+      background: #1f2a4e80;
+      color: white;
     }
-
-    button:hover {
-      background: #2b9eff;
-      border-color: #2b9eff;
+    /* page container */
+    .page {
+      display: none;
+      animation: fade 0.25s ease;
     }
-
-    /* progress bars */
-    .progress-section {
-      padding: 1.6rem;
+    .active-page {
+      display: block;
     }
-
-    .progress-label {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 0.4rem;
+    @keyframes fade {
+      from { opacity: 0; transform: translateY(6px);}
+      to { opacity: 1; transform: translateY(0);}
     }
-
-    .bar-bg {
-      background: #1f2a44;
+    h1, h2, h3 {
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+    h1 { font-size: 2rem; background: linear-gradient(135deg,#FFFFFF,#7bc9ff); -webkit-background-clip: text; background-clip: text; color: transparent; display: inline-block;}
+    .glow-text {
+      text-shadow: 0 0 6px #2b9eff80;
+    }
+    /* grid */
+    .grid-2, .grid-3 {
+      display: grid;
+      gap: 1.5rem;
+    }
+    .grid-2 { grid-template-columns: repeat(auto-fit, minmax(300px,1fr)); }
+    .grid-3 { grid-template-columns: repeat(auto-fit, minmax(270px,1fr)); }
+    .card {
+      padding: 1.4rem 1.6rem;
+    }
+    .progress-bar {
+      background: #1e2744;
       border-radius: 40px;
       height: 12px;
       overflow: hidden;
-      margin-bottom: 1rem;
+      margin: 0.5rem 0;
     }
-
-    .bar-fill {
+    .progress-fill {
       width: 0%;
       height: 100%;
       background: linear-gradient(90deg, #2b9eff, #7bc9ff);
       border-radius: 40px;
     }
-
-    .revision-badge {
-      margin-top: 1rem;
-      text-align: center;
-      background: #00a6ff20;
-      border-radius: 1.5rem;
-      padding: 0.5rem;
+    button, .btn {
+      background: #1c3552;
+      border: none;
+      padding: 0.5rem 1.2rem;
+      border-radius: 2rem;
+      color: white;
+      font-weight: 500;
+      cursor: pointer;
+      transition: 0.15s;
     }
-
+    button:hover { background: #2b9eff; transform: scale(0.97);}
+    input, select {
+      background: #0f1629;
+      border: 1px solid #2c406e;
+      padding: 0.6rem 1rem;
+      border-radius: 2rem;
+      color: white;
+      width: 100%;
+      margin: 0.3rem 0;
+    }
+    .task-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #1e2a4270;
+      padding: 0.6rem 1rem;
+      border-radius: 1.5rem;
+      margin: 0.5rem 0;
+    }
+    .badge {
+      background: #2b9eff30;
+      border-radius: 2rem;
+      padding: 0.2rem 0.8rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
     footer {
       text-align: center;
-      margin-top: 2rem;
+      margin-top: 2.5rem;
+      opacity: 0.6;
       font-size: 0.8rem;
-      opacity: 0.7;
     }
-
-    @media (max-width: 750px) {
-      body { padding: 1rem; }
+    @media (max-width: 700px) {
+      .nav-btn span { display: none; }
+      .nav-btn i { margin: 0; font-size: 1.4rem; }
+      .nav-btn { padding: 0.6rem 1rem; }
+    }
+    .week-plan {
+      max-height: 380px;
+      overflow-y: auto;
+    }
+    hr {
+      border-color: #2b9eff30;
+      margin: 1rem 0;
+    }
+    .chart-container {
+      background: #0b1020aa;
+      border-radius: 1.5rem;
+      padding: 1rem;
     }
   </style>
 </head>
 <body>
+<div class="container">
+  <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; margin-bottom: 1rem;">
+    <div><h1><i class="fas fa-brain"></i> CONSCIOUS DISCIPLINE</h1><p style="font-size: 0.85rem;">NEET 2027 · rank maker ecosystem</p></div>
+    <div class="badge" id="liveDate"></div>
+  </div>
 
-<div class="dashboard">
-  <!-- COUNTDOWN CARD -->
-  <div class="glass-card countdown-box">
-    <div class="neet-date">⏳ NEET 2027 · 1st Sunday of May</div>
-    <h2>Countdown to D‑Day</h2>
-    <div class="timer" id="timerContainer">
-      <div class="time-unit"><div class="time-number" id="days">--</div><div>Days</div></div>
-      <div class="time-unit"><div class="time-number" id="hours">--</div><div>Hrs</div></div>
-      <div class="time-unit"><div class="time-number" id="minutes">--</div><div>Mins</div></div>
-      <div class="time-unit"><div class="time-number" id="seconds">--</div><div>Secs</div></div>
+  <!-- navigation 5 pages -->
+  <div class="nav-bar">
+    <button class="nav-btn active" data-page="dashboard"><i class="fas fa-chalkboard-user"></i><span> Dashboard</span></button>
+    <button class="nav-btn" data-page="weekly"><i class="fas fa-calendar-week"></i><span> Weekly Planner</span></button>
+    <button class="nav-btn" data-page="revision"><i class="fas fa-rocket"></i><span> Revision Sprint</span></button>
+    <button class="nav-btn" data-page="progress"><i class="fas fa-chart-line"></i><span> Progress Tracker</span></button>
+    <button class="nav-btn" data-page="rank"><i class="fas fa-medal"></i><span> Rank Lab</span></button>
+  </div>
+
+  <!-- ============================= PAGE 1 : DASHBOARD ========================= -->
+  <div id="dashboard" class="page active-page">
+    <div class="grid-2">
+      <div class="glass-panel card">
+        <h3><i class="fas fa-hourglass-half"></i> NEET 2027 Countdown</h3>
+        <div id="countdownDisplay" style="font-size: 1.8rem; font-weight: 800; margin: 1rem 0;">--d --h --m</div>
+        <div class="progress-bar"><div class="progress-fill" id="yearProgressFill" style="width:0%"></div></div>
+        <p>Target: 1st Sunday May 2027</p>
+      </div>
+      <div class="glass-panel card">
+        <h3><i class="fas fa-bullhorn"></i> Realistic Rank Advice</h3>
+        <p id="motivationTip">✨ Consistency over intensity. 6–7 hours daily with revision → 98%ile possible.</p>
+        <div class="badge" id="rankEstimate">Estimated Rank: --</div>
+        <button id="refreshAdviceBtn" style="margin-top: 12px;">↻ Refresh advice</button>
+      </div>
+      <div class="glass-panel card">
+        <h3><i class="fas fa-tasks"></i> Today's core tasks</h3>
+        <ul id="quickTasksList" style="margin-left: 1.2rem;"></ul>
+        <a href="#" data-nav="weekly" style="color:#7bc9ff; font-size:0.8rem;">→ open weekly planner</a>
+      </div>
+    </div>
+    <div class="grid-2" style="margin-top: 1.5rem;">
+      <div class="glass-panel card">
+        <h3>📊 Weekly snapshot</h3>
+        <div>Tasks done this week: <span id="weekTaskDone">0</span>/<span id="weekTotalTasks">0</span></div>
+        <div class="progress-bar mt-1"><div class="progress-fill" id="weekFillBar"></div></div>
+        <div>Latest test score: <span id="latestTestScoreDash">--</span>/720</div>
+      </div>
+      <div class="glass-panel card">
+        <h3>🧠 Mindset & Strategy</h3>
+        <p>“Real rank makers analyse mistakes. Use the Rank Lab to convert score to rank estimate.”</p>
+        <i class="fas fa-microphone-alt"></i> 3–4 month NCERT Sprint is ready in Revision Sprint tab.
+      </div>
     </div>
   </div>
 
-  <!-- WEEKLY STUDY + TEST TRACKER -->
-  <div class="glass-card weekly-card">
-    <div class="week-header">
-      <h3>📚 This week's target</h3>
-      <button id="resetWeekBtn" style="background:#2c2f3f;">↻ Reset week</button>
+  <!-- ============================= PAGE 2 : WEEKLY PLANNER ========================= -->
+  <div id="weekly" class="page">
+    <div class="glass-panel card" style="margin-bottom: 1.5rem;">
+      <div style="display: flex; justify-content: space-between; flex-wrap: wrap;">
+        <h3><i class="fas fa-list-check"></i> Weekly Revision + Tests (Idea 3)</h3>
+        <button id="resetWeeklyTasksBtn"><i class="fas fa-undo-alt"></i> Reset week</button>
+      </div>
+      <div class="week-plan" id="weeklyTasksContainer"></div>
+      <hr>
+      <div><label>📝 Weekly Test Score (0-720):</label>
+        <input type="number" id="weeklyTestScore" placeholder="e.g., 540" min="0" max="720">
+        <button id="saveWeeklyScoreBtn">Save Score</button>
+        <div id="weeklyScoreFeedback" style="margin-top: 6px;"></div>
+      </div>
     </div>
-    <div id="tasksList"></div>
-
-    <div class="test-score">
-      <label>📊 Weekly test score (out of 720): </label>
-      <input type="number" id="testScore" placeholder="e.g., 580" min="0" max="720" step="1">
-      <button id="saveScoreBtn">Save score</button>
-      <div id="scoreDisplay" style="margin-top: 0.5rem; font-weight: 500;"></div>
+    <div class="grid-2">
+      <div class="glass-panel card">
+        <h4>⚡ Study strategy for rank</h4>
+        <p>✔️ Complete 80% weekly tasks → guaranteed syllabus progress.<br>✔️ Score >600/720 → top 5000 rank.<br>✔️ Analyse each wrong answer.</p>
+      </div>
+      <div class="glass-panel card">
+        <h4>📅 Next week preview</h4>
+        <p>After completing this week, jump to next NCERT chapters.<br>Revision Sprint includes daily micro schedule.</p>
+      </div>
     </div>
+  </div>
 
-    <div class="revision-badge">
-      🧠 <strong>Realistic rank tip:</strong> Complete 80% of weekly tasks → attempt full syllabus mock.
+  <!-- ============================= PAGE 3 : REVISION SPRINT (3-4 months plan) ========================= -->
+  <div id="revision" class="page">
+    <div class="glass-panel card">
+      <h3><i class="fas fa-calendar-alt"></i> 3‑4 Month Realistic Revision Plan – "NCERT Sprint"</h3>
+      <p>Structured for maximum retention. Click on each week to mark as done (auto saves).</p>
+      <div id="sprintWeeksContainer" style="display: flex; flex-direction: column; gap: 0.8rem; max-height: 500px; overflow-y: auto; margin-top: 1rem;"></div>
+      <button id="resetSprintProgress" style="margin-top: 1rem;">⟳ Reset all sprint progress</button>
     </div>
   </div>
 
-  <!-- PROGRESS TRACKER + REVISION PLAN SNIPPET -->
-  <div class="glass-card progress-section">
-    <h3>📈 Your preparation health</h3>
-    <div class="progress-label"><span>✅ Weekly tasks done</span><span id="taskPercent">0%</span></div>
-    <div class="bar-bg"><div class="bar-fill" id="taskFillBar"></div></div>
-
-    <div class="progress-label"><span>📖 Syllabus coverage (est.)</span><span id="syllabusPercent">0%</span></div>
-    <div class="bar-bg"><div class="bar-fill" id="syllabusFillBar"></div></div>
-
-    <div style="margin-top: 1.5rem;">
-      <details>
-        <summary style="cursor: pointer; font-weight: bold;">⚡ 3‑4 month NCERT Sprint (Idea 4)</summary>
-        <div style="margin-top: 0.8rem; font-size: 0.9rem;">
-          <p>✔️ Months 1-2: NCERT Line‑by‑line (Phy/Chem/Bio) + PYQ chapterwise.<br>
-          ✔️ Month 3: Full syllabus mocks + weak topic revision.<br>
-          ✔️ Last 15 days: Formula + diagram marathons.</p>
-          <p style="color:#7bc9ff;">👉 We'll build a fully interactive daily sprint calendar in Session 2.</p>
-        </div>
-      </details>
+  <!-- ============================= PAGE 4 : PROGRESS TRACKER ========================= -->
+  <div id="progress" class="page">
+    <div class="grid-2">
+      <div class="glass-panel card">
+        <h3><i class="fas fa-chart-simple"></i> Test score trend (last 6 weeks)</h3>
+        <canvas id="scoreTrendChart" width="400" height="250" style="max-height: 250px; width:100%"></canvas>
+      </div>
+      <div class="glass-panel card">
+        <h3>📖 Syllabus coverage estimation</h3>
+        <div class="progress-label"><span>Coverage %</span><span id="syllabusPercentText">0%</span></div>
+        <div class="progress-bar"><div class="progress-fill" id="syllabusChartFill" style="width:0%"></div></div>
+        <canvas id="syllabusPieChart" width="200" height="200" style="max-height: 170px; margin-top: 1rem;"></canvas>
+      </div>
+    </div>
+    <div class="glass-panel card" style="margin-top: 1rem;">
+      <h3>🏆 Mastery & consistency metrics</h3>
+      <div>Weekly tasks completion rate: <span id="consistencyRate">0%</span></div>
+      <div>Current streak (weeks with >70% tasks): <span id="streakCount">0</span> weeks</div>
+      <button id="resetAllDataBtn" style="background:#b91c1c;">⚠️ Reset all app data</button>
     </div>
   </div>
+
+  <!-- ============================= PAGE 5 : RANK LAB ========================= -->
+  <div id="rank" class="page">
+    <div class="glass-panel card">
+      <h3><i class="fas fa-chart-line"></i> Rank Estimator & Actionable Plan</h3>
+      <p>Enter your expected score in a full mock (out of 720) → get realistic rank & advice.</p>
+      <input type="number" id="mockScoreInput" placeholder="Mock test score (0-720)" min="0" max="720">
+      <button id="estimateRankBtn">Estimate my rank</button>
+      <div id="rankResult" style="margin-top: 1rem; font-weight: bold; background:#0f1424; border-radius: 2rem; padding: 1rem;"></div>
+    </div>
+    <div class="grid-2" style="margin-top: 1rem;">
+      <div class="glass-panel card">
+        <h4>🎯 Rank milestones</h4>
+        <ul style="margin-left: 1rem;">
+          <li>650+ → AIR <500 (extraordinary)</li>
+          <li>600-649 → AIR 500-3000</li>
+          <li>550-599 → AIR 3000-12000</li>
+          <li>500-549 → AIR 12000-35000</li>
+        </ul>
+      </div>
+      <div class="glass-panel card">
+        <h4>💡 Suggestions based on your scores</h4>
+        <p id="suggestionBox">Save weekly test scores to get personalised tips.</p>
+      </div>
+    </div>
+  </div>
+  <footer>⚡ CONSCIOUS DISCIPLINE • Data persists locally • Build for NEET 2027 rank makers</footer>
 </div>
 
-<footer>🔥 Meditate NEET 2027 · Data saves automatically in your browser</footer>
-
 <script>
-  // ------------------------------
-  // 1. NEET 2027 COUNTDOWN (most accurate)
-  // ------------------------------
-  function getNeet2027Date() {
-    // NEET is usually 1st Sunday of May
-    const year = 2027;
-    const mayFirst = new Date(year, 4, 1); // month 4 = May
-    const firstSunday = new Date(mayFirst);
-    firstSunday.setDate(mayFirst.getDate() + ((7 - mayFirst.getDay()) % 7));
-    return firstSunday;
-  }
+  // ----------------------------- GLOBAL STATE & INITIALIZATION -------------------
+  // tasks for current week (static but can be reset)
+  const defaultTasks = [
+    "Physics: 2 chapters + 40 numericals (NCERT + HCV)", "Chemistry: Inorganic+Organic revision + 30 MCQs", 
+    "Biology: 4 NCERT units + 100 PYQs", "Previous week weak topics revision (2 hrs)", "One full mock (subjectwise)",
+    "Analyze mistakes & make error log", "Daily formula revision (30 min)"
+  ];
+  let weeklyTasks = [];
+  let weeklyScores = []; // array of {date: weekStart, score}
+  let sprintWeeks = [];   // each {weekIndex, completed, title, description}
+  let syllabusPercent = 15; // dynamic
 
+  // Helper: load / save localStorage
+  function loadData() {
+    const storedTasks = localStorage.getItem("CD_tasks");
+    if(storedTasks) weeklyTasks = JSON.parse(storedTasks);
+    else weeklyTasks = defaultTasks.map(t => ({text: t, completed: false}));
+    
+    const storedScores = localStorage.getItem("CD_scores");
+    if(storedScores) weeklyScores = JSON.parse(storedScores);
+    else weeklyScores = [];
+    
+    const storedSprint = localStorage.getItem("CD_sprint");
+    if(storedSprint) sprintWeeks = JSON.parse(storedSprint);
+    else initSprintWeeks();
+    
+    const storedSyllabus = localStorage.getItem("CD_syllabus");
+    if(storedSyllabus) syllabusPercent = parseInt(storedSyllabus);
+    else syllabusPercent = 18;
+  }
+  function initSprintWeeks() {
+    sprintWeeks = [];
+    const weeksPlan = [
+      "Week 1-2: NCERT Physics (Mechanics + Kinematics) + Bio Unit 1-2",
+      "Week 3-4: Chemistry (Mole Concept + Thermochem) + Bio Human Physiology",
+      "Week 5-6: Physics (Optics + Waves) + Inorganic Periodic table",
+      "Week 7-8: Organic Chemistry (GOC, Hydrocarbons) + Bio Genetics",
+      "Week 9-10: Full syllabus mocks + weak area revival",
+      "Week 11-12: NCERT Exemplar + Previous Year final sprint + Diagrams"
+    ];
+    for(let i=0; i<weeksPlan.length; i++) {
+      sprintWeeks.push({ weekIndex: i, title: `Phase ${i+1}`, description: weeksPlan[i], completed: false });
+    }
+  }
+  function saveAll() {
+    localStorage.setItem("CD_tasks", JSON.stringify(weeklyTasks));
+    localStorage.setItem("CD_scores", JSON.stringify(weeklyScores));
+    localStorage.setItem("CD_sprint", JSON.stringify(sprintWeeks));
+    localStorage.setItem("CD_syllabus", syllabusPercent);
+  }
+  
+  // Countdown logic
+  function getNeet2027Date() {
+    let date = new Date(2027, 4, 1); // May 1
+    while(date.getDay() !== 0) date.setDate(date.getDate()+1);
+    return date;
+  }
   function updateCountdown() {
     const target = getNeet2027Date();
     const now = new Date();
     const diff = target - now;
-
-    if (diff <= 0) {
-      document.getElementById('days').innerText = '0';
-      document.getElementById('hours').innerText = '0';
-      document.getElementById('minutes').innerText = '0';
-      document.getElementById('seconds').innerText = '0';
-      return;
-    }
-
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((diff % (86400000)) / (3600000));
-    const minutes = Math.floor((diff % 3600000) / 60000);
-    const seconds = Math.floor((diff % 60000) / 1000);
-
-    document.getElementById('days').innerText = days;
-    document.getElementById('hours').innerText = hours;
-    document.getElementById('minutes').innerText = minutes;
-    document.getElementById('seconds').innerText = seconds;
+    if(diff<=0) { document.getElementById("countdownDisplay").innerText = "0d 0h 0m"; return; }
+    const days = Math.floor(diff/(1000*60*60*24));
+    const hours = Math.floor((diff/(1000*60*60))%24);
+    const mins = Math.floor((diff/(1000*60))%60);
+    document.getElementById("countdownDisplay").innerText = `${days}d ${hours}h ${mins}m`;
+    // year progress
+    const startYear = new Date(2026, 4, 1);
+    const total = target - startYear;
+    const elapsed = now - startYear;
+    let percent = Math.min(100, Math.max(0, (elapsed/total)*100));
+    document.getElementById("yearProgressFill").style.width = percent+"%";
   }
-
-  // update every second
-  setInterval(updateCountdown, 1000);
-  updateCountdown();
-
-  // ------------------------------
-  // 2. WEEKLY REVISION + TASKS (Idea 3)
-  // ------------------------------
-  const defaultTasks = [
-    "Physics: 2 chapters + 40 numericals",
-    "Chemistry: 1 organic + 1 inorganic",
-    "Biology: 4 NCERT units (read + mcq)",
-    "Revision of last week's weak topics",
-    "1 full subject mock (alternate days)"
-  ];
-
-  // Load or initialize tasks state
-  let tasks = [];
-  function loadTasks() {
-    const stored = localStorage.getItem("neet_tasks");
-    if (stored) {
-      tasks = JSON.parse(stored);
-    } else {
-      tasks = defaultTasks.map(text => ({ text, completed: false }));
-      saveTasks();
-    }
-    renderTasks();
-  }
-
-  function saveTasks() {
-    localStorage.setItem("neet_tasks", JSON.stringify(tasks));
-    updateProgress();
-  }
-
-  function renderTasks() {
-    const container = document.getElementById("tasksList");
+  
+  // RENDER WEEKLY TASKS
+  function renderWeeklyTasks() {
+    const container = document.getElementById("weeklyTasksContainer");
+    if(!container) return;
     container.innerHTML = "";
-    tasks.forEach((task, idx) => {
-      const taskDiv = document.createElement("div");
-      taskDiv.className = "task-item";
-      const check = document.createElement("input");
-      check.type = "checkbox";
-      check.checked = task.completed;
-      check.addEventListener("change", (e) => {
-        tasks[idx].completed = e.target.checked;
-        saveTasks();
-        renderTasks();  // re-render to keep fresh
+    weeklyTasks.forEach((task, idx) => {
+      const div = document.createElement("div");
+      div.className = "task-item";
+      const cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.checked = task.completed;
+      cb.addEventListener("change", (e) => {
+        weeklyTasks[idx].completed = e.target.checked;
+        saveAll();
+        renderWeeklyTasks();
+        updateDashboardSnapshots();
+        updateProgressPageMetrics();
       });
       const span = document.createElement("span");
-      span.className = "task-text";
       span.innerText = task.text;
-      taskDiv.appendChild(check);
-      taskDiv.appendChild(span);
-      container.appendChild(taskDiv);
+      div.appendChild(cb); div.appendChild(span);
+      container.appendChild(div);
     });
+    document.getElementById("weekTotalTasks").innerText = weeklyTasks.length;
+    const done = weeklyTasks.filter(t=>t.completed).length;
+    document.getElementById("weekTaskDone").innerText = done;
+    const percentDone = weeklyTasks.length ? (done/weeklyTasks.length)*100 : 0;
+    if(document.getElementById("weekFillBar")) document.getElementById("weekFillBar").style.width = percentDone+"%";
+    updateDashboardSnapshots();
   }
-
-  function updateProgress() {
-    const total = tasks.length;
-    const completed = tasks.filter(t => t.completed).length;
-    const percent = total === 0 ? 0 : Math.round((completed / total) * 100);
-    document.getElementById("taskPercent").innerText = `${percent}%`;
-    document.getElementById("taskFillBar").style.width = `${percent}%`;
-
-    // Estimate syllabus coverage based on weekly consistency + stored syllabus
-    let syllabus = localStorage.getItem("neet_syllabus_pct");
-    if (!syllabus) syllabus = "15"; // start at 15% baseline
-    document.getElementById("syllabusPercent").innerText = `${syllabus}%`;
-    document.getElementById("syllabusFillBar").style.width = `${syllabus}%`;
-  }
-
-  // Reset week (clear completed checkboxes)
-  document.getElementById("resetWeekBtn").addEventListener("click", () => {
-    tasks = tasks.map(t => ({ ...t, completed: false }));
-    saveTasks();
-    renderTasks();
-  });
-
-  // test score logic
-  let currentScore = null;
-  function loadTestScore() {
-    const saved = localStorage.getItem("neet_last_score");
-    if (saved) {
-      currentScore = saved;
-      document.getElementById("scoreDisplay").innerText = `📈 Last score: ${currentScore}/720`;
-    } else {
-      document.getElementById("scoreDisplay").innerText = "No score saved yet";
+  
+  function updateDashboardSnapshots() {
+    const done = weeklyTasks.filter(t=>t.completed).length;
+    if(document.getElementById("weekTaskDone")) document.getElementById("weekTaskDone").innerText = done;
+    const latest = weeklyScores.length? weeklyScores[weeklyScores.length-1].score : "--";
+    document.getElementById("latestTestScoreDash").innerText = latest;
+    const percDone = weeklyTasks.length ? (done/weeklyTasks.length)*100 : 0;
+    if(document.getElementById("weekFillBar")) document.getElementById("weekFillBar").style.width = percDone+"%";
+    // quick tasks list dashboard
+    const quickList = document.getElementById("quickTasksList");
+    if(quickList) {
+      quickList.innerHTML = "";
+      weeklyTasks.slice(0,3).forEach(t => {
+        let li = document.createElement("li");
+        li.innerHTML = t.completed ? `<s>${t.text}</s>` : t.text;
+        quickList.appendChild(li);
+      });
+    }
+    // update syllabus estimate based on task completion + scores average
+    let avgScore = 0;
+    if(weeklyScores.length){
+      let sum=0; weeklyScores.forEach(s=>sum+=s.score); avgScore = sum/weeklyScores.length;
+    }
+    let newSyl = Math.min(95, Math.floor((done/weeklyTasks.length)*30) + Math.floor(avgScore/25) + 15);
+    syllabusPercent = Math.max(12, Math.min(92, newSyl));
+    localStorage.setItem("CD_syllabus", syllabusPercent);
+    if(document.getElementById("syllabusPercentText")) document.getElementById("syllabusPercentText").innerText = syllabusPercent+"%";
+    if(document.getElementById("syllabusChartFill")) document.getElementById("syllabusChartFill").style.width = syllabusPercent+"%";
+    updateConsistencyMetrics();
+    if(window.syllabusPieChart && typeof window.syllabusPieChart.update === 'function') {
+      window.syllabusPieChart.data.datasets[0].data = [syllabusPercent, 100-syllabusPercent];
+      window.syllabusPieChart.update();
     }
   }
-
-  document.getElementById("saveScoreBtn").addEventListener("click", () => {
-    const input = document.getElementById("testScore").value;
-    if (input === "") return;
-    let score = parseInt(input);
-    if (isNaN(score)) return;
-    if (score < 0) score = 0;
-    if (score > 720) score = 720;
-    localStorage.setItem("neet_last_score", score);
-    loadTestScore();
-
-    // BONUS: adjust syllabus coverage based on score trend (realistic estimate)
-    let oldSyllabus = parseInt(localStorage.getItem("neet_syllabus_pct") || "15");
-    let newSyllabus = Math.min(95, Math.max(15, Math.floor((score / 720) * 80) + 10));
-    localStorage.setItem("neet_syllabus_pct", newSyllabus);
-    updateProgress();
-  });
-
-  // manual syllabus update from user? we also let user edit? optional, but for now accurate.
-  function initSyllabusIfMissing() {
-    if (!localStorage.getItem("neet_syllabus_pct")) {
-      localStorage.setItem("neet_syllabus_pct", "15");
-    }
-    updateProgress();
+  
+  // Save weekly score
+  function addWeeklyScore(score) {
+    const now = new Date();
+    const weekStart = new Date(now.setDate(now.getDate()-now.getDay()));
+    weeklyScores.push({ date: weekStart.toISOString().slice(0,10), score: score });
+    if(weeklyScores.length > 8) weeklyScores.shift();
+    saveAll();
+    updateScoreChart();
+    updateDashboardSnapshots();
+    document.getElementById("weeklyScoreFeedback").innerHTML = "✅ Score saved! Trend updated.";
+    updateRankLabSuggestion();
   }
-
-  loadTasks();
-  loadTestScore();
-  initSyllabusIfMissing();
-</script>
-</body>
-</html>
+  
+  // chart score trend
+  let scoreChart = null;
+  function updateScoreChart() {
+    const ctx = document.getElementById("scoreTrendChart")?.getContext("2d");
+    if(!ctx) return;
+    const labels = weeklyScores.map((s,i)=>`W${i+1}`);
+    const data = weeklyScores.map(s=>s.score);
+    if(scoreChart) scoreChart.destroy();
+    scoreChart = new Chart(ctx, {
+      type: 'line', data: { labels, datasets: [{ label:'Test Score /720', data, borderColor:'
