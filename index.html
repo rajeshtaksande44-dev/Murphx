@@ -1,11 +1,10 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Murphx Prep | Command Center</title>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <title>Murphx Prep · 和 | Zen Study Hub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&family=Noto+Serif+JP:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1"></script>
   <style>
@@ -16,17 +15,16 @@
     }
 
     body {
-      background: radial-gradient(ellipse at 20% 30%, #0a0f1a, #020408);
-      font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
-      color: #eef5ff;
+      background: #f4f0ea;  /* warm rice paper */
+      font-family: 'Inter', 'Noto Serif JP', sans-serif;
+      color: #2c2c2c;
       line-height: 1.5;
-      padding: 1.5rem;
+      padding: 2rem 1.5rem;
       min-height: 100vh;
       position: relative;
-      overflow-x: hidden;
     }
 
-    /* animated background noise */
+    /* subtle watercolor gradient background */
     body::before {
       content: '';
       position: fixed;
@@ -34,205 +32,156 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background-image: repeating-linear-gradient(0deg, rgba(0,255,255,0.02) 0px, rgba(0,255,255,0.02) 2px, transparent 2px, transparent 6px);
+      background: radial-gradient(circle at 70% 20%, rgba(235, 215, 195, 0.4) 0%, rgba(245, 240, 235, 0) 70%),
+                  radial-gradient(circle at 20% 80%, rgba(200, 180, 160, 0.2) 0%, transparent 80%);
       pointer-events: none;
       z-index: -1;
     }
 
-    /* floating neon orb */
+    /* very light cherry blossom petal (static) */
     body::after {
-      content: '';
+      content: '🌸';
       position: fixed;
-      top: -30%;
-      left: -20%;
-      width: 80%;
-      height: 80%;
-      background: radial-gradient(circle, rgba(249,115,22,0.15), rgba(59,130,246,0) 70%);
-      filter: blur(80px);
-      animation: floatOrb 12s infinite alternate ease-in-out;
-      z-index: -1;
+      bottom: 20px;
+      left: 20px;
+      font-size: 60px;
+      opacity: 0.1;
       pointer-events: none;
-    }
-
-    @keyframes floatOrb {
-      0% { transform: translate(0, 0) scale(1); opacity: 0.3; }
-      100% { transform: translate(5%, 8%) scale(1.2); opacity: 0.6; }
+      font-family: serif;
     }
 
     .container {
-      max-width: 1400px;
+      max-width: 1280px;
       margin: 0 auto;
       position: relative;
       z-index: 1;
     }
 
-    /* ----- CYBER NAVIGATION ----- */
+    /* ----- minimal navigation (zen) ----- */
     .nav {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0.6rem 1.8rem;
-      background: rgba(8, 18, 28, 0.75);
-      backdrop-filter: blur(16px);
-      border-radius: 80px;
-      margin-bottom: 2rem;
-      border: 1px solid rgba(0, 255, 255, 0.3);
-      box-shadow: 0 0 15px rgba(0, 255, 255, 0.1);
-      transition: all 0.3s;
-    }
-    .nav:hover {
-      border-color: #f97316;
-      box-shadow: 0 0 20px rgba(249,115,22,0.3);
+      padding: 0.5rem 0;
+      margin-bottom: 2.5rem;
+      border-bottom: 1px solid #e2dcd5;
     }
     .logo {
-      font-size: 1.7rem;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      background: linear-gradient(135deg, #facc15, #f97316, #06b6d4);
-      background-clip: text;
-      -webkit-background-clip: text;
-      color: transparent;
-      animation: glitch 3s infinite;
+      font-size: 1.5rem;
+      font-weight: 500;
+      font-family: 'Noto Serif JP', serif;
+      letter-spacing: 1px;
+      color: #5a4a3a;
     }
-    @keyframes glitch {
-      0%, 100% { text-shadow: none; }
-      95% { text-shadow: -2px 0 #f97316, 2px 0 #06b6d4; }
+    .logo i {
+      color: #b87c5e;
+      margin-right: 6px;
     }
     .nav-links a {
-      color: #ccddf8;
+      color: #6a5a4a;
       text-decoration: none;
-      margin: 0 1rem;
-      font-weight: 500;
+      margin: 0 1.2rem;
+      font-weight: 450;
+      font-size: 0.9rem;
       transition: 0.2s;
-      position: relative;
-    }
-    .nav-links a::after {
-      content: '';
-      position: absolute;
-      bottom: -5px;
-      left: 0;
-      width: 0%;
-      height: 2px;
-      background: linear-gradient(90deg, #f97316, #facc15);
-      transition: width 0.2s;
-    }
-    .nav-links a:hover::after, .nav-links a.active::after {
-      width: 100%;
+      border-bottom: 1px solid transparent;
     }
     .nav-links a:hover, .nav-links a.active {
-      color: #facc15;
-      text-shadow: 0 0 5px #f97316;
+      border-bottom-color: #b87c5e;
+      color: #3e2e22;
     }
     .xp-pill {
-      background: #0f172a;
-      padding: 0.4rem 1.2rem;
+      background: #f0ebe5;
+      padding: 0.3rem 1rem;
       border-radius: 40px;
-      font-weight: 800;
-      border: 1px solid #facc15;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      backdrop-filter: blur(4px);
-      animation: pulseBorder 2s infinite;
-    }
-    @keyframes pulseBorder {
-      0% { border-color: #facc15; box-shadow: 0 0 0 0 rgba(250,204,21,0.3); }
-      70% { border-color: #f97316; box-shadow: 0 0 0 6px rgba(249,115,22,0); }
-      100% { border-color: #facc15; box-shadow: 0 0 0 0 rgba(250,204,21,0); }
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #5a4a3a;
+      border: 1px solid #e0d6ce;
     }
 
-    /* ----- GLASS CARDS ----- */
-    .card, .glass-panel {
-      background: rgba(10, 20, 35, 0.65);
-      backdrop-filter: blur(12px);
-      border-radius: 2rem;
+    /* card – clean, soft shadow, rounded but subtle */
+    .card {
+      background: rgba(255, 250, 245, 0.85);
+      backdrop-filter: blur(2px);
+      border-radius: 24px;
       padding: 1.6rem;
-      border: 1px solid rgba(6, 182, 212, 0.3);
-      transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-      position: relative;
-      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02), 0 1px 2px rgba(0, 0, 0, 0.03);
+      border: 1px solid #e9e0d8;
+      transition: all 0.2s ease;
     }
-    .card::before, .glass-panel::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(249,115,22,0.1), transparent);
-      transition: left 0.5s;
-      pointer-events: none;
+    .card:hover {
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+      transform: translateY(-2px);
     }
-    .card:hover::before, .glass-panel:hover::before {
-      left: 100%;
-    }
-    .card:hover, .glass-panel:hover {
-      transform: translateY(-5px) scale(1.01);
-      border-color: #f97316;
-      box-shadow: 0 20px 35px -12px rgba(0,0,0,0.5), 0 0 0 1px rgba(249,115,22,0.3);
-    }
-    .card-title, .panel-title {
-      font-size: 1.5rem;
-      font-weight: 700;
-      margin-bottom: 1.2rem;
+    .card-title {
+      font-size: 1.4rem;
+      font-weight: 500;
+      font-family: 'Noto Serif JP', serif;
+      margin-bottom: 1rem;
       display: flex;
       align-items: center;
       gap: 0.6rem;
-      background: linear-gradient(135deg, #fff, #facc15);
-      background-clip: text;
-      -webkit-background-clip: text;
-      color: transparent;
-      border-left: 4px solid #f97316;
-      padding-left: 1rem;
+      border-left: 3px solid #b87c5e;
+      padding-left: 0.8rem;
+      color: #4a3a2a;
+    }
+    .card-title i {
+      color: #b87c5e;
+      font-size: 1.2rem;
     }
 
-    /* ----- GRID ----- */
+    /* grid */
     .dashboard-grid {
       display: grid;
       grid-template-columns: 1fr 0.9fr;
-      gap: 1.8rem;
+      gap: 2rem;
     }
 
-    /* ----- TIMETABLE ----- */
+    /* timetable – clean lines */
     .time-row {
       display: flex;
       justify-content: space-between;
-      padding: 0.8rem 0;
-      border-bottom: 1px dashed rgba(6, 182, 212, 0.2);
-      transition: all 0.2s;
-    }
-    .time-row:hover {
-      background: rgba(249,115,22,0.1);
-      border-radius: 1rem;
-      padding-left: 0.8rem;
-      border-bottom-style: solid;
+      padding: 0.7rem 0;
+      border-bottom: 1px solid #f0eae4;
+      transition: 0.1s;
     }
     .time-badge {
-      font-weight: 700;
-      background: #0f172a;
-      padding: 0.2rem 0.8rem;
+      font-weight: 500;
+      background: #f6f2ed;
+      padding: 0.1rem 0.7rem;
       border-radius: 30px;
-      font-size: 0.8rem;
-      border: 1px solid #06b6d4;
+      font-size: 0.75rem;
+      color: #6a5a4a;
     }
     .highlight .time-badge {
-      background: linear-gradient(145deg, #f97316, #ea580c);
-      border-color: #facc15;
-      color: #020408;
+      background: #e8ddd2;
+      color: #b87c5e;
+      font-weight: 600;
     }
     .activity {
-      font-weight: 500;
-    }
-    .motivation-card {
-      background: linear-gradient(120deg, #0f172a, #081020);
-      border-radius: 1rem;
-      padding: 1rem;
-      margin-top: 1rem;
-      font-style: italic;
-      border-left: 5px solid #f97316;
+      font-weight: 400;
+      color: #4a3e34;
     }
 
-    /* ----- STATS & XP RING ----- */
+    /* stats + ring (soft) */
+    .radial-container {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      margin: 1rem 0;
+    }
+    .level-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(245, 240, 235, 0.8);
+      padding: 0.2rem 0.6rem;
+      border-radius: 40px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
     .stat-row {
       display: flex;
       justify-content: space-between;
@@ -240,118 +189,98 @@
       margin: 1.2rem 0;
     }
     .stat-box {
-      background: rgba(15, 25, 45, 0.8);
-      backdrop-filter: blur(4px);
+      background: #faf7f3;
       flex: 1;
       padding: 0.6rem;
-      border-radius: 1.2rem;
+      border-radius: 1rem;
       text-align: center;
-      border: 1px solid rgba(6,182,212,0.3);
-      transition: 0.2s;
-    }
-    .stat-box:hover {
-      border-color: #f97316;
-      transform: translateY(-2px);
+      border: 1px solid #ece3db;
     }
     .stat-number {
-      font-size: 1.6rem;
-      font-weight: 800;
+      font-size: 1.5rem;
+      font-weight: 600;
       display: block;
-      line-height: 1.2;
-      background: linear-gradient(135deg, #facc15, #fff);
-      background-clip: text;
-      -webkit-background-clip: text;
-      color: transparent;
-    }
-    .radial-container {
-      position: relative;
-      display: flex;
-      justify-content: center;
-      margin: 0.5rem 0 1rem;
-    }
-    .level-text {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: #020408cc;
-      backdrop-filter: blur(4px);
-      padding: 0.2rem 0.8rem;
-      border-radius: 60px;
-      font-weight: 800;
-      font-size: 1rem;
-      border: 1px solid #facc15;
+      color: #b87c5e;
     }
 
-    /* ----- 7-DAY GAUNTLET ----- */
+    /* 7‑day gauntlet – simple, inspired by Zen garden stones */
     .streak-grid {
       display: flex;
-      gap: 0.8rem;
+      gap: 0.6rem;
       flex-wrap: wrap;
       justify-content: center;
       margin: 1rem 0;
     }
     .day-card {
-      background: #0f172a;
-      border-radius: 1.2rem;
+      background: #f5f0ea;
+      border-radius: 1rem;
       width: 70px;
       text-align: center;
       padding: 0.6rem 0;
       cursor: pointer;
-      transition: all 0.2s cubic-bezier(0.18, 0.89, 0.32, 1.28);
-      border: 1px solid #334155;
+      transition: all 0.2s;
+      border: 1px solid #e2d8d0;
+      color: #5a4a3a;
     }
     .day-card.completed {
-      background: linear-gradient(145deg, #f97316, #ea580c);
-      border-color: #facc15;
-      transform: scale(1.05);
-      box-shadow: 0 0 15px #f97316;
+      background: #e8ddd2;
+      border-color: #b87c5e;
+      color: #4a2e1e;
+      transform: scale(0.98);
     }
     .day-number {
-      font-weight: 800;
-      font-size: 1.2rem;
+      font-weight: 600;
+      font-size: 1.1rem;
     }
     .progress-bar-bg {
-      background: #0f172a;
-      height: 8px;
-      border-radius: 20px;
+      background: #ede6df;
+      height: 6px;
+      border-radius: 10px;
       margin: 0.8rem 0;
-      overflow: hidden;
     }
     .progress-fill {
       height: 100%;
-      background: linear-gradient(90deg, #facc15, #f97316, #06b6d4);
-      border-radius: 20px;
+      background: #b87c5e;
+      border-radius: 10px;
       width: 0%;
-      transition: width 0.4s cubic-bezier(0.22, 0.97, 0.36, 1.1);
+      transition: width 0.3s;
     }
 
-    /* ----- BUTTONS ----- */
-    .btn-neon {
-      background: linear-gradient(90deg, #f97316, #ea580c);
+    /* buttons – soft earthy */
+    .btn-primary {
+      background: #e8ddd2;
       border: none;
-      padding: 0.6rem 1.2rem;
-      border-radius: 60px;
-      font-weight: 800;
+      padding: 0.5rem 1rem;
+      border-radius: 40px;
+      font-weight: 500;
       cursor: pointer;
       transition: 0.2s;
       width: 100%;
-      color: #020408;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      color: #4a3a2a;
+      font-family: inherit;
+      margin-top: 0.8rem;
     }
-    .btn-neon:hover {
-      transform: scale(0.97);
-      box-shadow: 0 0 20px #f97316, 0 0 5px #facc15;
+    .btn-primary:hover {
+      background: #dccfc4;
+      transform: scale(0.98);
     }
     .btn-secondary {
-      background: #1e2a3a;
-      color: #eef5ff;
-      box-shadow: none;
+      background: #f0ebe5;
+      color: #6a5a4a;
     }
 
-    /* ----- RESPONSIVE ----- */
-    @media (max-width: 900px) {
+    .motivation-card {
+      background: #faf7f3;
+      border-radius: 1rem;
+      padding: 0.8rem;
+      margin-top: 1rem;
+      font-style: normal;
+      border-left: 3px solid #b87c5e;
+      font-size: 0.9rem;
+    }
+
+    /* responsive */
+    @media (max-width: 800px) {
       .dashboard-grid {
         grid-template-columns: 1fr;
       }
@@ -360,11 +289,7 @@
       }
       .nav {
         flex-direction: column;
-        gap: 0.8rem;
-        border-radius: 2rem;
-      }
-      .day-card {
-        width: 60px;
+        gap: 0.6rem;
       }
     }
   </style>
@@ -372,99 +297,96 @@
 <body>
 <div class="container">
   <nav class="nav">
-    <div class="logo"><i class="fas fa-bolt"></i> MURPHX<span style="color:#5a7c9c;">/PREP</span></div>
+    <div class="logo"><i class="fas fa-mountain"></i> 無常・MURPHX</div>
     <div class="nav-links">
-      <a href="#" class="active"><i class="fas fa-chart-line"></i> Hub</a>
-      <a href="#"><i class="fas fa-scroll"></i> Missions</a>
-      <a href="#"><i class="fas fa-flask"></i> Concept Lab</a>
+      <a href="#" class="active">日課</a>
+      <a href="#">任務</a>
+      <a href="#">研究録</a>
     </div>
-    <div class="xp-pill"><i class="fas fa-star"></i> <span id="headerXP">0</span> XP</div>
+    <div class="xp-pill"><i class="fas fa-leaf"></i> <span id="headerXP">0</span> 功</div>
   </nav>
 
   <div class="dashboard-grid">
-    <!-- LEFT: Timetable -->
+    <!-- left column: timetable (daily battle plan) -->
     <div class="card">
-      <div class="card-title"><i class="fas fa-clock"></i> Daily Battle Plan</div>
+      <div class="card-title"><i class="fas fa-clock"></i> 日々の設計</div>
       <div class="timetable">
-        <div class="time-row"><span class="time-badge">🌅 05:00 – 06:00</span><span class="activity">Exercise & fresh up</span></div>
-        <div class="time-row"><span class="time-badge">06:00 – 07:30</span><span class="activity">Bath + routine</span></div>
-        <div class="time-row highlight"><span class="time-badge">🔥 07:30 – 10:30</span><span class="activity"><strong>PHYSICS CORE</strong> – 1h concept + 2h problems</span></div>
-        <div class="time-row"><span class="time-badge">☕ 10:30 – 11:00</span><span class="activity">Break – no screens</span></div>
-        <div class="time-row"><span class="time-badge">🧪 11:00 – 14:00</span><span class="activity">Chemistry + 40 Qs + NCERT</span></div>
-        <div class="time-row"><span class="time-badge">🍚 14:00 – 15:00</span><span class="activity">Lunch + power nap</span></div>
-        <div class="time-row"><span class="time-badge">⚙️ 15:00 – 17:00</span><span class="activity">PYQs / Modules (only problems)</span></div>
-        <div class="time-row"><span class="time-badge">🌿 17:30 – 19:30</span><span class="activity">Biology NCERT – 2 chapters</span></div>
-        <div class="time-row"><span class="time-badge">📘 20:00 – 22:00</span><span class="activity">Night reinforcement + error log</span></div>
-        <div class="time-row"><span class="time-badge">🌙 23:00</span><span class="activity">Sleep (6h minimum)</span></div>
+        <div class="time-row"><span class="time-badge">05:00 – 06:00</span><span class="activity">朝稽古・体を整える</span></div>
+        <div class="time-row"><span class="time-badge">06:00 – 07:30</span><span class="activity">身支度・静かな準備</span></div>
+        <div class="time-row highlight"><span class="time-badge">07:30 – 10:30</span><span class="activity"><strong>物理・核心</strong>  – 概念1h + 問題2h</span></div>
+        <div class="time-row"><span class="time-badge">10:30 – 11:00</span><span class="activity">休息・無心</span></div>
+        <div class="time-row"><span class="time-badge">11:00 – 14:00</span><span class="activity">化学 – 40問 + NCERT</span></div>
+        <div class="time-row"><span class="time-badge">14:00 – 15:00</span><span class="activity">昼食・小憩</span></div>
+        <div class="time-row"><span class="time-badge">15:00 – 17:00</span><span class="activity">PYQs・応用問題のみ</span></div>
+        <div class="time-row"><span class="time-badge">17:30 – 19:30</span><span class="activity">生物学 – 2章 精読</span></div>
+        <div class="time-row"><span class="time-badge">20:00 – 22:00</span><span class="activity">夜の復習・過ちの記録</span></div>
+        <div class="time-row"><span class="time-badge">23:00</span><span class="activity">睡眠・再生</span></div>
       </div>
-      <div class="motivation-card"><i class="fas fa-fire"></i> No Zero Days – even 2h counts. Progress > perfection.</div>
+      <div class="motivation-card"><i class="fas fa-feather-alt"></i> ゼロデイを許さず – たとえ2時間でも進む。</div>
     </div>
 
-    <!-- RIGHT: XP + 7-Day Gauntlet -->
+    <!-- right column: stats + 7‑day gauntlet -->
     <div class="card">
-      <div class="card-title"><i class="fas fa-chart-line"></i> Ascension Tracker</div>
+      <div class="card-title"><i class="fas fa-chart-line"></i> 成長の軌跡</div>
       <div class="radial-container">
         <canvas id="xpRingCanvas" width="160" height="160"></canvas>
-        <div class="level-text" id="levelLabel">Lv.1</div>
+        <div class="level-text" id="levelLabel">初級</div>
       </div>
       <div class="stat-row">
-        <div class="stat-box"><i class="fas fa-calendar-alt"></i><span class="stat-number" id="streakCount">0</span><span>day streak</span></div>
-        <div class="stat-box"><i class="fas fa-dumbbell"></i><span class="stat-number" id="physicsStreak">0</span><span>physics days</span></div>
-        <div class="stat-box"><i class="fas fa-gem"></i><span class="stat-number" id="totalXPnum">0</span><span>total XP</span></div>
+        <div class="stat-box"><i class="fas fa-calendar-alt"></i><span class="stat-number" id="streakCount">0</span><span>連続日</span></div>
+        <div class="stat-box"><i class="fas fa-dumbbell"></i><span class="stat-number" id="physicsStreak">0</span><span>物理の日</span></div>
+        <div class="stat-box"><i class="fas fa-gem"></i><span class="stat-number" id="totalXPnum">0</span><span>功績</span></div>
       </div>
       <div style="margin-top: 0.5rem;">
-        <strong><i class="fas fa-chess-queen"></i> 7‑Day Gauntlet</strong><br>
-        <small>“Sit for Physics at 7:30 AM – no excuses”</small>
+        <strong><i class="fas fa-calendar-week"></i> 7日間の克己</strong><br>
+        <small>毎朝7:30に物理に向かう – 言い訳なし</small>
         <div class="streak-grid" id="sevenDayGrid"></div>
         <div class="progress-bar-bg"><div class="progress-fill" id="missionProgressFill"></div></div>
-        <button id="resetGauntletBtn" class="btn-neon btn-secondary">⟳ Reset Gauntlet</button>
-        <button id="warriorBoostBtn" class="btn-neon" style="margin-top: 1rem;"><i class="fas fa-shield-halbed"></i> ⚡ PHYSICS WARRIOR MODE</button>
-        <div class="motivation-card" id="dailyQuote"><i class="fas fa-feather-alt"></i> “Discipline is the bridge between goals and accomplishment.”</div>
+        <button id="resetGauntletBtn" class="btn-primary btn-secondary">⟳ 記録をリセット</button>
+        <button id="warriorBoostBtn" class="btn-primary"><i class="fas fa-shield-alt"></i> ⚡ 物理の道を極める</button>
+        <div class="motivation-card" id="dailyQuote"><i class="fas fa-feather-alt"></i> “継続は力なり。今日という日を積み重ねよ。”</div>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-  // ---------- GLOBAL STATE ----------
+  // ========== STATE ==========
   let sevenDayState = JSON.parse(localStorage.getItem('murphx_7day')) || [false, false, false, false, false, false, false];
   let totalXP = parseInt(localStorage.getItem('murphx_totalXP')) || 0;
   const XP_PER_LEVEL = 400;
 
-  // Helper: update all displays (ring, stats, header, progress)
+  // helper: update all UI (ring, stats, header, progress)
   function updateAllStats() {
-    // header
     document.getElementById('headerXP').innerText = totalXP;
     document.getElementById('totalXPnum').innerText = totalXP;
     const physicsDays = sevenDayState.filter(v => v === true).length;
     document.getElementById('physicsStreak').innerText = physicsDays;
     document.getElementById('streakCount').innerText = physicsDays;
 
-    // level & ring
-    const level = Math.floor(totalXP / XP_PER_LEVEL) + 1;
-    document.getElementById('levelLabel').innerHTML = `Lv.${level}`;
+    const level = Math.floor(totalXP / XP_PER_LEVEL);
+    const levelNames = ["初級", "見習", "修行", "指南", "達人", "師範", "無双"];
+    const lvlIndex = Math.min(level, levelNames.length-1);
+    document.getElementById('levelLabel').innerHTML = levelNames[lvlIndex];
     const xpInLevel = totalXP % XP_PER_LEVEL;
-    const percent = (xpInLevel / XP_PER_LEVEL);
+    const percent = xpInLevel / XP_PER_LEVEL;
     drawRing(percent);
 
-    // mission progress
     const missionPercent = (physicsDays / 7) * 100;
     document.getElementById('missionProgressFill').style.width = missionPercent + '%';
 
-    // dynamic quote
     const quoteDiv = document.getElementById('dailyQuote');
     if (physicsDays >= 5) {
-      quoteDiv.innerHTML = `<i class="fas fa-crown"></i> “${physicsDays} days of Physics – momentum is real! You're a warrior.”`;
+      quoteDiv.innerHTML = `<i class="fas fa-crown"></i> “${physicsDays}日も続いた – その意志は本物だ。この勢いを信じよ。”`;
     } else if (physicsDays >= 3) {
-      quoteDiv.innerHTML = `<i class="fas fa-chart-simple"></i> “${physicsDays} days streak – keep showing up. Habit is forming.”`;
+      quoteDiv.innerHTML = `<i class="fas fa-chart-simple"></i> “${physicsDays}日連続 – 小さな習慣が変わらぬ力となる。”`;
     } else if (physicsDays === 0) {
-      quoteDiv.innerHTML = `<i class="fas fa-seedling"></i> “Start today. One brick at a time – you're not behind.”`;
+      quoteDiv.innerHTML = `<i class="fas fa-seedling"></i> “今日がその第一歩。焦らず、しかし確実に。”`;
     } else {
-      quoteDiv.innerHTML = `<i class="fas fa-feather-alt"></i> “Day ${physicsDays} – consistency is your superpower.”`;
+      quoteDiv.innerHTML = `<i class="fas fa-feather-alt"></i> “${physicsDays}日目。続けることこそが才能を超える。”`;
     }
   }
 
-  // Draw circular XP ring
   function drawRing(percent) {
     const canvas = document.getElementById('xpRingCanvas');
     if (!canvas) return;
@@ -475,20 +397,19 @@
     ctx.clearRect(0, 0, size, size);
     ctx.beginPath();
     ctx.arc(center, center, radius, 0, 2 * Math.PI);
-    ctx.strokeStyle = '#1e293b';
-    ctx.lineWidth = 12;
+    ctx.strokeStyle = '#e2d8d0';
+    ctx.lineWidth = 8;
     ctx.stroke();
     ctx.beginPath();
     ctx.arc(center, center, radius, start, end);
-    ctx.strokeStyle = '#f97316';
-    ctx.lineWidth = 12;
+    ctx.strokeStyle = '#b87c5e';
+    ctx.lineWidth = 8;
     ctx.stroke();
-    ctx.fillStyle = '#facc15';
-    ctx.font = 'bold 18px "Space Grotesk"';
-    ctx.fillText(`${Math.floor(percent * 100)}%`, center - 28, center + 8);
+    ctx.fillStyle = '#b87c5e';
+    ctx.font = '500 14px "Inter"';
+    ctx.fillText(`${Math.floor(percent * 100)}%`, center-20, center+6);
   }
 
-  // Add XP with toast and confetti on level up
   function addXP(amount) {
     let oldLevel = Math.floor(totalXP / XP_PER_LEVEL);
     totalXP += amount;
@@ -496,10 +417,10 @@
     localStorage.setItem('murphx_totalXP', totalXP);
     let newLevel = Math.floor(totalXP / XP_PER_LEVEL);
     if (newLevel > oldLevel) {
-      canvasConfetti({ particleCount: 200, spread: 70, origin: { y: 0.6 } });
-      showToast(`🎉 LEVEL UP! You reached Level ${newLevel+1} 🎉`);
+      canvasConfetti({ particleCount: 120, spread: 55, origin: { y: 0.6 }, colors: ['#b87c5e', '#e8ddd2'] });
+      showToast(`🎋 段位上昇！「${document.getElementById('levelLabel').innerText}」に`);
     } else if (amount > 0) {
-      showToast(`+${amount} XP`);
+      showToast(`+${amount} 功績`);
     }
     updateAllStats();
   }
@@ -510,19 +431,19 @@
     toast.style.position = 'fixed';
     toast.style.bottom = '20px';
     toast.style.right = '20px';
-    toast.style.backgroundColor = '#f97316';
-    toast.style.color = '#020408';
-    toast.style.padding = '0.6rem 1.2rem';
-    toast.style.borderRadius = '40px';
-    toast.style.fontWeight = 'bold';
+    toast.style.backgroundColor = '#f0ebe5';
+    toast.style.color = '#4a3a2a';
+    toast.style.padding = '0.5rem 1rem';
+    toast.style.borderRadius = '30px';
+    toast.style.fontSize = '0.85rem';
+    toast.style.fontWeight = '500';
+    toast.style.border = '1px solid #dccfc4';
     toast.style.zIndex = '9999';
-    toast.style.backdropFilter = 'blur(8px)';
-    toast.style.fontFamily = 'Space Grotesk, monospace';
+    toast.style.backdropFilter = 'blur(4px)';
     document.body.appendChild(toast);
     setTimeout(() => toast.remove(), duration);
   }
 
-  // Render 7-day gauntlet
   function renderGauntlet() {
     const grid = document.getElementById('sevenDayGrid');
     if (!grid) return;
@@ -530,19 +451,18 @@
     sevenDayState.forEach((completed, idx) => {
       const dayDiv = document.createElement('div');
       dayDiv.className = `day-card ${completed ? 'completed' : ''}`;
-      dayDiv.innerHTML = `<div class="day-number">${idx+1}</div><div style="font-size:0.7rem;">${completed ? '✓' : '◌'}</div>`;
+      dayDiv.innerHTML = `<div class="day-number">${idx+1}</div><div style="font-size:0.7rem;">${completed ? '◉' : '○'}</div>`;
       dayDiv.addEventListener('click', () => {
         if (!completed) addXP(15);
         sevenDayState[idx] = !sevenDayState[idx];
         localStorage.setItem('murphx_7day', JSON.stringify(sevenDayState));
         renderGauntlet();
         updateAllStats();
-        // Check for full gauntlet completion
         if (sevenDayState.every(v => v === true) && !localStorage.getItem('gauntletBonus')) {
           addXP(150);
           localStorage.setItem('gauntletBonus', 'true');
-          canvasConfetti({ particleCount: 300, spread: 100, origin: { y: 0.5 } });
-          showToast('🔥 COMPLETED 7-DAY GAUNTLET! +150 XP 🔥');
+          canvasConfetti({ particleCount: 200, spread: 80, origin: { y: 0.5 }, colors: ['#b87c5e', '#d4b48c'] });
+          showToast('🌸 七日成就！150功 獲得 🌸');
         } else if (!sevenDayState.every(v => v)) {
           localStorage.removeItem('gauntletBonus');
         }
@@ -552,29 +472,25 @@
     updateAllStats();
   }
 
-  // Reset gauntlet
   function resetGauntlet() {
     sevenDayState = [false, false, false, false, false, false, false];
     localStorage.setItem('murphx_7day', JSON.stringify(sevenDayState));
     localStorage.removeItem('gauntletBonus');
     renderGauntlet();
-    showToast('Gauntlet reset – begin your 7‑day journey again');
+    showToast('克己の記録を初期化しました。新たな7日間を。');
   }
 
-  // Physics warrior mode
   function warriorBoost() {
     addXP(5);
-    alert("⚡ 7:30 AM PHYSICS – sit down, open your module, solve at least 5 questions. You are building an unbreakable habit.");
-    showToast('⚡ +5 XP – warrior mindset activated');
+    alert("⚡ 物理の時間です。7:30、机に向かい、5問だけでも解いてみてください。その一歩が習慣を作ります。");
+    showToast('⚡ 武士の覚醒 +5功');
   }
 
-  // Initialize
   renderGauntlet();
   updateAllStats();
   document.getElementById('resetGauntletBtn').addEventListener('click', resetGauntlet);
   document.getElementById('warriorBoostBtn').addEventListener('click', warriorBoost);
 
-  // Sync with other pages (if any) via storage event
   window.addEventListener('storage', (e) => {
     if (e.key === 'murphx_7day') {
       sevenDayState = JSON.parse(e.newValue) || [false, false, false, false, false, false, false];
