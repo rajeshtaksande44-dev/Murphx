@@ -3,633 +3,108 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>⚡ ZERO → 650+ · NEET Study Quest</title>
-  <!-- Google Fonts + Font Awesome 6 -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+  <title>NEET Quest · Main Hub</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      background: linear-gradient(145deg, #f0f4fa 0%, #e6edf4 100%);
-      font-family: 'Inter', sans-serif;
-      color: #0a1c2f;
-      line-height: 1.4;
-      padding: 1.5rem;
-      min-height: 100vh;
-    }
-
-    /* animated background orbs */
-    body::before {
-      content: '';
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: radial-gradient(circle at 10% 20%, rgba(59,130,246,0.08) 0%, rgba(249,115,22,0.05) 80%);
-      pointer-events: none;
-      z-index: -2;
-    }
-
-    .container {
-      max-width: 1400px;
-      margin: 0 auto;
-      animation: fadeSlideUp 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-    }
-
-    @keyframes fadeSlideUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* header with glowing badge */
-    .hero {
-      text-align: center;
-      margin-bottom: 2rem;
-    }
-    .hero h1 {
-      font-size: 2.8rem;
-      font-weight: 800;
-      background: linear-gradient(135deg, #0f2b4d, #2563eb, #f97316);
-      background-clip: text;
-      -webkit-background-clip: text;
-      color: transparent;
-      letter-spacing: -0.02em;
-      filter: drop-shadow(0 2px 5px rgba(0,0,0,0.05));
-    }
-    .hero-badge {
-      display: inline-flex;
-      gap: 10px;
-      background: rgba(255,255,255,0.5);
-      backdrop-filter: blur(8px);
-      padding: 0.4rem 1.4rem;
-      border-radius: 60px;
-      margin-top: 0.8rem;
-      border: 1px solid rgba(59,130,246,0.3);
-      font-weight: 600;
-    }
-    .xp-stat {
-      background: #1e293b;
-      color: #facc15;
-      border-radius: 40px;
-      padding: 0.2rem 1rem;
-      font-size: 0.85rem;
-    }
-
-    /* dashboard grid */
-    .dashboard {
-      display: grid;
-      grid-template-columns: 1fr 0.95fr;
-      gap: 1.8rem;
-    }
-
-    /* glass cards */
-    .card {
-      background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(12px);
-      border-radius: 2rem;
-      box-shadow: 0 20px 35px -12px rgba(0,0,0,0.1), 0 0 0 1px rgba(255,255,255,0.5);
-      padding: 1.5rem 1.6rem;
-      margin-bottom: 1.8rem;
-      transition: transform 0.2s ease, box-shadow 0.2s;
-    }
-    .card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 24px 40px -14px rgba(0,0,0,0.2);
-    }
-
-    .card-title {
-      font-size: 1.5rem;
-      font-weight: 700;
-      margin-bottom: 1rem;
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-      border-left: 5px solid #f97316;
-      padding-left: 1rem;
-    }
-    .card-title i {
-      color: #3b82f6;
-    }
-
-    /* timetable list with smooth collapse */
-    .time-block {
-      display: flex;
-      flex-wrap: wrap;
-      padding: 0.9rem 0;
-      border-bottom: 1px solid rgba(0,0,0,0.05);
-      transition: background 0.2s;
-    }
-    .time {
-      font-weight: 800;
-      min-width: 100px;
-      font-size: 0.85rem;
-      background: #eef2ff;
-      padding: 0.2rem 0.8rem;
-      border-radius: 30px;
-      display: inline-block;
-      text-align: center;
-    }
-    .activity {
-      flex: 1;
-      padding-left: 1rem;
-      font-weight: 500;
-    }
-    .break-tag {
-      background: #fef3c7;
-      color: #b45309;
-      border-radius: 30px;
-      padding: 0.2rem 0.9rem;
-      font-size: 0.7rem;
-      font-weight: 700;
-    }
-
-    /* checklist quest items */
-    .checklist-item {
-      background: rgba(241, 245, 249, 0.7);
-      border-radius: 1.2rem;
-      padding: 0.8rem 1rem;
-      margin-bottom: 0.8rem;
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      transition: all 0.2s;
-      cursor: pointer;
-      border: 1px solid transparent;
-    }
-    .checklist-item:hover {
-      background: white;
-      border-color: #f97316;
-      transform: scale(0.99);
-    }
-    .checklist-item input {
-      width: 1.3rem;
-      height: 1.3rem;
-      accent-color: #f97316;
-      cursor: pointer;
-    }
-    .quest-label {
-      flex: 1;
-      font-weight: 500;
-    }
-    .xp-gain {
-      font-size: 0.7rem;
-      background: #e9f5e9;
-      padding: 0.2rem 0.6rem;
-      border-radius: 30px;
-      color: #2b6e2f;
-    }
-
-    /* 7-day mission grid (animated) */
-    .streak-grid {
-      display: flex;
-      gap: 0.7rem;
-      flex-wrap: wrap;
-      margin: 1rem 0;
-    }
-    .day-card {
-      background: #eef2ff;
-      border-radius: 1rem;
-      text-align: center;
-      padding: 0.6rem 0.3rem;
-      width: 70px;
-      transition: all 0.2s cubic-bezier(0.18, 0.89, 0.32, 1.28);
-      cursor: pointer;
-      border: 1px solid #cbd5e1;
-    }
-    .day-card.completed {
-      background: linear-gradient(145deg, #3b82f6, #2563eb);
-      color: white;
-      transform: scale(1.02);
-      box-shadow: 0 8px 14px -6px #3b82f680;
-    }
-    .day-number {
-      font-weight: 800;
-      font-size: 1.4rem;
-    }
-    .xp-badge {
-      font-size: 0.65rem;
-    }
-
-    /* progress bar */
-    .progress-container {
-      background: #e2e8f0;
-      border-radius: 30px;
-      height: 12px;
-      margin: 0.8rem 0;
-      overflow: hidden;
-    }
-    .progress-fill {
-      width: 0%;
-      height: 100%;
-      background: linear-gradient(90deg, #f97316, #facc15);
-      border-radius: 30px;
-      transition: width 0.4s ease;
-    }
-
-    button {
-      background: #1e293b;
-      border: none;
-      padding: 0.5rem 1.2rem;
-      border-radius: 40px;
-      font-weight: 600;
-      color: white;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-    button:hover {
-      background: #f97316;
-      transform: scale(0.96);
-    }
-
-    textarea {
-      width: 100%;
-      border-radius: 1.2rem;
-      border: 1px solid #cbd5e1;
-      padding: 0.8rem;
-      background: #ffffffcc;
-      font-family: monospace;
-      margin-top: 0.5rem;
-      resize: vertical;
-    }
-
-    .rule-badge {
-      background: #ffffffaa;
-      backdrop-filter: blur(4px);
-      border-radius: 1rem;
-      padding: 0.7rem 1rem;
-      margin-bottom: 0.7rem;
-      border-left: 4px solid #f97316;
-    }
-
-    @keyframes pulse-glow {
-      0% { box-shadow: 0 0 0 0 rgba(249,115,22,0.4); }
-      70% { box-shadow: 0 0 0 8px rgba(249,115,22,0); }
-      100% { box-shadow: 0 0 0 0 rgba(249,115,22,0); }
-    }
-    .levelup {
-      animation: pulse-glow 0.6s ease-out;
-    }
-
-    @media (max-width: 900px) {
-      .dashboard { grid-template-columns: 1fr; }
-      body { padding: 1rem; }
-    }
-
-    footer {
-      text-align: center;
-      margin-top: 1.5rem;
-      font-size: 0.75rem;
-      opacity: 0.7;
-    }
-  </style>
 </head>
 <body>
-<div class="container">
-  <div class="hero">
-    <h1><i class="fas fa-dragon"></i> ZERO → 650+ QUEST</h1>
-    <div class="hero-badge">
-      <span><i class="fas fa-fire"></i> Battle-Tested Schedule</span>
-      <span class="xp-stat" id="totalXpDisplay">🏆 XP: 0</span>
-    </div>
-    <div class="tagline" style="margin-top: 8px;">⚔️ "Discipline + Repetition – not motivation"</div>
-  </div>
-
-  <div class="dashboard">
-    <!-- LEFT COLUMN: TIMETABLE + RULES -->
-    <div>
-      <div class="card">
-        <div class="card-title"><i class="fas fa-clock"></i> Daily Campaign (realistic hours)</div>
-        <div class="time-block"><span class="time">🌅 5:00 – 6:00</span><div class="activity"><strong>Exercise</strong> – build discipline</div></div>
-        <div class="time-block"><span class="time">6:00 – 7:30</span><div class="activity">Bath + routine <span class="break-tag">cut 2h→1.5h</span></div></div>
-        <div class="time-block"><span class="time">🔥 7:30 – 10:30</span><div class="activity"><strong>PHYSICS CORE</strong> (1h concept + 2h problem solving) · non-negotiable</div></div>
-        <div class="time-block"><span class="time">☕ 10:30 – 11:00</span><div class="activity"><span class="break-tag">REST</span> NO phone scroll</div></div>
-        <div class="time-block"><span class="time">🧪 11:00 – 2:00</span><div class="activity"><strong>Chemistry</strong> Physical/Organic + NCERT Inorganic · 30-40 Qs daily</div></div>
-        <div class="time-block"><span class="time">🍚 2:00 – 3:00</span><div class="activity"><span class="break-tag">LUNCH + NAP</span> allowed</div></div>
-        <div class="time-block"><span class="time">⚙️ 3:00 – 5:00</span><div class="activity"><strong>PYQs / Modules</strong> (only questions, no lectures) – rankers zone</div></div>
-        <div class="time-block"><span class="time">🌿 5:30 – 7:30</span><div class="activity"><strong>BIOLOGY</strong> NCERT line‑by‑line + diagrams · 2 chapters/day</div></div>
-        <div class="time-block"><span class="time">📓 8:00 – 10:00</span><div class="activity"><strong>Night reinforcement</strong> – revise mistakes + error notebook</div></div>
-        <div class="time-block"><span class="time">🌙 11:00 PM</span><div class="activity">Sleep 6h+ (non-negotiable recovery)</div></div>
-        <hr style="margin: 1rem 0;">
-        <div class="rule-badge"><i class="fas fa-chalkboard-user"></i> 🎯 Lectures ≤ 6h/day → always + questions</div>
-        <div class="rule-badge"><i class="fas fa-calendar-week"></i> 📅 SUNDAY = Mock test (3-4h) + 2h analysis</div>
-        <div class="rule-badge"><i class="fas fa-brain"></i> “Physics = your weakness = your weapon”</div>
+  <div class="page-transition">
+    <nav class="game-nav">
+      <div class="nav-logo"><i class="fas fa-dice-d6"></i> ZERO→650+</div>
+      <div class="nav-links">
+        <a href="index.html" class="active"><i class="fas fa-home"></i> Hub</a>
+        <a href="daily.html"><i class="fas fa-scroll"></i> Daily Quests</a>
+        <a href="notebook.html"><i class="fas fa-skull-book"></i> Error Vault</a>
       </div>
-    </div>
+      <div class="xp-pill" id="globalXpDisplay">🏆 XP 0</div>
+    </nav>
 
-    <!-- RIGHT COLUMN: GAMIFIED TRACKERS -->
-    <div>
-      <!-- 7-DAY MISSION (physics showing up) -->
-      <div class="card">
-        <div class="card-title"><i class="fas fa-chess-queen"></i> 🎯 7‑Day Gauntlet</div>
-        <div class="section-sub">“Sit for Physics at 7:30 AM – no excuses”</div>
-        <div class="streak-grid" id="sevenDayGrid"></div>
-        <div id="missionFeedback" class="progress-text"></div>
-        <button id="resetMissionBtn" style="margin-top: 8px;"><i class="fas fa-sync-alt"></i> Reset mission</button>
-        <div class="progress-container" style="margin-top: 12px;"><div class="progress-fill" id="missionProgressFill"></div></div>
+    <main class="container">
+      <div class="hero-glow">
+        <h1><span class="gradient-text">Battle-Tested Timetable</span></h1>
+        <p class="sub">“Discipline + repetition – not motivation”</p>
       </div>
 
-      <!-- TODAY'S QUEST LOG (daily checklist with XP) -->
-      <div class="card">
-        <div class="card-title"><i class="fas fa-scroll"></i> Today's Quests <span id="xpTodaySpan" style="margin-left: auto; font-size: 0.8rem;">✨ +0 XP</span></div>
-        <div id="dailyChecklistContainer"></div>
-        <div class="progress-container"><div class="progress-fill" id="dailyProgressFill"></div></div>
-        <button id="resetDailyBtn" class="btn-sm" style="background:#e2e8f0; color:#1f2937;">Reset today's progress</button>
-        <div id="levelUpEffect" style="font-size:0.8rem; text-align:center; margin-top: 8px;"></div>
-      </div>
-
-      <!-- ERROR NOTEBOOK (auto-save) -->
-      <div class="card">
-        <div class="card-title"><i class="fas fa-book-skull"></i> 📘 Error Notebook · Mistake Log</div>
-        <textarea id="errorNotebook" rows="3" placeholder="Write your repeated errors / weak concepts... review at night reinforcement phase"></textarea>
-        <div class="note">📌 auto-saved · vital for rank boost</div>
-      </div>
-
-      <!-- RULES + QUOTE -->
-      <div class="card">
-        <div class="card-title"><i class="fas fa-gem"></i> Final Truth</div>
-        <div class="rule-badge"><i class="fas fa-hourglass-half"></i> No Zero Days → even worst day = 2 hours</div>
-        <div class="rule-badge"><i class="fas fa-fire"></i> Physics DAILY (mood off? tired? bored? show up!)</div>
-        <div class="quote" style="background:#fff0e0; border-radius:1rem; padding:0.8rem;">
-          <i class="fas fa-feather-alt"></i> “Don't study to become anything. Study like: I am exploring how things work.” — Osho
-        </div>
-        <div class="quote" style="background:#e6f7ec; margin-top:0.6rem;">
-          <i class="fas fa-redo-alt"></i> Missed a session? Don't overthink. Just come back next day.<br>
-          <strong>Consistency = returning, not being perfect.</strong>
-        </div>
-      </div>
-    </div>
-  </div>
-  <footer><i class="fas fa-gamepad"></i> One simple agreement: show up at 7:30 AM physics for 7 days → then we level up.</footer>
-</div>
-
-<script>
-  // ----- GAME LOGIC (XP, streak, daily quests) -----
-  (function() {
-    // 7 DAY MISSION
-    let sevenDayState = JSON.parse(localStorage.getItem('neetSevenDay')) || [false, false, false, false, false, false, false];
-    // Daily checklist (6 quest items)
-    const questDefinitions = [
-      { id: "phyMorning", label: "🌅 7:30-10:30 Physics CORE (concept + problems)", xp: 25 },
-      { id: "chemPhase", label: "🧪 11:00-2:00 Chemistry + 30-40 Qs", xp: 20 },
-      { id: "practicePhase", label: "⚙️ 3:00-5:00 PYQs/Modules (No lectures)", xp: 20 },
-      { id: "bioPhase", label: "🌿 5:30-7:30 Biology NCERT 2 chapters", xp: 20 },
-      { id: "nightRev", label: "📓 8:00-10:00 Night reinforcement + error notebook review", xp: 15 },
-      { id: "extraDiscipline", label: "⚡ No Zero Days extra effort / Sunday mock (bonus)", xp: 10 }
-    ];
-    let dailyCheckState = JSON.parse(localStorage.getItem('neetDailyChecklist')) || {};
-    // Total XP from all completed quests (persistent)
-    let totalXP = parseInt(localStorage.getItem('neetTotalXP')) || 0;
-    
-    // Helper: update XP display & check for level up animation
-    function updateTotalXPDisplay() {
-      document.getElementById('totalXpDisplay').innerHTML = `🏆 XP: ${totalXP}`;
-      localStorage.setItem('neetTotalXP', totalXP);
-    }
-    
-    // Compute today's completed XP sum and update progress
-    function computeDailyProgress() {
-      let completedCount = 0;
-      let earnedXP = 0;
-      questDefinitions.forEach(q => {
-        if (dailyCheckState[q.id]) {
-          completedCount++;
-          earnedXP += q.xp;
-        }
-      });
-      const percent = (completedCount / questDefinitions.length) * 100;
-      document.getElementById('dailyProgressFill').style.width = percent + '%';
-      document.getElementById('xpTodaySpan').innerHTML = `✨ +${earnedXP} XP today`;
-      return { completedCount, earnedXP, totalPossible: questDefinitions.length };
-    }
-    
-    // Recalculate total XP based on all available daily completions (across days? but we store totalXP as cumulative)
-    // Actually we maintain totalXP by adding XP when checkbox is toggled.
-    // We'll add/remove XP when checkboxes change.
-    function toggleQuest(questId, isChecked) {
-      const quest = questDefinitions.find(q => q.id === questId);
-      if (!quest) return;
-      const wasChecked = dailyCheckState[questId] === true;
-      if (isChecked && !wasChecked) {
-        totalXP += quest.xp;
-        updateTotalXPDisplay();
-        // trigger animation on xp display
-        const xpElem = document.getElementById('totalXpDisplay');
-        xpElem.classList.add('levelup');
-        setTimeout(() => xpElem.classList.remove('levelup'), 500);
-        showFloatyMessage(`+${quest.xp} XP`, '#f97316');
-      } else if (!isChecked && wasChecked) {
-        totalXP -= quest.xp;
-        updateTotalXPDisplay();
-        showFloatyMessage(`-${quest.xp} XP`, '#475569');
-      }
-      dailyCheckState[questId] = isChecked;
-      localStorage.setItem('neetDailyChecklist', JSON.stringify(dailyCheckState));
-      computeDailyProgress();
-      // also update mission progress (7day) refresh might not needed
-    }
-    
-    function showFloatyMessage(msg, color) {
-      let div = document.createElement('div');
-      div.innerText = msg;
-      div.style.position = 'fixed';
-      div.style.bottom = '20px';
-      div.style.right = '20px';
-      div.style.backgroundColor = color;
-      div.style.color = 'white';
-      div.style.padding = '6px 12px';
-      div.style.borderRadius = '40px';
-      div.style.fontWeight = 'bold';
-      div.style.zIndex = '999';
-      div.style.opacity = '1';
-      div.style.transition = 'opacity 1s';
-      document.body.appendChild(div);
-      setTimeout(() => { div.style.opacity = '0'; setTimeout(() => div.remove(), 1000); }, 1500);
-    }
-    
-    // render daily checklist
-    function renderDailyChecklist() {
-      const container = document.getElementById('dailyChecklistContainer');
-      if (!container) return;
-      container.innerHTML = '';
-      questDefinitions.forEach(q => {
-        const isChecked = dailyCheckState[q.id] || false;
-        const div = document.createElement('div');
-        div.className = 'checklist-item';
-        div.innerHTML = `
-          <input type="checkbox" id="chk_${q.id}" ${isChecked ? 'checked' : ''}>
-          <span class="quest-label">${q.label}</span>
-          <span class="xp-gain">+${q.xp} XP</span>
-        `;
-        const cb = div.querySelector('input');
-        cb.addEventListener('change', (e) => {
-          toggleQuest(q.id, e.target.checked);
-          renderDailyChecklist();  // re-render to keep sync, but better update only style? fine
-        });
-        container.appendChild(div);
-      });
-      computeDailyProgress();
-    }
-    
-    // 7-DAY MISSION RENDER
-    const dayMessages = ["Day 1: just sit", "Day 2: just sit", "Day 3: slight improv", "Day 4: slight improv", "Day 5: momentum", "Day 6: momentum", "Day 7: discipline"];
-    function renderSevenDay() {
-      const grid = document.getElementById('sevenDayGrid');
-      if (!grid) return;
-      grid.innerHTML = '';
-      sevenDayState.forEach((completed, idx) => {
-        const dayDiv = document.createElement('div');
-        dayDiv.className = `day-card ${completed ? 'completed' : ''}`;
-        dayDiv.innerHTML = `
-          <div class="day-number">${idx+1}</div>
-          <div class="day-label">${dayMessages[idx]}</div>
-          <div style="font-size:10px;">${completed ? '✓ done' : '🔘'}</div>
-        `;
-        dayDiv.addEventListener('click', () => {
-          sevenDayState[idx] = !sevenDayState[idx];
-          localStorage.setItem('neetSevenDay', JSON.stringify(sevenDayState));
-          renderSevenDay();
-          updateMissionProgress();
-          // if all 7 completed, reward XP bonus
-          const allCompleted = sevenDayState.every(v => v === true);
-          if (allCompleted && !localStorage.getItem('sevenDayBonusClaimed')) {
-            totalXP += 100;
-            updateTotalXPDisplay();
-            localStorage.setItem('sevenDayBonusClaimed', 'true');
-            showFloatyMessage('🔥 PERFECT 7-DAY STREAK! +100 XP 🔥', '#f97316');
-          } else if (!allCompleted) {
-            localStorage.removeItem('sevenDayBonusClaimed');
-          }
-        });
-        grid.appendChild(dayDiv);
-      });
-      updateMissionProgress();
-    }
-    
-    function updateMissionProgress() {
-      const completedCount = sevenDayState.filter(v => v === true).length;
-      const percent = (completedCount / 7) * 100;
-      const fill = document.getElementById('missionProgressFill');
-      if (fill) fill.style.width = percent + '%';
-      const feedback = document.getElementById('missionFeedback');
-      if (feedback) {
-        if (completedCount === 7) feedback.innerHTML = '🎉 LEGENDARY! You proved you can show up. Momentum unlocked!';
-        else feedback.innerHTML = `✅ ${completedCount}/7 days · “Just show up – no perfection needed.”`;
-      }
-    }
-    
-    // Reset mission
-    document.getElementById('resetMissionBtn')?.addEventListener('click', () => {
-      sevenDayState = [false, false, false, false, false, false, false];
-      localStorage.setItem('neetSevenDay', JSON.stringify(sevenDayState));
-      localStorage.removeItem('sevenDayBonusClaimed');
-      renderSevenDay();
-      showFloatyMessage('Mission reset, start fresh!', '#3b82f6');
-    });
-    
-    // Reset daily checklist (without losing XP? careful: resetting should uncheck and subtract XP)
-    document.getElementById('resetDailyBtn')?.addEventListener('click', () => {
-      // subtract XP for all currently checked quests
-      questDefinitions.forEach(q => {
-        if (dailyCheckState[q.id]) {
-          totalXP -= q.xp;
-          dailyCheckState[q.id] = false;
-        }
-      });
-      updateTotalXPDisplay();
-      localStorage.setItem('neetDailyChecklist', JSON.stringify(dailyCheckState));
-      renderDailyChecklist();
-      showFloatyMessage('Daily quests reset, XP adjusted', '#64748b');
-    });
-    
-    // Error notebook auto-save
-    const errorArea = document.getElementById('errorNotebook');
-    if (errorArea) {
-      const savedNote = localStorage.getItem('neetErrorNotebook');
-      if (savedNote) errorArea.value = savedNote;
-      errorArea.addEventListener('input', () => {
-        localStorage.setItem('neetErrorNotebook', errorArea.value);
-      });
-    }
-    
-    // Bonus: Physics reminder inject (extra interactive)
-    function addPhysicsWarrior() {
-      const rightSide = document.querySelector('.dashboard > div:last-child');
-      if (rightSide && !document.getElementById('physWarriorCard')) {
-        const warrior = document.createElement('div');
-        warrior.id = 'physWarriorCard';
-        warrior.className = 'card';
-        warrior.innerHTML = `
-          <div class="card-title"><i class="fas fa-shield-alt"></i> Physics Non‑Negotiable</div>
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span>🎯 “Even if mood off, tired, bored — show up.”</span>
-            <button id="physicsBattleCry" style="background:#f97316;">⚡ ENFORCE</button>
+      <div class="dashboard-grid">
+        <!-- Left: Timetable Cards -->
+        <div class="glass-card">
+          <div class="card-header"><i class="fas fa-clock"></i> Daily Campaign</div>
+          <div class="timetable">
+            <div class="time-slot"><span class="time">🌅 5:00 – 6:00</span><span>Exercise (fixed)</span></div>
+            <div class="time-slot"><span class="time">6:00 – 7:30</span><span>Bath + routine <span class="badge">cut to 1.5h</span></span></div>
+            <div class="time-slot highlight"><span class="time">🔥 7:30 – 10:30</span><span><strong>PHYSICS CORE</strong> – 1h concept + 2h problems</span></div>
+            <div class="time-slot"><span class="time">☕ 10:30 – 11:00</span><span>Rest (NO phone)</span></div>
+            <div class="time-slot"><span class="time">🧪 11:00 – 14:00</span><span>Chemistry – 30‑40 Qs + NCERT</span></div>
+            <div class="time-slot"><span class="time">🍚 14:00 – 15:00</span><span>Lunch + short nap</span></div>
+            <div class="time-slot"><span class="time">⚙️ 15:00 – 17:00</span><span>PYQs / Modules – only questions</span></div>
+            <div class="time-slot"><span class="time">🌿 17:30 – 19:30</span><span>Biology – 2 chapters line‑by‑line</span></div>
+            <div class="time-slot"><span class="time">📓 20:00 – 22:00</span><span>Night reinforcement + error log</span></div>
+            <div class="time-slot"><span class="time">🌙 23:00</span><span>Sleep (6h min)</span></div>
           </div>
-        `;
-        rightSide.appendChild(warrior);
-        document.getElementById('physicsBattleCry')?.addEventListener('click', () => {
-          alert("🧠 Right now: SIT FOR PHYSICS. Do 5 questions or 1 concept. Resistance will vanish.");
-          showFloatyMessage('⚡ Physics warrior activated! +5 discipline', '#f97316');
-          // optional mini xp for clicking reminder? but just fun
-        });
-      }
-    }
-    
-    // Sunday mock reminder
-    function checkSunday() {
-      const today = new Date().getDay();
-      if (today === 0) {
-        const container = document.querySelector('.dashboard > div:first-child .card:first-child');
-        if (container && !document.getElementById('sundayAlert')) {
-          const alertDiv = document.createElement('div');
-          alertDiv.id = 'sundayAlert';
-          alertDiv.className = 'rule-badge';
-          alertDiv.style.background = '#fce7f3';
-          alertDiv.style.marginTop = '10px';
-          alertDiv.innerHTML = '<i class="fas fa-vial"></i> ⚠️ SUNDAY MODE: Take full mock test (3-4h) + 2h analysis. +50 XP bonus if completed!';
-          container.appendChild(alertDiv);
-        }
-      }
-    }
-    
-    // init everything
-    renderSevenDay();
-    renderDailyChecklist();
-    updateTotalXPDisplay();
-    addPhysicsWarrior();
-    checkSunday();
-    // Bonus: Every time daily progress reaches 100% we show a nice animation
-    function watchDailyComplete() {
-      const interval = setInterval(() => {
-        const fill = document.getElementById('dailyProgressFill');
-        if (fill && fill.style.width === '100%') {
-          const levelDiv = document.getElementById('levelUpEffect');
-          if (levelDiv && !levelDiv.innerText.includes('ALL QUESTS')) {
-            levelDiv.innerHTML = '✨🌟 ALL QUESTS COMPLETE! +50 BONUS XP 🌟✨';
-            levelDiv.style.animation = 'pulse-glow 0.5s';
-            // add bonus only once per day? We'll give once per session, but better to avoid multiple
-            if (!localStorage.getItem('dailyBonusGiven')) {
-              totalXP += 50;
-              updateTotalXPDisplay();
-              localStorage.setItem('dailyBonusGiven', 'true');
-              showFloatyMessage('🔥 PERFECT DAY! +50 BONUS XP 🔥', '#facc15');
+        </div>
+
+        <!-- Right: 7-Day Gauntlet & Rules -->
+        <div class="glass-card">
+          <div class="card-header"><i class="fas fa-chess-queen"></i> 7‑Day Gauntlet</div>
+          <p class="small-text">“Sit for Physics at 7:30 AM – no excuses”</p>
+          <div class="streak-grid" id="sevenDayGrid"></div>
+          <div class="progress-container"><div class="progress-fill" id="missionProgressFill"></div></div>
+          <button id="resetMissionBtn" class="btn-secondary">⟳ Reset mission</button>
+
+          <div class="rule-list">
+            <div class="rule-item"><i class="fas fa-ban"></i> No Zero Days → even worst day = 2h</div>
+            <div class="rule-item"><i class="fas fa-bolt"></i> Physics daily (mood off? show up!)</div>
+            <div class="rule-item"><i class="fas fa-calendar-week"></i> Sunday = Mock test + analysis</div>
+            <div class="rule-item"><i class="fas fa-redo-alt"></i> Missed session? Return next day – no guilt</div>
+          </div>
+          <div class="quote-card">
+            <i class="fas fa-feather-alt"></i> “Study like: I am exploring how things work.” – Osho
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script src="global.js"></script>
+  <script>
+    // 7-day mission logic (shared via globalState)
+    (function() {
+      let sevenDay = JSON.parse(localStorage.getItem('neetSevenDay')) || [false,false,false,false,false,false,false];
+      const grid = document.getElementById('sevenDayGrid');
+      function render() {
+        grid.innerHTML = '';
+        sevenDay.forEach((done, i) => {
+          const day = document.createElement('div');
+          day.className = `day-card ${done ? 'completed' : ''}`;
+          day.innerHTML = `<div class="day-num">${i+1}</div><div class="day-label">Day ${i+1}</div>`;
+          day.onclick = () => {
+            sevenDay[i] = !sevenDay[i];
+            localStorage.setItem('neetSevenDay', JSON.stringify(sevenDay));
+            render();
+            updateMissionFill();
+            if(sevenDay.every(v=>v===true) && !localStorage.getItem('sevenBonus')) {
+              addXP(100);
+              localStorage.setItem('sevenBonus','true');
+              triggerConfetti();
             }
-            setTimeout(() => { if(levelDiv) levelDiv.innerText = ''; }, 3000);
-          }
-        } else {
-          localStorage.removeItem('dailyBonusGiven');
-          const levelDiv = document.getElementById('levelUpEffect');
-          if (levelDiv && levelDiv.innerText.includes('ALL QUESTS')) levelDiv.innerText = '';
-        }
-      }, 1000);
-    }
-    watchDailyComplete();
-  })();
-</script>
+          };
+          grid.appendChild(day);
+        });
+        updateMissionFill();
+      }
+      function updateMissionFill() {
+        let completed = sevenDay.filter(v=>v===true).length;
+        let percent = (completed/7)*100;
+        document.getElementById('missionProgressFill').style.width = percent+'%';
+      }
+      render();
+      document.getElementById('resetMissionBtn')?.addEventListener('click',()=>{
+        sevenDay = [false,false,false,false,false,false,false];
+        localStorage.setItem('neetSevenDay',JSON.stringify(sevenDay));
+        localStorage.removeItem('sevenBonus');
+        render();
+      });
+    })();
+  </script>
 </body>
 </html>
