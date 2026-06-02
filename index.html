@@ -2,12 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>CONSCIOUS DISCIPLINE · NEET 2027 · Chapter‑wise Mastery</title>
-  <!-- Fonts, Icons, Charts -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Zero to 650+ · NEET Blueprint | Discipline Engine</title>
+  <!-- Google Fonts + Font Awesome -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
     * {
       margin: 0;
@@ -15,678 +14,532 @@
       box-sizing: border-box;
     }
 
-    :root {
-      --bg-gradient: radial-gradient(circle at 20% 30%, #0a0f1e, #03060b);
-      --card-bg: rgba(12, 20, 35, 0.7);
-      --glass-border: rgba(0, 200, 255, 0.25);
-      --accent: #2b9eff;
-      --accent-glow: #7bc9ff;
-      --text: #eef5ff;
-      --text-muted: #9bb5d4;
-      --danger: #ff5e7e;
-      --success: #2ecc71;
-      --warning: #f39c12;
-    }
-
     body {
-      background: var(--bg-gradient);
+      background: #f7f9fc;
       font-family: 'Inter', sans-serif;
-      color: var(--text);
+      color: #1e293b;
       line-height: 1.5;
-      padding: 1rem;
-      min-height: 100vh;
-    }
-
-    /* Glassmorphic Core */
-    .glass {
-      background: var(--card-bg);
-      backdrop-filter: blur(14px);
-      border-radius: 2rem;
-      border: 1px solid var(--glass-border);
-      box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.4);
-      transition: all 0.2s ease;
-    }
-    .glass:hover {
-      border-color: var(--accent);
-      transform: translateY(-3px);
+      padding: 2rem 1.5rem;
     }
 
     .container {
-      max-width: 1500px;
+      max-width: 1400px;
       margin: 0 auto;
     }
 
-    /* Header */
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      flex-wrap: wrap;
-      margin-bottom: 1.5rem;
+    /* header */
+    .hero {
+      text-align: center;
+      margin-bottom: 2.5rem;
     }
-    h1 {
-      font-size: 2rem;
-      background: linear-gradient(135deg, #fff, var(--accent-glow));
-      -webkit-background-clip: text;
+    .hero h1 {
+      font-size: 2.6rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #0f172a, #1e3a8a);
       background-clip: text;
+      -webkit-background-clip: text;
       color: transparent;
+      letter-spacing: -0.02em;
     }
-    .badge {
-      background: rgba(43, 158, 255, 0.2);
-      border-radius: 2rem;
+    .hero .badge {
+      display: inline-block;
+      background: #eef2ff;
       padding: 0.3rem 1rem;
-      font-size: 0.8rem;
+      border-radius: 40px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-top: 0.8rem;
+      color: #1e40af;
+    }
+    .hero .tagline {
+      font-size: 1.1rem;
+      color: #334155;
+      margin-top: 0.5rem;
     }
 
-    /* Navigation */
-    .nav-tabs {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      margin-bottom: 2rem;
-      background: rgba(0, 0, 0, 0.3);
-      border-radius: 3rem;
-      padding: 0.4rem;
-      backdrop-filter: blur(8px);
+    /* grid layout */
+    .dashboard {
+      display: grid;
+      grid-template-columns: 1fr 0.9fr;
+      gap: 2rem;
     }
-    .nav-btn {
-      background: transparent;
-      border: none;
-      padding: 0.7rem 1.4rem;
-      border-radius: 2.5rem;
-      font-weight: 600;
-      color: #bbd9ff;
-      cursor: pointer;
-      transition: 0.2s;
+
+    /* cards common */
+    .card {
+      background: white;
+      border-radius: 2rem;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.05);
+      padding: 1.6rem 1.8rem;
+      margin-bottom: 2rem;
+      transition: transform 0.1s ease;
+      border: 1px solid #e9eef3;
+    }
+    .card-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 1.2rem;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 0.6rem;
+      border-left: 5px solid #3b82f6;
+      padding-left: 1rem;
     }
-    .nav-btn.active {
-      background: linear-gradient(125deg, #1a5d9c, #0e3a66);
-      color: white;
-      box-shadow: 0 0 12px var(--accent);
+    .card-title i {
+      color: #3b82f6;
+      font-size: 1.3rem;
     }
-    .nav-btn i { font-size: 1.1rem; }
-
-    /* Pages */
-    .page {
-      display: none;
-      animation: fade 0.3s ease;
-    }
-    .active-page { display: block; }
-    @keyframes fade {
-      from { opacity: 0; transform: translateY(8px);}
-      to { opacity: 1; transform: translateY(0);}
+    .section-sub {
+      font-size: 0.9rem;
+      color: #475569;
+      margin-top: -0.5rem;
+      margin-bottom: 1rem;
+      font-weight: 400;
     }
 
-    /* Grids */
-    .grid-2, .grid-3 {
-      display: grid;
-      gap: 1.5rem;
+    /* timetable styling */
+    .time-block {
+      display: flex;
+      flex-wrap: wrap;
+      border-bottom: 1px solid #eef2f6;
+      padding: 1rem 0;
+      align-items: flex-start;
     }
-    .grid-2 { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
-    .grid-3 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
-
-    .card {
-      padding: 1.5rem;
+    .time {
+      font-weight: 700;
+      width: 110px;
+      font-size: 0.9rem;
+      color: #0f3b6f;
+      background: #f1f5f9;
+      padding: 0.2rem 0.6rem;
+      border-radius: 20px;
+      display: inline-block;
+      text-align: center;
     }
-
-    /* Chapter Tracker Tables */
-    .subject-table {
-      width: 100%;
-      border-collapse: collapse;
+    .activity {
+      flex: 1;
+      padding-left: 1rem;
     }
-    .subject-table th, .subject-table td {
-      padding: 0.8rem 0.5rem;
-      text-align: left;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
+    .activity strong {
+      font-weight: 700;
+      color: #0f172a;
     }
-    .status-btn {
-      background: #1f2a44;
-      border: none;
-      padding: 0.3rem 0.8rem;
-      border-radius: 2rem;
-      color: white;
+    .note {
+      font-size: 0.8rem;
+      color: #4b5563;
+      margin-top: 0.25rem;
+    }
+    .break-tag {
+      background: #fef9e3;
+      color: #b45309;
+      padding: 0.2rem 0.7rem;
+      border-radius: 20px;
       font-size: 0.7rem;
-      cursor: pointer;
-      margin: 0 2px;
-      transition: 0.1s;
-    }
-    .status-btn.completed {
-      background: var(--success);
-    }
-    .status-btn.partial {
-      background: var(--warning);
-    }
-    .progress-circle {
-      width: 35px;
-      height: 35px;
-      border-radius: 50%;
-      background: conic-gradient(var(--accent) 0deg, #2a3a60 0deg);
+      font-weight: 600;
       display: inline-block;
     }
-    .chapter-progress {
-      font-size: 0.75rem;
-      font-weight: bold;
-    }
 
-    /* Progress Bars */
-    .progress-bar {
-      background: #1e2744;
-      border-radius: 40px;
-      height: 8px;
-      overflow: hidden;
-      margin: 0.5rem 0;
+    /* checklist & tracker */
+    .checklist-item {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      margin-bottom: 0.9rem;
+      background: #fafcff;
+      padding: 0.6rem 0.8rem;
+      border-radius: 1rem;
+      transition: all 0.1s;
     }
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--accent), var(--accent-glow));
-      width: 0%;
-    }
-
-    /* Buttons & Inputs */
-    button, .btn {
-      background: #1c3552;
-      border: none;
-      padding: 0.5rem 1.2rem;
-      border-radius: 2rem;
-      color: white;
+    .checklist-item label {
+      font-weight: 500;
+      flex: 1;
       cursor: pointer;
-      transition: 0.15s;
     }
-    button:hover { background: var(--accent); transform: scale(0.97);}
-    input, select {
-      background: #0f1629;
-      border: 1px solid #2c406e;
-      padding: 0.6rem 1rem;
+    input[type="checkbox"] {
+      width: 1.2rem;
+      height: 1.2rem;
+      cursor: pointer;
+      accent-color: #3b82f6;
+    }
+    .btn-sm {
+      background: #eef2ff;
+      border: none;
+      padding: 0.4rem 1rem;
       border-radius: 2rem;
-      color: white;
-      width: 100%;
+      font-weight: 500;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: 0.2s;
+      color: #1e3a8a;
     }
-
-    /* Responsive */
-    @media (max-width: 760px) {
-      .nav-btn span { display: none; }
-      .nav-btn i { font-size: 1.3rem; }
-      .subject-table th, .subject-table td { font-size: 0.7rem; padding: 0.4rem; }
-      .status-btn { padding: 0.2rem 0.5rem; font-size: 0.6rem; }
+    .btn-sm:hover {
+      background: #d9e6ff;
+    }
+    .btn-primary {
+      background: #3b82f6;
+      color: white;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 2rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+      width: 100%;
+      margin-top: 0.5rem;
+    }
+    .btn-primary:hover {
+      background: #2563eb;
+      transform: scale(0.98);
+    }
+    .streak-grid {
+      display: flex;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      margin: 1rem 0;
+    }
+    .day-card {
+      background: #f1f5f9;
+      border-radius: 1rem;
+      text-align: center;
+      padding: 0.5rem;
+      width: 65px;
+      transition: 0.1s;
+      cursor: pointer;
+      border: 1px solid #e2e8f0;
+    }
+    .day-card.completed {
+      background: #3b82f6;
+      color: white;
+      border-color: #3b82f6;
+    }
+    .day-card.completed i {
+      color: white;
+    }
+    .day-number {
+      font-weight: 800;
+      font-size: 1.2rem;
+    }
+    .day-label {
+      font-size: 0.65rem;
+      opacity: 0.8;
+    }
+    .quote {
+      background: #fef2e8;
+      padding: 1rem;
+      border-radius: 1rem;
+      font-style: italic;
+      margin-top: 1rem;
+      border-left: 4px solid #f97316;
+    }
+    hr {
+      margin: 1rem 0;
+      border-color: #eef2f6;
+    }
+    textarea {
+      width: 100%;
+      border-radius: 1rem;
+      border: 1px solid #cbd5e1;
+      padding: 0.8rem;
+      font-family: 'Inter', monospace;
+      font-size: 0.85rem;
+      margin-top: 0.5rem;
+      resize: vertical;
+    }
+    .rule-badge {
+      background: #f1f5f9;
+      padding: 0.6rem 1rem;
+      border-radius: 1rem;
+      margin-bottom: 0.6rem;
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+    @media (max-width: 900px) {
+      .dashboard {
+        grid-template-columns: 1fr;
+      }
+      body {
+        padding: 1.2rem;
+      }
+      .hero h1 {
+        font-size: 1.9rem;
+      }
+    }
+    footer {
+      text-align: center;
+      margin-top: 2.5rem;
+      font-size: 0.75rem;
+      color: #5b6e8c;
+    }
+    .progress-text {
+      font-weight: 600;
+      margin-top: 0.5rem;
     }
   </style>
 </head>
 <body>
 <div class="container">
-  <div class="header">
-    <div><h1><i class="fas fa-brain"></i> CONSCIOUS DISCIPLINE</h1><p>Chapter‑wise mastery · NEET 2027</p></div>
-    <div class="badge" id="liveDate"></div>
+  <div class="hero">
+    <h1>⚡ ZERO → 650+ TIMETABLE</h1>
+    <div class="badge">🧠 battle-tested · human schedule · NO fantasy robot plan</div>
+    <div class="tagline">“Discipline + repetition — not motivation.”</div>
   </div>
 
-  <div class="nav-tabs">
-    <button class="nav-btn active" data-page="dashboard"><i class="fas fa-home"></i><span> Dashboard</span></button>
-    <button class="nav-btn" data-page="chapterTracker"><i class="fas fa-book-open"></i><span> Chapter Tracker</span></button>
-    <button class="nav-btn" data-page="weekly"><i class="fas fa-calendar-week"></i><span> Weekly Plan</span></button>
-    <button class="nav-btn" data-page="revisionSprint"><i class="fas fa-rocket"></i><span> Sprint</span></button>
-    <button class="nav-btn" data-page="progressStats"><i class="fas fa-chart-line"></i><span> Analytics</span></button>
-    <button class="nav-btn" data-page="rankLab"><i class="fas fa-medal"></i><span> Rank Lab</span></button>
-    <button class="nav-btn" data-page="focus"><i class="fas fa-hourglass-half"></i><span> Focus</span></button>
-  </div>
+  <div class="dashboard">
+    <!-- LEFT COLUMN: TIMETABLE & STRUCTURE -->
+    <div>
+      <!-- DAILY PHASES -->
+      <div class="card">
+        <div class="card-title"><i class="fas fa-clock"></i> Non‑negotiable daily rhythm</div>
+        <div class="section-sub">🌅 Morning phase (discipline builder)</div>
+        <div class="time-block"><span class="time">5:00 – 6:00</span><div class="activity"><strong>🏃 Exercise</strong> (already fixed)</div></div>
+        <div class="time-block"><span class="time">6:00 – 7:30</span><div class="activity"><strong>🚿 Bath + routine</strong> <span class="note">(cut from 2h → 1.5h max)</span></div></div>
+        
+        <div class="section-sub" style="margin-top: 0.6rem;">📘 Study begins 7:30 AM</div>
+        <div class="time-block"><span class="time">7:30 – 10:30</span><div class="activity"><strong>🔥 PHASE 1: DEEP FOCUS (Physics CORE)</strong><br>1h concept + 2h problem solving. <span class="note">No questions = wasted session</span></div></div>
+        <div class="time-block"><span class="time">10:30 – 11:00</span><div class="activity"><span class="break-tag"><i class="fas fa-coffee"></i> BREAK</span> – No phone scrolling, just rest.</div></div>
+        <div class="time-block"><span class="time">11:00 – 2:00</span><div class="activity"><strong>🧪 PHASE 2: CHEMISTRY</strong><br>1.5h Physical/Organic concepts + 1.5h NCERT + Inorganic reading.<br>📌 30‑40 questions minimum daily.</div></div>
+        <div class="time-block"><span class="time">2:00 – 3:00</span><div class="activity"><span class="break-tag"><i class="fas fa-utensils"></i> LUNCH + REST</span> (short nap allowed)</div></div>
+        <div class="time-block"><span class="time">3:00 – 5:00</span><div class="activity"><strong>⚙️ PHASE 3: RECOVERY + STRENGTHENING</strong><br>Only questions (PYQs + modules) – Physics/Chem practice. <span class="note">Rankers are made here.</span></div></div>
+        <div class="time-block"><span class="time">5:00 – 5:30</span><div class="activity"><span class="break-tag"><i class="fas fa-walk"></i> BREAK</span></div></div>
+        <div class="time-block"><span class="time">5:30 – 7:30</span><div class="activity"><strong>🌿 PHASE 4: BIOLOGY (Rank Booster)</strong><br>NCERT line‑by‑line + diagrams + keywords. Target: 2 chapters/day (light+heavy mix).</div></div>
+        <div class="time-block"><span class="time">7:30 – 8:00</span><div class="activity"><span class="break-tag"><i class="fas fa-moon"></i> EVENING BREAK</span></div></div>
+        <div class="time-block"><span class="time">8:00 – 10:00</span><div class="activity"><strong>📓 PHASE 5: NIGHT REINFORCEMENT (most underrated)</strong><br>1h revise Physics mistakes + 1h revise Chemistry/Bio. <strong>📘 Error notebook → vital</strong></div></div>
+        <div class="time-block"><span class="time">10:00 – 10:30</span><div class="activity">✨ Light revision / plan next day</div></div>
+        <div class="time-block"><span class="time">11:00 PM</span><div class="activity">😴 Sleep (minimum 6 hrs)</div></div>
+        <hr>
+        <div class="rule-badge"><i class="fas fa-chalkboard-user"></i> 📺 Lectures Control: Max 5‑6 hrs/day + always followed by questions.</div>
+        <div class="rule-badge"><i class="fas fa-calendar-week"></i> 📅 WEEKLY SYSTEM: Sunday = Mock Test (3‑4h) + 2h analysis.</div>
+      </div>
 
-  <!-- ======================= DASHBOARD ======================= -->
-  <div id="dashboard" class="page active-page">
-    <div class="grid-2">
-      <div class="glass card">
-        <h3><i class="fas fa-hourglass-start"></i> NEET 2027 Countdown</h3>
-        <div id="countdown" style="font-size: 2rem; font-weight:800;">--d --h --m</div>
-        <div class="progress-bar mt-1"><div class="progress-fill" id="yearProgress"></div></div>
+      <!-- RULES & FINAL TRUTH -->
+      <div class="card">
+        <div class="card-title"><i class="fas fa-gavel"></i> Rules that will decide your future</div>
+        <div class="rule-badge"><i class="fas fa-ban"></i> ❌ No Zero Days — even worst day: do at least 2 hours.</div>
+        <div class="rule-badge"><i class="fas fa-bolt"></i> ⚡ Physics Daily (NON-NEGOTIABLE) — mood off, tired, bored → still do it.</div>
+        <div class="rule-badge"><i class="fas fa-redo-alt"></i> 🎯 Missed one session? Don't overthink, don't feel guilty. Just come back next day. <br>Consistency = returning, not being perfect.</div>
+        <div class="quote">
+          <i class="fas fa-feather-alt"></i> “Don't study to become anything. Study like: I am exploring how things work.” — Osho<br>
+          ✨ <strong>One small ritual:</strong> Before studying, say in mind: <em>“This is my experiment. I will act, then observe.”</em>
+        </div>
+        <div class="final-truth" style="background: #eef2ff; border-radius: 1rem; padding: 1rem; margin-top: 1rem;">
+          <strong>✅ FINAL TRUTH:</strong> You don’t need motivation. You need structure + repetition.<br>
+          You are not behind. You are just undisciplined right now — and that is fixable.
+        </div>
       </div>
-      <div class="glass card">
-        <h3><i class="fas fa-chart-pie"></i> Overall Mastery</h3>
-        <div>Chapters completed (all 4 stages): <span id="completeChaptersCount">0</span> / <span id="totalChaptersCount">0</span></div>
-        <div class="progress-bar mt-1"><div class="progress-fill" id="masteryFill"></div></div>
-        <canvas id="masteryPie" width="200" height="200" style="max-height:140px; margin-top:1rem;"></canvas>
+    </div>
+
+    <!-- RIGHT COLUMN: TRACKERS & INTERACTIVE -->
+    <div>
+      <!-- 7-DAY MISSION: show up for physics at 7:30AM -->
+      <div class="card">
+        <div class="card-title"><i class="fas fa-calendar-check"></i> 🎯 YOUR 7‑DAY MISSION</div>
+        <div class="section-sub">“Just sit for Physics at 7:30 AM every day — no matter what.”</div>
+        <div class="streak-grid" id="sevenDayGrid">
+          <!-- dynamic js generated -->
+        </div>
+        <div id="missionFeedback" class="progress-text" style="font-size: 0.85rem;"></div>
+        <button class="btn-sm" id="resetMissionBtn" style="margin-top: 8px;"><i class="fas fa-sync-alt"></i> Reset mission</button>
+        <div class="quote" style="margin-top: 1rem; background:#f1f5f9;">
+          <i class="fas fa-brain"></i> <strong>Why this works:</strong> Starting resistance dissolves when you sit daily at the same time. <br>
+          Day 1‑2 → just sit + try &nbsp;|&nbsp; Day 3‑4 → slight improvement &nbsp;|&nbsp; Day 5‑7 → momentum begins.
+        </div>
       </div>
-      <div class="glass card">
-        <h3><i class="fas fa-tasks"></i> Today's Focus</h3>
-        <ul id="quickTaskList" style="margin-left:1rem;"></ul>
-        <a href="#" data-nav="chapterTracker" style="color:var(--accent-glow);">→ Update chapter progress</a>
+
+      <!-- TODAY'S DAILY SESSION CHECKLIST (functional) -->
+      <div class="card">
+        <div class="card-title"><i class="fas fa-tasks"></i> ✅ Today’s battle plan</div>
+        <div class="section-sub">Check each block as you finish — builds momentum.</div>
+        <div id="dailyChecklistContainer">
+          <!-- injected from js -->
+        </div>
+        <button id="resetDailyBtn" class="btn-sm"><i class="fas fa-eraser"></i> Reset today’s checks</button>
+        <div class="note" style="margin-top: 8px;"><i class="fas fa-info-circle"></i> Track your own sessions. Real study > fake sitting.</div>
+      </div>
+
+      <!-- ERROR NOTEBOOK (very important) -->
+      <div class="card">
+        <div class="card-title"><i class="fas fa-book-open"></i> 📘 Error notebook · mistake log</div>
+        <div class="section-sub">Write your repeated mistakes, weak concepts, or silly errors. Review every night.</div>
+        <textarea id="errorNotebook" rows="4" placeholder="e.g., Physics: rotational dynamics sign mistake | Chemistry: Isomerism confusion | Bio: NCERT line 24 ..."></textarea>
+        <div class="note" style="margin-top: 8px;"><i class="fas fa-save"></i> Auto-saved in your browser. Review before night reinforcement phase.</div>
+      </div>
+
+      <!-- NON-NEGOTIABLE reminder + weekly mock -->
+      <div class="card">
+        <div class="card-title"><i class="fas fa-rocket"></i> Ignite mode</div>
+        <div class="rule-badge"><i class="fas fa-hourglass-start"></i> <strong>“Just show up for 7:30 AM Physics daily — no excuses.”</strong><br>That one habit builds discipline, confidence, mindset.</div>
+        <div class="rule-badge"><i class="fas fa-chart-line"></i> 🧪 Sunday = full length mock + analysis (3-4h test + 2h analysis). Simulate real exam.</div>
+        <div class="rule-badge"><i class="fas fa-dumbbell"></i> Physics = your weakness = your weapon. Attack it daily.</div>
+        <div style="margin-top: 12px; background:#e6f7e6; border-radius: 1rem; padding: 0.7rem; font-size: 0.85rem;">
+          ⭐ <strong>One simple agreement (next 7 days):</strong> Forget rank, future, NEET 2027. Just sit for Physics at 7:30 AM — even if you feel blank or lazy. That’s it.
+        </div>
       </div>
     </div>
   </div>
-
-  <!-- ======================= CHAPTER TRACKER (core) ======================= -->
-  <div id="chapterTracker" class="page">
-    <div class="glass card">
-      <h3><i class="fas fa-layer-group"></i> Detailed Chapter‑wise Tracker (Lectures · Learning · Revision · Test)</h3>
-      <p>Click on each status to cycle: ❌ Not Started → 📺 Lectures → 📖 Learning → 🔁 Revision → ✅ Test Done</p>
-      <div id="subjectTabs" style="display:flex; gap:1rem; margin:1rem 0;">
-        <button class="btn subject-tab active" data-subj="physics">Physics</button>
-        <button class="btn subject-tab" data-subj="chemistry">Chemistry</button>
-        <button class="btn subject-tab" data-subj="biology">Biology</button>
-      </div>
-      <div id="chapterTableContainer"></div>
-      <div class="mt-2"><button id="resetChaptersBtn" style="background:#b91c1c;">⚠️ Reset all chapter progress</button></div>
-    </div>
-  </div>
-
-  <!-- ======================= WEEKLY PLANNER ======================= -->
-  <div id="weekly" class="page">
-    <div class="glass card">
-      <h3>📅 Weekly Revision + Tests</h3>
-      <div id="weeklyTasksContainer" style="max-height:400px; overflow-y:auto;"></div>
-      <hr class="mt-2">
-      <label>📝 Weekly Test Score (0-720):</label>
-      <input type="number" id="weeklyTestScore" placeholder="e.g., 560">
-      <button id="saveScoreBtn">Save Score</button>
-      <div id="scoreFeedback"></div>
-    </div>
-  </div>
-
-  <!-- ======================= REVISION SPRINT (3-4 months) ======================= -->
-  <div id="revisionSprint" class="page">
-    <div class="glass card">
-      <h3>🚀 3‑4 Month NCERT Sprint</h3>
-      <div id="sprintContainer"></div>
-      <button id="resetSprintBtn" class="mt-2">Reset Sprint</button>
-    </div>
-  </div>
-
-  <!-- ======================= PROGRESS STATS ======================= -->
-  <div id="progressStats" class="page">
-    <div class="grid-2">
-      <div class="glass card">
-        <h3>📈 Test Score Trend</h3>
-        <canvas id="scoreTrendChart"></canvas>
-      </div>
-      <div class="glass card">
-        <h3>📊 Subject-wise Completion</h3>
-        <canvas id="subjectProgressChart"></canvas>
-      </div>
-      <div class="glass card">
-        <h3>🔥 Consistency</h3>
-        <div>Weekly tasks done: <span id="consistencyRate">0%</span></div>
-        <div>Study streak (weeks >400 score): <span id="streakCount">0</span></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ======================= RANK LAB ======================= -->
-  <div id="rankLab" class="page">
-    <div class="glass card">
-      <h3>🎯 Rank Estimator & Advice</h3>
-      <input type="number" id="mockScore" placeholder="Mock test score (0-720)">
-      <button id="estimateRank">Estimate Rank</button>
-      <div id="rankResult" class="mt-2"></div>
-      <div id="adviceBox" class="mt-2" style="background:#0f1424; border-radius:1rem; padding:1rem;"></div>
-    </div>
-  </div>
-
-  <!-- ======================= FOCUS MODE (Pomodoro + Calendar) ======================= -->
-  <div id="focus" class="page">
-    <div class="grid-2">
-      <div class="glass card text-center">
-        <h3><i class="fas fa-hourglass-start"></i> Pomodoro</h3>
-        <div style="font-size: 3rem; font-weight:800;" id="timerDisplay">25:00</div>
-        <div class="mt-1"><button id="startTimer"><i class="fas fa-play"></i> Start</button> <button id="pauseTimer"><i class="fas fa-pause"></i> Pause</button> <button id="resetTimer"><i class="fas fa-sync-alt"></i> Reset</button></div>
-      </div>
-      <div class="glass card">
-        <h3>📅 Study Calendar (click today to mark)</h3>
-        <div id="calendarGrid" style="display: grid; grid-template-columns: repeat(7,1fr); gap:6px;"></div>
-      </div>
-    </div>
-  </div>
-  <footer style="text-align:center; margin-top:2rem; opacity:0.6;">CONSCIOUS DISCIPLINE · Data stays on your device · NEET 2027</footer>
+  <footer>
+    <i class="fas fa-charging-station"></i> Consistency is built by returning, not by being perfect. · Show up, observe, level up.
+  </footer>
 </div>
 
 <script>
-  // ---------- COMPLETE CHAPTER DATABASE ----------
-  const subjects = {
-    physics: [
-      "Physical World & Measurement", "Kinematics", "Laws of Motion", "Work, Energy & Power", "Rotational Motion", "Gravitation",
-      "Properties of Matter", "Thermodynamics", "Kinetic Theory", "Oscillations", "Waves", "Electrostatics",
-      "Current Electricity", "Magnetic Effects", "EMI & AC", "Optics", "Dual Nature", "Atoms & Nuclei", "Semiconductors"
-    ],
-    chemistry: [
-      "Some Basic Concepts", "Structure of Atom", "Classification of Elements", "Chemical Bonding", "States of Matter", "Thermodynamics",
-      "Equilibrium", "Redox Reactions", "Hydrogen", "s-Block", "p-Block", "Organic Basics", "Hydrocarbons", "Environmental Chem",
-      "Solid State", "Solutions", "Electrochemistry", "Chemical Kinetics", "Surface Chem", "d&f Block", "Coordination", "Haloalkanes",
-      "Alcohols Phenols", "Aldehydes Ketones", "Amines", "Biomolecules", "Polymers", "Chemistry in Everyday Life"
-    ],
-    biology: [
-      "Diversity in Living World", "Structural Organisation", "Cell Structure", "Plant Physiology", "Human Physiology I", "Human Physiology II",
-      "Reproduction", "Genetics & Evolution", "Biology & Human Welfare", "Biotechnology", "Ecology & Environment"
-    ]
-  };
+  // ---------- 7-DAY MISSION (show up for physics 7:30 AM) ----------
+  let sevenDayState = JSON.parse(localStorage.getItem('neetSevenDay')) || [false, false, false, false, false, false, false];
+  const dayMessages = ["Day 1 · just sit + try", "Day 2 · just sit + try", "Day 3 · slight improvement", "Day 4 · slight improvement", "Day 5 · momentum begins", "Day 6 · momentum builds", "Day 7 · discipline wire"];
 
-  // Stages: 0=Not started, 1=Lectures done, 2=Learning done, 3=Revision done, 4=Test done
-  let chapterProgress = {}; // format: "physics_0": stage
-  let weeklyTasks = [];
-  let weeklyScores = [];
-  let sprintWeeks = [];
-  let studyCalendar = {};
+  function renderSevenDayGrid() {
+    const grid = document.getElementById('sevenDayGrid');
+    if (!grid) return;
+    grid.innerHTML = '';
+    sevenDayState.forEach((completed, idx) => {
+      const dayDiv = document.createElement('div');
+      dayDiv.className = `day-card ${completed ? 'completed' : ''}`;
+      dayDiv.innerHTML = `
+        <div class="day-number">${idx+1}</div>
+        <div class="day-label">${dayMessages[idx].split('·')[0]}</div>
+        <div style="font-size:10px;">${completed ? '✓ done' : '📌'}</div>
+      `;
+      dayDiv.addEventListener('click', (e) => {
+        e.stopPropagation();
+        sevenDayState[idx] = !sevenDayState[idx];
+        localStorage.setItem('neetSevenDay', JSON.stringify(sevenDayState));
+        renderSevenDayGrid();
+        updateMissionFeedback();
+      });
+      grid.appendChild(dayDiv);
+    });
+    updateMissionFeedback();
+  }
 
-  const DEFAULT_TASKS = ["Physics: 2 chapters + 40 nums", "Chemistry: Inorg+Org + 30 MCQs", "Biology: 4 NCERT units", "Weak topics revision", "Full mock test", "Error analysis", "Formula revision"];
-  const SPRINT_DATA = [
-    "Week 1-2: Mechanics + Bio Diversity", "Week 3-4: Thermodynamics + Cell Bio", "Week 5-6: Electrostatics + Genetics", "Week 7-8: Organic GOC + Human Physio",
-    "Week 9-10: Full mocks + weak areas", "Week 11-12: NCERT Exemplar + PYQs"
+  function updateMissionFeedback() {
+    const completedCount = sevenDayState.filter(v => v === true).length;
+    const feedbackDiv = document.getElementById('missionFeedback');
+    if (completedCount === 7) {
+      feedbackDiv.innerHTML = '🎉🏆 PERFECT! You proved: “I can show up.” Momentum is yours — keep going!';
+      feedbackDiv.style.color = '#15803d';
+    } else {
+      feedbackDiv.innerHTML = `✅ ${completedCount}/7 days completed · "Just sit and try — no perfection needed."`;
+      feedbackDiv.style.color = '#1e40af';
+    }
+  }
+
+  document.getElementById('resetMissionBtn')?.addEventListener('click', () => {
+    sevenDayState = [false, false, false, false, false, false, false];
+    localStorage.setItem('neetSevenDay', JSON.stringify(sevenDayState));
+    renderSevenDayGrid();
+  });
+
+  // ---------- DAILY CHECKLIST (dynamic from timetable phases) ----------
+  const checklistItems = [
+    { id: "phyMorning", label: "🌅 7:30 AM - 10:30 AM · Physics Deep Focus (concept + problems)" },
+    { id: "chemPhase", label: "🧪 11:00 AM - 2:00 PM · Chemistry (Physical/Organic + NCERT Inorganic) + 30-40 Qs" },
+    { id: "practicePhase", label: "⚙️ 3:00 PM - 5:00 PM · PYQs / modules (Physics/Chem Practice - NO lectures)" },
+    { id: "bioPhase", label: "🌿 5:30 PM - 7:30 PM · Biology NCERT line-by-line + 2 chapters" },
+    { id: "nightRev", label: "📓 8:00 PM - 10:00 PM · Night reinforcement (mistakes revision + error notebook)" },
+    { id: "mockPrep", label: "📊 Extra: Sunday Mock Test simulation (if Sunday) — else daily consistency" }
   ];
 
-  // Helper: initialize chapter progress if missing
-  function initChapters() {
-    for(let subj in subjects) {
-      subjects[subj].forEach((ch, idx) => {
-        const key = `${subj}_${idx}`;
-        if(chapterProgress[key] === undefined) chapterProgress[key] = 0;
+  function loadDailyChecklist() {
+    const saved = JSON.parse(localStorage.getItem('neetDailyChecklist')) || {};
+    const container = document.getElementById('dailyChecklistContainer');
+    if (!container) return;
+    container.innerHTML = '';
+    checklistItems.forEach(item => {
+      const isChecked = saved[item.id] === true;
+      const div = document.createElement('div');
+      div.className = 'checklist-item';
+      div.innerHTML = `
+        <input type="checkbox" id="${item.id}" ${isChecked ? 'checked' : ''}>
+        <label for="${item.id}">${item.label}</label>
+      `;
+      const cb = div.querySelector('input');
+      cb.addEventListener('change', (e) => {
+        const newState = JSON.parse(localStorage.getItem('neetDailyChecklist')) || {};
+        newState[item.id] = e.target.checked;
+        localStorage.setItem('neetDailyChecklist', JSON.stringify(newState));
       });
-    }
-  }
-
-  function getStageName(stage) {
-    const stages = ["❌ Not Started", "📺 Lectures", "📖 Learning", "🔁 Revision", "✅ Test Done"];
-    return stages[stage];
-  }
-
-  function updateChapterStage(subj, idx, increment = true) {
-    const key = `${subj}_${idx}`;
-    let current = chapterProgress[key] || 0;
-    if(increment) current = (current + 1) % 5;
-    else current = (current - 1 + 5) % 5;
-    chapterProgress[key] = current;
-    saveAll();
-    renderChapterTable(subj);
-    updateOverallProgress();
-  }
-
-  function renderChapterTable(activeSubject = "physics") {
-    const container = document.getElementById("chapterTableContainer");
-    if(!container) return;
-    const chapters = subjects[activeSubject];
-    let html = `<table class="subject-table"><thead><tr><th>Chapter</th><th>Status</th><th>Action</th></tr></thead><tbody>`;
-    chapters.forEach((ch, idx) => {
-      const key = `${activeSubject}_${idx}`;
-      const stage = chapterProgress[key] || 0;
-      html += `<tr>
-        <td>${ch}</td>
-        <td><span class="badge">${getStageName(stage)}</span></td>
-        <td><button class="status-btn" data-subj="${activeSubject}" data-idx="${idx}" data-inc="true">+ Stage</button> <button class="status-btn" data-subj="${activeSubject}" data-idx="${idx}" data-inc="false">- Stage</button></td>
-      </tr>`;
-    });
-    html += `</tbody></table>`;
-    container.innerHTML = html;
-    // attach events
-    document.querySelectorAll(".status-btn").forEach(btn => {
-      btn.addEventListener("click", (e) => {
-        const subj = btn.dataset.subj;
-        const idx = parseInt(btn.dataset.idx);
-        const inc = btn.dataset.inc === "true";
-        updateChapterStage(subj, idx, inc);
-      });
+      container.appendChild(div);
     });
   }
 
-  function updateOverallProgress() {
-    let total = 0, completed = 0;
-    for(let subj in subjects) {
-      subjects[subj].forEach((_, idx) => {
-        total++;
-        const key = `${subj}_${idx}`;
-        if((chapterProgress[key] || 0) === 4) completed++;
-      });
-    }
-    document.getElementById("totalChaptersCount").innerText = total;
-    document.getElementById("completeChaptersCount").innerText = completed;
-    let percent = total ? (completed/total)*100 : 0;
-    document.getElementById("masteryFill").style.width = percent+"%";
-    if(window.masteryPieChart) {
-      window.masteryPieChart.data.datasets[0].data = [percent, 100-percent];
-      window.masteryPieChart.update();
-    }
-    // update subject progress chart
-    updateSubjectChart();
-  }
+  document.getElementById('resetDailyBtn')?.addEventListener('click', () => {
+    localStorage.setItem('neetDailyChecklist', JSON.stringify({}));
+    loadDailyChecklist();
+  });
 
-  let masteryPieChart = null;
-  function initMasteryPie() {
-    const ctx = document.getElementById("masteryPie").getContext("2d");
-    if(masteryPieChart) masteryPieChart.destroy();
-    masteryPieChart = new Chart(ctx, {
-      type: 'doughnut',
-      data: { labels: ['Mastered', 'Remaining'], datasets: [{ data: [0,100], backgroundColor: ['#2b9eff','#2a3a60'] }] }
+  // ---------- ERROR NOTEBOOK auto-save ----------
+  const errorTextarea = document.getElementById('errorNotebook');
+  if (errorTextarea) {
+    const savedNotes = localStorage.getItem('neetErrorNotebook');
+    if (savedNotes) errorTextarea.value = savedNotes;
+    errorTextarea.addEventListener('input', () => {
+      localStorage.setItem('neetErrorNotebook', errorTextarea.value);
     });
   }
 
-  function updateSubjectChart() {
-    let subjStats = { physics:0, chemistry:0, biology:0 };
-    let totalPerSubject = { physics: subjects.physics.length, chemistry: subjects.chemistry.length, biology: subjects.biology.length };
-    for(let subj in subjects) {
-      let completed = 0;
-      subjects[subj].forEach((_, idx) => {
-        const key = `${subj}_${idx}`;
-        if((chapterProgress[key] || 0) === 4) completed++;
-      });
-      subjStats[subj] = (completed/totalPerSubject[subj])*100;
+  // ---------- Additional: Physics non-negotiable reminder widget (dynamic) ----------
+  // adds a little extra streak feel: physics daily reminder
+  function injectPhysicsWidget() {
+    const rightColumn = document.querySelector('.dashboard > div:last-child');
+    if (!rightColumn) return;
+    // avoid duplicate if needed, but we can just insert near card
+    const extraCard = document.createElement('div');
+    extraCard.className = 'card';
+    extraCard.style.marginTop = '0';
+    extraCard.innerHTML = `
+      <div class="card-title"><i class="fas fa-dumbbell"></i> ⚡ Physics daily (NON‑NEGOTIABLE)</div>
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
+        <span><i class="fas fa-check-circle" style="color:#3b82f6"></i> “Even if mood off, tired, bored — show up.”</span>
+        <button id="physicsReminderBtn" class="btn-sm" style="background:#f97316; color:white;"><i class="fas fa-bell"></i> Remind me</button>
+      </div>
+      <div class="note" style="margin-top: 10px;">🔁 Physics = your weakness = your weapon. Build the 7:30 AM habit first.</div>
+    `;
+    // append after the last card
+    const cards = rightColumn.querySelectorAll('.card');
+    if (cards.length) {
+      cards[cards.length-1].insertAdjacentElement('afterend', extraCard);
+    } else {
+      rightColumn.appendChild(extraCard);
     }
-    const ctx = document.getElementById("subjectProgressChart")?.getContext("2d");
-    if(ctx && window.subjectChart) window.subjectChart.destroy();
-    if(ctx) {
-      window.subjectChart = new Chart(ctx, {
-        type: 'bar',
-        data: { labels: ['Physics','Chemistry','Biology'], datasets: [{ label: 'Completion %', data: [subjStats.physics, subjStats.chemistry, subjStats.biology], backgroundColor: '#2b9eff' }] }
-      });
-    }
-  }
-
-  // Weekly tasks
-  function renderWeeklyTasks() {
-    const cont = document.getElementById("weeklyTasksContainer");
-    if(!cont) return;
-    cont.innerHTML = "";
-    weeklyTasks.forEach((t, i) => {
-      const div = document.createElement("div");
-      div.className = "task-item";
-      div.style.display="flex"; div.style.gap="10px"; div.style.alignItems="center"; div.style.margin="8px 0";
-      const cb = document.createElement("input");
-      cb.type = "checkbox";
-      cb.checked = t.completed;
-      cb.addEventListener("change", () => { weeklyTasks[i].completed = cb.checked; saveAll(); renderWeeklyTasks(); updateDashboardQuick(); });
-      const span = document.createElement("span");
-      span.innerText = t.text;
-      div.appendChild(cb); div.appendChild(span);
-      cont.appendChild(div);
+    document.getElementById('physicsReminderBtn')?.addEventListener('click', () => {
+      alert("🧠 Right now: SIT FOR PHYSICS. Even 5 questions. Starting resistance will vanish after 7 days.");
     });
   }
 
-  function updateDashboardQuick() {
-    const quick = document.getElementById("quickTaskList");
-    if(quick) {
-      quick.innerHTML = "";
-      weeklyTasks.slice(0,3).forEach(t => { let li=document.createElement("li"); li.innerHTML = t.completed ? `<s>${t.text}</s>` : t.text; quick.appendChild(li); });
-    }
-    let completed = weeklyTasks.filter(t=>t.completed).length;
-    let percent = weeklyTasks.length ? (completed/weeklyTasks.length)*100 : 0;
-    document.getElementById("consistencyRate").innerText = percent.toFixed(0)+"%";
-    let streak = 0;
-    for(let i=weeklyScores.length-1; i>=0; i--) if(weeklyScores[i].score > 400) streak++; else break;
-    document.getElementById("streakCount").innerText = streak;
-  }
-
-  // Scores & rank
-  function addScore(score) {
-    weeklyScores.push({ date: new Date().toISOString().slice(0,10), score });
-    if(weeklyScores.length>8) weeklyScores.shift();
-    saveAll();
-    updateScoreChart();
-    updateDashboardQuick();
-  }
-
-  let scoreChart = null;
-  function updateScoreChart() {
-    const ctx = document.getElementById("scoreTrendChart")?.getContext("2d");
-    if(!ctx) return;
-    if(scoreChart) scoreChart.destroy();
-    scoreChart = new Chart(ctx, {
-      type: 'line', data: { labels: weeklyScores.map((_,i)=>`W${i+1}`), datasets: [{ label:'Test Score', data: weeklyScores.map(s=>s.score), borderColor:'#2b9eff', fill:false }] }
-    });
-  }
-
-  function estimateRank(score) {
-    if(score>=680) return "AIR 1-200 (Top 0.1%)";
-    if(score>=650) return "AIR 200-800";
-    if(score>=600) return "AIR 800-4000";
-    if(score>=550) return "AIR 4000-15000";
-    if(score>=500) return "AIR 15000-40000";
-    if(score>=400) return "AIR 40000-100000";
-    return "Below 1.5L (Need more effort)";
-  }
-
-  // Sprint
-  function renderSprint() {
-    const cont = document.getElementById("sprintContainer");
-    if(!cont) return;
-    cont.innerHTML = "";
-    sprintWeeks.forEach((w, i) => {
-      const div = document.createElement("div");
-      div.className = "task-item";
-      const cb = document.createElement("input");
-      cb.type = "checkbox";
-      cb.checked = w.completed;
-      cb.addEventListener("change", () => { sprintWeeks[i].completed = cb.checked; saveAll(); });
-      div.appendChild(cb);
-      div.appendChild(document.createTextNode(w.text));
-      cont.appendChild(div);
-    });
-  }
-
-  // Calendar
-  function renderCalendar() {
-    const todayStr = new Date().toISOString().slice(0,10);
-    const firstDay = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
-    const start = new Date(firstDay);
-    start.setDate(start.getDate() - start.getDay());
-    const grid = document.getElementById("calendarGrid");
-    if(!grid) return;
-    grid.innerHTML = "";
-    for(let i=0;i<42;i++) {
-      const d = new Date(start);
-      d.setDate(start.getDate()+i);
-      const dStr = d.toISOString().slice(0,10);
-      const marked = studyCalendar[dStr] === true;
-      const btn = document.createElement("button");
-      btn.innerText = d.getDate();
-      btn.style.background = marked ? "#2b9eff" : "#1f2a44";
-      btn.style.borderRadius = "12px";
-      btn.style.padding = "8px";
-      if(dStr === todayStr) btn.style.border = "2px solid white";
-      btn.addEventListener("click", () => {
-        if(dStr === todayStr) {
-          studyCalendar[dStr] = !studyCalendar[dStr];
-          saveAll();
-          renderCalendar();
-        } else alert("You can only mark today's study day!");
-      });
-      grid.appendChild(btn);
+  // also add "No Zero Days" interactive encouragement
+  function addZeroDayBuster() {
+    const container = document.querySelector('.dashboard > div:first-child .card:last-child');
+    if (container) {
+      const zeroDiv = document.createElement('div');
+      zeroDiv.style.marginTop = '1rem';
+      zeroDiv.style.padding = '0.8rem';
+      zeroDiv.style.background = '#fff7ed';
+      zeroDiv.style.borderRadius = '1rem';
+      zeroDiv.innerHTML = `<i class="fas fa-calendar-day"></i> <strong>No Zero Days rule:</strong> On worst days, just do 2 hours — ANY subject. Prove you can return.`;
+      container.appendChild(zeroDiv);
     }
   }
 
-  // Pomodoro
-  let timerSeconds = 25*60, timerInterval = null;
-  function updateTimerDisplay() {
-    let mins = Math.floor(timerSeconds/60);
-    let secs = timerSeconds%60;
-    document.getElementById("timerDisplay").innerText = `${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
-  }
-  function startTimer() { if(timerInterval) clearInterval(timerInterval); timerInterval = setInterval(() => { if(timerSeconds<=0) { clearInterval(timerInterval); alert("Pomodoro done! Break time."); } else { timerSeconds--; updateTimerDisplay(); } }, 1000); }
-  function pauseTimer() { clearInterval(timerInterval); timerInterval=null; }
-  function resetTimer() { pauseTimer(); timerSeconds=25*60; updateTimerDisplay(); }
-
-  // Countdown
-  function getNeetDate() { let d = new Date(2027,4,1); while(d.getDay() !== 0) d.setDate(d.getDate()+1); return d; }
-  function updateCountdown() {
-    const target = getNeetDate();
-    const diff = target - new Date();
-    if(diff<=0) return;
-    const days = Math.floor(diff/86400000);
-    const hours = Math.floor((diff%86400000)/3600000);
-    const mins = Math.floor((diff%3600000)/60000);
-    document.getElementById("countdown").innerText = `${days}d ${hours}h ${mins}m`;
-    const start = new Date(2026,4,1);
-    const p = ((new Date()-start)/(target-start))*100;
-    document.getElementById("yearProgress").style.width = Math.min(100,p)+"%";
+  // also ensure the weekly mock reminder
+  function weeklyMockNote() {
+    const weeklyContainer = document.querySelector('.rule-badge:contains("Sunday = Mock Test")');
+    // no jquery, just do a manual if needed. fine.
   }
 
-  // Persistence
-  function saveAll() {
-    localStorage.setItem("CD_chapters", JSON.stringify(chapterProgress));
-    localStorage.setItem("CD_tasks", JSON.stringify(weeklyTasks));
-    localStorage.setItem("CD_scores", JSON.stringify(weeklyScores));
-    localStorage.setItem("CD_sprint", JSON.stringify(sprintWeeks));
-    localStorage.setItem("CD_calendar", JSON.stringify(studyCalendar));
-  }
-  function loadAll() {
-    chapterProgress = JSON.parse(localStorage.getItem("CD_chapters") || "{}");
-    weeklyTasks = JSON.parse(localStorage.getItem("CD_tasks") || JSON.stringify(DEFAULT_TASKS.map(t=>({text:t,completed:false}))));
-    weeklyScores = JSON.parse(localStorage.getItem("CD_scores") || "[]");
-    sprintWeeks = JSON.parse(localStorage.getItem("CD_sprint") || JSON.stringify(SPRINT_DATA.map(t=>({text:t,completed:false}))));
-    studyCalendar = JSON.parse(localStorage.getItem("CD_calendar") || "{}");
-    initChapters();
-  }
-
-  // Reset
-  function resetAllProgress() {
-    if(confirm("⚠️ This will erase all chapter progress, tasks, scores, sprint, calendar. Continue?")) {
-      localStorage.clear();
-      loadAll();
-      initChapters();
-      saveAll();
-      location.reload();
-    }
-  }
-
-  // Navigation & Event Binding
-  function switchPage(pageId) {
-    document.querySelectorAll(".page").forEach(p => p.classList.remove("active-page"));
-    document.getElementById(pageId).classList.add("active-page");
-    document.querySelectorAll(".nav-btn").forEach(btn => btn.classList.remove("active"));
-    document.querySelector(`.nav-btn[data-page="${pageId}"]`).classList.add("active");
-    if(pageId === "chapterTracker") renderChapterTable("physics");
-    if(pageId === "progressStats") { updateScoreChart(); updateSubjectChart(); updateOverallProgress(); }
-    if(pageId === "focus") renderCalendar();
-  }
-
-  function bindEvents() {
-    document.querySelectorAll(".nav-btn").forEach(btn => btn.addEventListener("click", () => switchPage(btn.dataset.page)));
-    document.querySelectorAll("[data-nav]").forEach(el => el.addEventListener("click", (e) => { e.preventDefault(); switchPage(el.dataset.nav); }));
-    document.getElementById("saveScoreBtn")?.addEventListener("click", () => { let v = parseInt(document.getElementById("weeklyTestScore").value); if(!isNaN(v) && v>=0 && v<=720) addScore(v); else alert("Enter 0-720"); });
-    document.getElementById("estimateRank")?.addEventListener("click", () => { let s = parseInt(document.getElementById("mockScore").value); if(!isNaN(s)) document.getElementById("rankResult").innerHTML = `Predicted Rank: ${estimateRank(s)}`; });
-    document.getElementById("resetChaptersBtn")?.addEventListener("click", resetAllProgress);
-    document.getElementById("resetSprintBtn")?.addEventListener("click", () => { sprintWeeks = SPRINT_DATA.map(t=>({text:t,completed:false})); saveAll(); renderSprint(); });
-    document.getElementById("startTimer")?.addEventListener("click", startTimer);
-    document.getElementById("pauseTimer")?.addEventListener("click", pauseTimer);
-    document.getElementById("resetTimer")?.addEventListener("click", resetTimer);
-    document.querySelectorAll(".subject-tab").forEach(tab => {
-      tab.addEventListener("click", (e) => {
-        document.querySelectorAll(".subject-tab").forEach(t=>t.classList.remove("active"));
-        tab.classList.add("active");
-        renderChapterTable(tab.dataset.subj);
-      });
-    });
-    document.getElementById("refreshAdvice")?.addEventListener("click", () => {});
-  }
-
+  // Init all
   function init() {
-    loadAll();
-    bindEvents();
-    renderWeeklyTasks();
-    renderSprint();
-    updateOverallProgress();
-    updateScoreChart();
-    updateDashboardQuick();
-    initMasteryPie();
-    updateSubjectChart();
-    updateCountdown();
-    setInterval(updateCountdown,1000);
-    setInterval(()=>{ document.getElementById("liveDate").innerText = new Date().toLocaleDateString(); },1000);
-    renderChapterTable("physics");
-    renderCalendar();
+    renderSevenDayGrid();
+    loadDailyChecklist();
+    injectPhysicsWidget();
+    addZeroDayBuster();
+    // Optional: Sunday reminder detect
+    const today = new Date().getDay();
+    if (today === 0) {
+      const mockReminder = document.createElement('div');
+      mockReminder.className = 'rule-badge';
+      mockReminder.style.background = '#fce7f3';
+      mockReminder.innerHTML = '<i class="fas fa-vial"></i> 🧪 TODAY IS SUNDAY → Mock test day! 3-4h test + 2h analysis. Simulate exam conditions.';
+      const rightSide = document.querySelector('.dashboard > div:last-child .card');
+      if (rightSide) rightSide.parentNode?.insertBefore(mockReminder, rightSide.nextSibling);
+    }
   }
   init();
 </script>
