@@ -2,92 +2,410 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Error Vault · NEET Quest</title>
-  <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Murphx Prep | Daily Missions</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: radial-gradient(circle at 10% 20%, #0b1120, #030712);
+      font-family: 'Inter', sans-serif;
+      color: #eef2ff;
+      line-height: 1.5;
+      padding: 1.5rem;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* navigation (consistent with index) */
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.8rem 1.8rem;
+      background: rgba(15, 25, 45, 0.65);
+      backdrop-filter: blur(12px);
+      border-radius: 60px;
+      margin-bottom: 2rem;
+      border: 1px solid rgba(249,115,22,0.3);
+    }
+    .logo {
+      font-size: 1.6rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #facc15, #f97316);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .logo i {
+      color: #f97316;
+      background: none;
+      -webkit-background-clip: unset;
+    }
+    .nav-links a {
+      color: #b9d0f0;
+      text-decoration: none;
+      margin: 0 1rem;
+      font-weight: 500;
+      transition: 0.2s;
+    }
+    .nav-links a:hover, .nav-links a.active {
+      color: #f97316;
+      text-shadow: 0 0 6px #f97316;
+    }
+    .xp-pill {
+      background: #1e293b;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 700;
+      border: 1px solid #facc15;
+    }
+
+    /* glass card */
+    .card {
+      background: rgba(20, 30, 55, 0.55);
+      backdrop-filter: blur(10px);
+      border-radius: 2rem;
+      padding: 1.8rem;
+      border: 1px solid rgba(255,255,255,0.08);
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      border-color: rgba(249,115,22,0.5);
+      transform: translateY(-3px);
+    }
+    .card-title {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      border-left: 4px solid #f97316;
+      padding-left: 1rem;
+    }
+
+    /* quest list */
+    .quest-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    .quest-item {
+      background: #0f172a;
+      border-radius: 1.2rem;
+      padding: 1rem 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      transition: all 0.2s;
+      border: 1px solid #1e293b;
+    }
+    .quest-item:hover {
+      background: #1e293b;
+      transform: translateX(4px);
+    }
+    .quest-item.completed {
+      background: #1f4a2c;
+      border-left: 5px solid #4ade80;
+    }
+    .quest-item input {
+      width: 1.3rem;
+      height: 1.3rem;
+      accent-color: #f97316;
+      cursor: pointer;
+    }
+    .quest-label {
+      flex: 1;
+      font-weight: 500;
+    }
+    .quest-xp {
+      background: #f97316;
+      padding: 0.2rem 0.8rem;
+      border-radius: 40px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #030712;
+    }
+
+    /* combo meter */
+    .combo-container {
+      background: #0f172a;
+      border-radius: 1.5rem;
+      padding: 0.8rem;
+      text-align: center;
+      margin: 1rem 0;
+    }
+    .combo-text {
+      font-size: 1.3rem;
+      font-weight: 800;
+    }
+    .combo-fire {
+      color: #facc15;
+      animation: pulse 0.5s ease;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); text-shadow: 0 0 8px #f97316; }
+      100% { transform: scale(1); }
+    }
+
+    /* progress bar */
+    .progress-bar-bg {
+      background: #1e293b;
+      height: 10px;
+      border-radius: 10px;
+      margin: 1rem 0;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #facc15, #f97316);
+      border-radius: 10px;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    /* buttons */
+    .btn-neon {
+      background: #f97316;
+      border: none;
+      padding: 0.7rem 1.2rem;
+      border-radius: 40px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s;
+      width: 100%;
+      color: #030712;
+    }
+    .btn-neon:hover {
+      background: #ea580c;
+      transform: scale(0.98);
+      box-shadow: 0 0 12px #f97316;
+    }
+    .btn-secondary {
+      background: #334155;
+      margin-top: 0.5rem;
+    }
+
+    /* responsive */
+    @media (max-width: 700px) {
+      body { padding: 1rem; }
+      .nav { flex-direction: column; gap: 0.8rem; text-align: center; }
+      .nav-links a { margin: 0 0.5rem; }
+      .quest-item { flex-wrap: wrap; }
+    }
+  </style>
 </head>
 <body>
-  <div class="page-transition">
-    <nav class="game-nav">
-      <div class="nav-logo"><i class="fas fa-dice-d6"></i> ZERO→650+</div>
-      <div class="nav-links">
-        <a href="index.html"><i class="fas fa-home"></i> Hub</a>
-        <a href="daily.html"><i class="fas fa-scroll"></i> Daily Quests</a>
-        <a href="notebook.html" class="active"><i class="fas fa-skull-book"></i> Error Vault</a>
-      </div>
-      <div class="xp-pill" id="globalXpDisplay">🏆 XP 0</div>
-    </nav>
-
-    <main class="container">
-      <div class="hero-glow">
-        <h1>📘 <span class="gradient-text">Error Notebook</span> & Revision Core</h1>
-        <p>“Review mistakes every night – rankers are made here.”</p>
-      </div>
-
-      <div class="double-grid">
-        <div class="glass-card">
-          <div class="card-header"><i class="fas fa-pen-fancy"></i> Mistake Log</div>
-          <textarea id="errorNotebook" rows="8" placeholder="Write your repeated errors, weak concepts, silly mistakes..."></textarea>
-          <div class="note">✍️ Auto-saved. Review during night reinforcement (8-10 PM).</div>
-        </div>
-
-        <div class="glass-card">
-          <div class="card-header"><i class="fas fa-brain"></i> Revision Tracker</div>
-          <div class="revision-grid" id="revisionTracker">
-            <!-- Physics, Chemistry, Bio revision toggles -->
-          </div>
-          <button id="resetRevisionBtn" class="btn-secondary mt-2">Reset revision ticks</button>
-          <div class="quote-card" style="margin-top: 1rem;">
-            <i class="fas fa-shield-alt"></i> <strong>Physics Weapon</strong> – “Even if tired, show up for 30 min of problems.”
-            <button id="physicsWarriorBtn" class="btn-small">⚡ Remind Me</button>
-          </div>
-        </div>
-      </div>
-    </main>
+<div class="container">
+  <div class="nav">
+    <div class="logo"><i class="fas fa-bolt"></i> MURPHX<span style="color:#5a7c9c;">/PREP</span></div>
+    <div class="nav-links">
+      <a href="index.html"><i class="fas fa-chart-line"></i> Hub</a>
+      <a href="daily.html" class="active"><i class="fas fa-scroll"></i> Missions</a>
+      <a href="notebook.html"><i class="fas fa-flask"></i> Concept Lab</a>
+    </div>
+    <div class="xp-pill"><i class="fas fa-star"></i> <span id="headerXP">0</span> XP</div>
   </div>
-  <script src="global.js"></script>
-  <script>
-    // error notebook save
-    const errorTa = document.getElementById('errorNotebook');
-    errorTa.value = localStorage.getItem('neetErrorNotebook') || '';
-    errorTa.addEventListener('input', () => localStorage.setItem('neetErrorNotebook', errorTa.value));
-    
-    // revision tracker
-    let revisionState = JSON.parse(localStorage.getItem('neetRevision')) || { physics:false, chemistry:false, bio:false };
-    const revGrid = document.getElementById('revisionTracker');
-    function renderRevision() {
-      revGrid.innerHTML = `
-        <div class="rev-card ${revisionState.physics ? 'rev-done' : ''}" data-subj="physics"><i class="fas fa-atom"></i> Physics mistakes revised</div>
-        <div class="rev-card ${revisionState.chemistry ? 'rev-done' : ''}" data-subj="chemistry"><i class="fas fa-flask"></i> Chemistry errors reviewed</div>
-        <div class="rev-card ${revisionState.bio ? 'rev-done' : ''}" data-subj="bio"><i class="fas fa-leaf"></i> Biology NCERT corrections</div>
+
+  <div class="card">
+    <div class="card-title"><i class="fas fa-list-check"></i> Today's Quests</div>
+    <p style="margin-bottom: 1rem; color: #94a3b8;">Complete each quest to earn XP and build your combo streak.</p>
+
+    <div class="quest-list" id="questContainer"></div>
+
+    <!-- Combo meter -->
+    <div class="combo-container" id="comboBox">
+      <span class="combo-text">🔥 Combo: <span id="comboCount">0</span>x</span>
+      <div id="comboBonusMsg" style="font-size: 0.8rem; margin-top: 0.3rem;"></div>
+    </div>
+
+    <!-- Progress to perfect day -->
+    <div class="progress-bar-bg"><div class="progress-fill" id="dailyProgressFill"></div></div>
+    <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
+      <button id="resetQuestsBtn" class="btn-neon btn-secondary" style="background:#334155;">⟳ Reset All Quests</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ----- define quests (daily tasks) -----
+  const QUESTS = [
+    { id: "phyCore", label: "🌞 Physics CORE (7:30-10:30)", xp: 25 },
+    { id: "chemFull", label: "🧪 Chemistry + 40 Questions + NCERT", xp: 20 },
+    { id: "pyqModule", label: "⚙️ PYQs / Modules (only problems, no lectures)", xp: 20 },
+    { id: "bioNcert", label: "🌿 Biology – 2 chapters line‑by‑line", xp: 20 },
+    { id: "nightRev", label: "📘 Night reinforcement + error notebook review", xp: 15 },
+    { id: "extraEffort", label: "⚡ Bonus: No zero day / Sunday mock attempt", xp: 10 }
+  ];
+
+  // load state from localStorage
+  let questState = JSON.parse(localStorage.getItem('murphx_dailyQuests')) || {};
+  let totalXP = parseInt(localStorage.getItem('murphx_totalXP')) || 0;
+
+  // Helper: update header XP display
+  function updateHeaderXP() {
+    document.getElementById('headerXP').innerText = totalXP;
+  }
+
+  // Add XP and save globally
+  function addXP(amount) {
+    totalXP += amount;
+    if(totalXP < 0) totalXP = 0;
+    localStorage.setItem('murphx_totalXP', totalXP);
+    updateHeaderXP();
+    // optional level-up check (but main page handles confetti, we can do local too)
+    if(amount > 0) showToast(`+${amount} XP`);
+    // update any other page that might be open? storage event will handle sync
+  }
+
+  // Show small toast notification
+  function showToast(msg, duration = 2000) {
+    let toast = document.createElement('div');
+    toast.innerText = msg;
+    toast.style.position = 'fixed';
+    toast.style.bottom = '20px';
+    toast.style.right = '20px';
+    toast.style.backgroundColor = '#f97316';
+    toast.style.color = '#030712';
+    toast.style.padding = '0.6rem 1.2rem';
+    toast.style.borderRadius = '40px';
+    toast.style.fontWeight = 'bold';
+    toast.style.zIndex = '9999';
+    toast.style.backdropFilter = 'blur(8px)';
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), duration);
+  }
+
+  // Compute combo (number of completed quests)
+  function computeCombo() {
+    let completed = Object.values(questState).filter(v => v === true).length;
+    return completed;
+  }
+
+  // Update UI: quest list, combo meter, progress bar, bonus detection
+  function renderQuests() {
+    const container = document.getElementById('questContainer');
+    if(!container) return;
+    container.innerHTML = '';
+    let completedCount = 0;
+    QUESTS.forEach(q => {
+      const isChecked = questState[q.id] || false;
+      if(isChecked) completedCount++;
+      const questDiv = document.createElement('div');
+      questDiv.className = `quest-item ${isChecked ? 'completed' : ''}`;
+      questDiv.innerHTML = `
+        <input type="checkbox" id="chk_${q.id}" ${isChecked ? 'checked' : ''}>
+        <span class="quest-label">${q.label}</span>
+        <span class="quest-xp">+${q.xp} XP</span>
       `;
-      document.querySelectorAll('.rev-card').forEach(card => {
-        card.addEventListener('click', () => {
-          const subj = card.dataset.subj;
-          revisionState[subj] = !revisionState[subj];
-          localStorage.setItem('neetRevision', JSON.stringify(revisionState));
-          renderRevision();
-          if(Object.values(revisionState).every(v=>v===true) && !localStorage.getItem('revisionBonus')){
-            addXP(40);
-            localStorage.setItem('revisionBonus','true');
-            triggerConfetti();
-          }
-        });
+      const cb = questDiv.querySelector('input');
+      cb.addEventListener('change', (e) => {
+        const nowChecked = e.target.checked;
+        if(nowChecked && !questState[q.id]) {
+          addXP(q.xp);
+          questState[q.id] = true;
+          showToast(`Completed: ${q.label} +${q.xp} XP`);
+        } else if(!nowChecked && questState[q.id]) {
+          addXP(-q.xp);
+          questState[q.id] = false;
+          showToast(`Unchecked: ${q.label} -${q.xp} XP`);
+        }
+        localStorage.setItem('murphx_dailyQuests', JSON.stringify(questState));
+        renderQuests(); // re-render to update checkbox state and combo
+        updateComboAndProgress();
+        // check perfect day bonus
+        const allCompleted = QUESTS.every(qq => questState[qq.id] === true);
+        if(allCompleted && !localStorage.getItem('perfectDayBonus')) {
+          addXP(50);
+          localStorage.setItem('perfectDayBonus', 'true');
+          canvasConfetti({ particleCount: 200, spread: 70, origin: { y: 0.6 } });
+          showToast('🌟 PERFECT DAY! +50 XP BONUS 🌟');
+        } else if(!allCompleted) {
+          localStorage.removeItem('perfectDayBonus');
+        }
       });
+      container.appendChild(questDiv);
+    });
+    updateComboAndProgress();
+  }
+
+  function updateComboAndProgress() {
+    const combo = computeCombo();
+    const comboElem = document.getElementById('comboCount');
+    if(comboElem) {
+      comboElem.innerText = combo;
+      if(combo >= 5) {
+        comboElem.classList.add('combo-fire');
+        document.getElementById('comboBonusMsg').innerHTML = '🔥 BLAZING! +10 XP bonus if you finish all!';
+      } else if(combo >= 3) {
+        comboElem.classList.add('combo-fire');
+        document.getElementById('comboBonusMsg').innerHTML = '⚡ Good streak! Keep going.';
+      } else {
+        comboElem.classList.remove('combo-fire');
+        document.getElementById('comboBonusMsg').innerHTML = 'Complete quests to build combo.';
+      }
+      // extra combo bonus: if combo == 6 and not yet awarded
+      if(combo === QUESTS.length && !localStorage.getItem('comboMasterBonus')) {
+        addXP(30);
+        localStorage.setItem('comboMasterBonus', 'true');
+        canvasConfetti({ particleCount: 150, spread: 60 });
+        showToast('🎯 COMBO MASTER! +30 XP');
+      } else if(combo !== QUESTS.length) {
+        localStorage.removeItem('comboMasterBonus');
+      }
     }
-    renderRevision();
-    document.getElementById('resetRevisionBtn')?.addEventListener('click',()=>{
-      revisionState = { physics:false, chemistry:false, bio:false };
-      localStorage.setItem('neetRevision',JSON.stringify(revisionState));
-      localStorage.removeItem('revisionBonus');
-      renderRevision();
+    const percent = (combo / QUESTS.length) * 100;
+    document.getElementById('dailyProgressFill').style.width = percent + '%';
+  }
+
+  // Reset all quests (subtract XP for any checked quests)
+  function resetAllQuests() {
+    QUESTS.forEach(q => {
+      if(questState[q.id]) {
+        totalXP -= q.xp;
+        questState[q.id] = false;
+      }
     });
-    document.getElementById('physicsWarriorBtn')?.addEventListener('click',()=>{
-      alert("⚡ 7:30 AM PHYSICS – sit down, open module, solve 5 questions. Resistance breaks.");
-      addXP(5);
-    });
-  </script>
+    if(totalXP < 0) totalXP = 0;
+    localStorage.setItem('murphx_totalXP', totalXP);
+    localStorage.setItem('murphx_dailyQuests', JSON.stringify(questState));
+    localStorage.removeItem('perfectDayBonus');
+    localStorage.removeItem('comboMasterBonus');
+    updateHeaderXP();
+    renderQuests();
+    showToast('All quests reset. XP adjusted accordingly.');
+  }
+
+  // Sync XP from other pages (storage event)
+  window.addEventListener('storage', (e) => {
+    if(e.key === 'murphx_totalXP') {
+      totalXP = parseInt(e.newValue) || 0;
+      updateHeaderXP();
+      renderQuests(); // re-render to keep combo consistent (though XP display only)
+    }
+    if(e.key === 'murphx_dailyQuests') {
+      questState = JSON.parse(e.newValue) || {};
+      renderQuests();
+    }
+  });
+
+  // Initial render and set up reset button
+  renderQuests();
+  updateHeaderXP();
+  document.getElementById('resetQuestsBtn').addEventListener('click', resetAllQuests);
+</script>
 </body>
-</html>
+                                                                        </html>
