@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily Quests · NEET Quest</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+  <div class="page-transition">
+    <nav class="game-nav">
+      <div class="nav-logo"><i class="fas fa-dice-d6"></i> ZERO→650+</div>
+      <div class="nav-links">
+        <a href="index.html"><i class="fas fa-home"></i> Hub</a>
+        <a href="daily.html" class="active"><i class="fas fa-scroll"></i> Daily Quests</a>
+        <a href="notebook.html"><i class="fas fa-skull-book"></i> Error Vault</a>
+      </div>
+      <div class="xp-pill" id="globalXpDisplay">🏆 XP 0</div>
+    </nav>
+
+    <main class="container">
+      <div class="hero-glow">
+        <h1>⚔️ Today's <span class="gradient-text">Quests</span></h1>
+        <div class="xp-meter">
+          <span id="xpTodaySpan">✨ Today's XP: 0</span>
+          <div class="progress-container"><div class="progress-fill" id="dailyProgressFill"></div></div>
+        </div>
+      </div>
+
+      <div class="quest-board" id="dailyChecklistContainer"></div>
+      <div style="display: flex; justify-content: center; gap: 1rem; margin: 2rem 0;">
+        <button id="resetDailyBtn" class="btn-secondary"><i class="fas fa-undo-alt"></i> Reset Quests</button>
+        <button id="claimBonusBtn" class="btn-primary"><i class="fas fa-gift"></i> Claim Daily Bonus</button>
+      </div>
+      <div id="levelUpMessage" class="level-toast"></div>
+    </main>
+  </div>
+  <script src="global.js"></script>
+  <script>
+    const quests = [
+      { id: "phyCore", label: "🌅 7:30-10:30 Physics CORE (concept + problem solving)", xp: 25 },
+      { id: "chemFull", label: "🧪 11:00-2:00 Chemistry + 30-40 Questions", xp: 20 },
+      { id: "pyqs", label: "⚙️ 3:00-5:00 PYQs / Modules (No lectures)", xp: 20 },
+      { id: "bioNcert", label: "🌿 5:30-7:30 Biology NCERT 2 chapters", xp: 20 },
+      { id: "nightRev", label: "📓 8:00-10:00 Night reinforcement + error notebook review", xp: 15 },
+      { id: "bonusEffort", label: "⚡ No Zero Days / Sunday mock attempt", xp: 10 }
+    ];
+    let questState = JSON.parse(localStorage.getItem('neetDailyQuests')) || {};
+    function renderQuests() {
+      const container = document.getElementById('dailyChecklistContainer');
+      container.innerHTML = '';
+      let totalEarned = 0;
+      quests.forEach(q => {
+        const checked = questState[q.id] || false;
+        if(checked) totalEarned += q.xp;
+        const card = document.createElement('div');
+        card.className = `quest-card ${checked ? 'completed-quest' : ''}`;
+        card.innerHTML = `
+          <input type="checkbox" id="${q.id}" ${checked ? 'checked' : ''}>
+          <label for="${q.id}">${q.label}</label>
+          <span class="quest-xp">+${q.xp} XP</span>
+        `;
+        const cb = card.querySelector('input');
+        cb.addEventListener('change', (e) => {
+          if(e.target.checked) {
+            addXP(q.xp);
+            questState[q.id] = true;
+          } else {
+            addXP(-q.xp);
+            questState[q.id] = false;
+          }
+          localStorage.setItem('neetDailyQuests', JSON.stringify(questState));
+          renderQuests();
+          updateDailyProgress();
+        });
+        container.appendChild(card);
+      });
+      document.getElementById('xpTodaySpan').innerHTML = `✨ Today's XP: ${totalEarned}`;
+      updateDailyProgress();
+    }
+    function updateDailyProgress() {
+      let completed = Object.values(questState).filter(v=>v===true).length;
+      let percent = (completed / quests.length) * 100;
+      document.getElementById('dailyProgressFill').style.width = percent+'%';
+      if(percent === 100 && !localStorage.getItem('dailyPerfectBonus')){
+        addXP(50);
+        localStorage.setItem('dailyPerfectBonus','true');
+        triggerConfetti();
+        showToast('🔥 PERFECT DAY! +50 BONUS XP 🔥');
+      }
+    }
+    document.getElementById('resetDailyBtn')?.addEventListener('click',()=>{
+      Object.keys(questState).forEach(k => {
+        if(questState[k]) addXP(-quests.find(q=>q.id===k).xp);
+      });
+      questState = {};
+      localStorage.setItem('neetDailyQuests', JSON.stringify(questState));
+      localStorage.removeItem('dailyPerfectBonus');
+      renderQuests();
+    });
+    document.getElementById('claimBonusBtn')?.addEventListener('click',()=>{
+      addXP(25);
+      showToast('✨ +25 XP loyalty bonus!');
+    });
+    renderQuests();
+  </script>
+</body>
+</html>
