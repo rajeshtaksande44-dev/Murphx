@@ -7,9 +7,103 @@
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* additional hub-specific tweaks */
+    .hero-glow {
+      position: relative;
+      overflow: hidden;
+    }
+    .floating-orb {
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(249,115,22,0.2) 0%, rgba(59,130,246,0) 80%);
+      border-radius: 50%;
+      filter: blur(40px);
+      animation: float 8s infinite alternate;
+      z-index: -1;
+    }
+    @keyframes float {
+      0% { transform: translate(0, 0) scale(1); opacity: 0.3; }
+      100% { transform: translate(30px, -30px) scale(1.2); opacity: 0.6; }
+    }
+    .level-badge {
+      background: linear-gradient(135deg, #1e293b, #0f172a);
+      border-radius: 60px;
+      padding: 0.2rem 1rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      border: 1px solid #facc15;
+    }
+    .xp-bar-container {
+      background: #0f172a;
+      border-radius: 30px;
+      height: 12px;
+      width: 100%;
+      margin: 0.5rem 0;
+    }
+    .xp-fill {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #facc15, #f97316);
+      border-radius: 30px;
+      transition: width 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    }
+    .stat-grid {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    .stat-card {
+      background: rgba(30, 41, 59, 0.6);
+      backdrop-filter: blur(4px);
+      border-radius: 1.5rem;
+      padding: 0.8rem;
+      text-align: center;
+      flex: 1;
+      transition: transform 0.2s;
+    }
+    .stat-card:hover { transform: translateY(-3px); background: rgba(30,41,59,0.9); }
+    .stat-number {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: #facc15;
+    }
+    .time-slot {
+      transition: all 0.2s;
+      cursor: default;
+    }
+    .time-slot:hover {
+      background: rgba(249,115,22,0.15);
+      transform: scale(1.01);
+      border-radius: 1rem;
+      padding-left: 0.5rem;
+    }
+    .physics-warrior-btn {
+      background: #f97316;
+      border: none;
+      margin-top: 0.5rem;
+      width: 100%;
+    }
+    @keyframes subtlePulse {
+      0% { box-shadow: 0 0 0 0 rgba(249,115,22,0.4); }
+      70% { box-shadow: 0 0 0 6px rgba(249,115,22,0); }
+      100% { box-shadow: 0 0 0 0 rgba(249,115,22,0); }
+    }
+    .day-card {
+      transition: all 0.2s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+    }
+    .day-card.completed {
+      animation: subtlePulse 0.6s ease-out;
+    }
+  </style>
 </head>
 <body>
   <div class="page-transition">
+    <!-- Navigation (same as other pages) -->
     <nav class="game-nav">
       <div class="nav-logo"><i class="fas fa-dice-d6"></i> ZERO→650+</div>
       <div class="nav-links">
@@ -21,13 +115,27 @@
     </nav>
 
     <main class="container">
+      <!-- Hero with floating orbs -->
       <div class="hero-glow">
+        <div class="floating-orb" style="top: -50px; left: -80px;"></div>
+        <div class="floating-orb" style="bottom: -30px; right: -50px; width: 250px; height: 250px; animation-duration: 12s;"></div>
         <h1><span class="gradient-text">Battle-Tested Timetable</span></h1>
         <p class="sub">“Discipline + repetition – not motivation”</p>
+        <div class="level-badge" id="levelBadge">
+          <i class="fas fa-chart-line"></i> <span id="levelText">Level 1</span>
+        </div>
+        <div class="xp-bar-container">
+          <div class="xp-fill" id="xpFillBar"></div>
+        </div>
+        <div class="stat-grid">
+          <div class="stat-card"><i class="fas fa-calendar-check"></i><div class="stat-number" id="streakCount">0</div><div>day streak</div></div>
+          <div class="stat-card"><i class="fas fa-trophy"></i><div class="stat-number" id="totalXPNum">0</div><div>total XP</div></div>
+          <div class="stat-card"><i class="fas fa-fire"></i><div class="stat-number" id="physicsStreak">0</div><div>physics days</div></div>
+        </div>
       </div>
 
       <div class="dashboard-grid">
-        <!-- Left: Timetable Cards -->
+        <!-- LEFT: Timetable with animations -->
         <div class="glass-card">
           <div class="card-header"><i class="fas fa-clock"></i> Daily Campaign</div>
           <div class="timetable">
@@ -42,17 +150,20 @@
             <div class="time-slot"><span class="time">📓 20:00 – 22:00</span><span>Night reinforcement + error log</span></div>
             <div class="time-slot"><span class="time">🌙 23:00</span><span>Sleep (6h min)</span></div>
           </div>
+          <button class="physics-warrior-btn" id="physicsWarriorBtnHub"><i class="fas fa-shield-alt"></i> ⚡ PHYSICS WARRIOR (remind me)</button>
         </div>
 
-        <!-- Right: 7-Day Gauntlet & Rules -->
+        <!-- RIGHT: 7-Day Gauntlet + Rules + Quote -->
         <div class="glass-card">
           <div class="card-header"><i class="fas fa-chess-queen"></i> 7‑Day Gauntlet</div>
           <p class="small-text">“Sit for Physics at 7:30 AM – no excuses”</p>
           <div class="streak-grid" id="sevenDayGrid"></div>
-          <div class="progress-container"><div class="progress-fill" id="missionProgressFill"></div></div>
-          <button id="resetMissionBtn" class="btn-secondary">⟳ Reset mission</button>
+          <div class="progress-container">
+            <div class="progress-fill" id="missionProgressFill"></div>
+          </div>
+          <button id="resetMissionBtn" class="btn-secondary" style="margin-top: 0.5rem;">⟳ Reset mission</button>
 
-          <div class="rule-list">
+          <div class="rule-list" style="margin-top: 1.5rem;">
             <div class="rule-item"><i class="fas fa-ban"></i> No Zero Days → even worst day = 2h</div>
             <div class="rule-item"><i class="fas fa-bolt"></i> Physics daily (mood off? show up!)</div>
             <div class="rule-item"><i class="fas fa-calendar-week"></i> Sunday = Mock test + analysis</div>
@@ -67,42 +178,92 @@
   </div>
   <script src="global.js"></script>
   <script>
-    // 7-day mission logic (shared via globalState)
     (function() {
+      // ----- 7-day mission (same logic, but enhanced UI) -----
       let sevenDay = JSON.parse(localStorage.getItem('neetSevenDay')) || [false,false,false,false,false,false,false];
       const grid = document.getElementById('sevenDayGrid');
-      function render() {
+      function renderSevenDay() {
         grid.innerHTML = '';
         sevenDay.forEach((done, i) => {
           const day = document.createElement('div');
           day.className = `day-card ${done ? 'completed' : ''}`;
           day.innerHTML = `<div class="day-num">${i+1}</div><div class="day-label">Day ${i+1}</div>`;
           day.onclick = () => {
+            if(!done) {
+              // adding a physics day: bonus XP?
+              addXP(15);  // reward for showing up
+              showToast(`+15 XP for showing up on Day ${i+1}!`);
+            }
             sevenDay[i] = !sevenDay[i];
             localStorage.setItem('neetSevenDay', JSON.stringify(sevenDay));
-            render();
-            updateMissionFill();
+            renderSevenDay();
+            updateMissionProgress();
             if(sevenDay.every(v=>v===true) && !localStorage.getItem('sevenBonus')) {
               addXP(100);
               localStorage.setItem('sevenBonus','true');
               triggerConfetti();
+              showToast('🔥 PERFECT 7-DAY STREAK! +100 XP 🔥');
             }
+            updateStats(); // refresh physics streak count
           };
           grid.appendChild(day);
         });
-        updateMissionFill();
+        updateMissionProgress();
       }
-      function updateMissionFill() {
+      function updateMissionProgress() {
         let completed = sevenDay.filter(v=>v===true).length;
         let percent = (completed/7)*100;
-        document.getElementById('missionProgressFill').style.width = percent+'%';
+        const fill = document.getElementById('missionProgressFill');
+        if(fill) fill.style.width = percent+'%';
       }
-      render();
+      renderSevenDay();
       document.getElementById('resetMissionBtn')?.addEventListener('click',()=>{
         sevenDay = [false,false,false,false,false,false,false];
         localStorage.setItem('neetSevenDay',JSON.stringify(sevenDay));
         localStorage.removeItem('sevenBonus');
-        render();
+        renderSevenDay();
+        updateStats();
+        showToast('Mission reset – start fresh warrior');
+      });
+
+      // ----- Physics warrior button (extra boost) -----
+      document.getElementById('physicsWarriorBtnHub')?.addEventListener('click', () => {
+        addXP(5);
+        alert("⚡ 7:30 AM PHYSICS – sit down, open module, solve 5 questions. Resistance breaks.");
+        showToast('⚡ +5 XP for warrior mindset');
+      });
+
+      // ----- Stats & XP bar update -----
+      function updateStats() {
+        let totalXP = parseInt(localStorage.getItem('neetTotalXP')) || 0;
+        let physicsDays = sevenDay.filter(v=>v===true).length;
+        let level = Math.floor(totalXP / 500) + 1;
+        let xpForNext = 500 - (totalXP % 500);
+        let percentToNext = (totalXP % 500) / 500 * 100;
+        document.getElementById('totalXPNum').innerText = totalXP;
+        document.getElementById('physicsStreak').innerText = physicsDays;
+        document.getElementById('streakCount').innerText = physicsDays; // same as physics streak for now
+        document.getElementById('levelText').innerHTML = `Level ${level}`;
+        const xpFill = document.getElementById('xpFillBar');
+        if(xpFill) xpFill.style.width = percentToNext + '%';
+      }
+      // override addXP from global to also update stats
+      const originalAddXP = window.addXP;
+      window.addXP = function(amount) {
+        if(originalAddXP) originalAddXP(amount);
+        updateStats();
+      };
+      // initial stats
+      updateStats();
+      // also update on any localStorage change from other pages (optional)
+      window.addEventListener('storage', (e) => {
+        if(e.key === 'neetTotalXP' || e.key === 'neetSevenDay') {
+          updateStats();
+          if(e.key === 'neetSevenDay') {
+            sevenDay = JSON.parse(localStorage.getItem('neetSevenDay')) || [false,false,false,false,false,false,false];
+            renderSevenDay();
+          }
+        }
       });
     })();
   </script>
