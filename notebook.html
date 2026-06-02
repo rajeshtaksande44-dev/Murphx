@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Error Vault · NEET Quest</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+  <div class="page-transition">
+    <nav class="game-nav">
+      <div class="nav-logo"><i class="fas fa-dice-d6"></i> ZERO→650+</div>
+      <div class="nav-links">
+        <a href="index.html"><i class="fas fa-home"></i> Hub</a>
+        <a href="daily.html"><i class="fas fa-scroll"></i> Daily Quests</a>
+        <a href="notebook.html" class="active"><i class="fas fa-skull-book"></i> Error Vault</a>
+      </div>
+      <div class="xp-pill" id="globalXpDisplay">🏆 XP 0</div>
+    </nav>
+
+    <main class="container">
+      <div class="hero-glow">
+        <h1>📘 <span class="gradient-text">Error Notebook</span> & Revision Core</h1>
+        <p>“Review mistakes every night – rankers are made here.”</p>
+      </div>
+
+      <div class="double-grid">
+        <div class="glass-card">
+          <div class="card-header"><i class="fas fa-pen-fancy"></i> Mistake Log</div>
+          <textarea id="errorNotebook" rows="8" placeholder="Write your repeated errors, weak concepts, silly mistakes..."></textarea>
+          <div class="note">✍️ Auto-saved. Review during night reinforcement (8-10 PM).</div>
+        </div>
+
+        <div class="glass-card">
+          <div class="card-header"><i class="fas fa-brain"></i> Revision Tracker</div>
+          <div class="revision-grid" id="revisionTracker">
+            <!-- Physics, Chemistry, Bio revision toggles -->
+          </div>
+          <button id="resetRevisionBtn" class="btn-secondary mt-2">Reset revision ticks</button>
+          <div class="quote-card" style="margin-top: 1rem;">
+            <i class="fas fa-shield-alt"></i> <strong>Physics Weapon</strong> – “Even if tired, show up for 30 min of problems.”
+            <button id="physicsWarriorBtn" class="btn-small">⚡ Remind Me</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script src="global.js"></script>
+  <script>
+    // error notebook save
+    const errorTa = document.getElementById('errorNotebook');
+    errorTa.value = localStorage.getItem('neetErrorNotebook') || '';
+    errorTa.addEventListener('input', () => localStorage.setItem('neetErrorNotebook', errorTa.value));
+    
+    // revision tracker
+    let revisionState = JSON.parse(localStorage.getItem('neetRevision')) || { physics:false, chemistry:false, bio:false };
+    const revGrid = document.getElementById('revisionTracker');
+    function renderRevision() {
+      revGrid.innerHTML = `
+        <div class="rev-card ${revisionState.physics ? 'rev-done' : ''}" data-subj="physics"><i class="fas fa-atom"></i> Physics mistakes revised</div>
+        <div class="rev-card ${revisionState.chemistry ? 'rev-done' : ''}" data-subj="chemistry"><i class="fas fa-flask"></i> Chemistry errors reviewed</div>
+        <div class="rev-card ${revisionState.bio ? 'rev-done' : ''}" data-subj="bio"><i class="fas fa-leaf"></i> Biology NCERT corrections</div>
+      `;
+      document.querySelectorAll('.rev-card').forEach(card => {
+        card.addEventListener('click', () => {
+          const subj = card.dataset.subj;
+          revisionState[subj] = !revisionState[subj];
+          localStorage.setItem('neetRevision', JSON.stringify(revisionState));
+          renderRevision();
+          if(Object.values(revisionState).every(v=>v===true) && !localStorage.getItem('revisionBonus')){
+            addXP(40);
+            localStorage.setItem('revisionBonus','true');
+            triggerConfetti();
+          }
+        });
+      });
+    }
+    renderRevision();
+    document.getElementById('resetRevisionBtn')?.addEventListener('click',()=>{
+      revisionState = { physics:false, chemistry:false, bio:false };
+      localStorage.setItem('neetRevision',JSON.stringify(revisionState));
+      localStorage.removeItem('revisionBonus');
+      renderRevision();
+    });
+    document.getElementById('physicsWarriorBtn')?.addEventListener('click',()=>{
+      alert("⚡ 7:30 AM PHYSICS – sit down, open module, solve 5 questions. Resistance breaks.");
+      addXP(5);
+    });
+  </script>
+</body>
+</html>
